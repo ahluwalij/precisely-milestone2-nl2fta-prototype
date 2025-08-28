@@ -1,4 +1,4 @@
-name: Transaction Dataset - Generate & Evaluate
+name: Transactions Dataset - Generate & Evaluate
 
 on:
   push:
@@ -67,7 +67,7 @@ jobs:
           name: nl2fta-milestone3.zip
           path: nl2fta-milestone3.zip
 
-  generate-and-evaluate-transaction:
+  generate-and-evaluate-transactions:
     if: needs.build-package.result == 'success'
     runs-on: ubuntu-latest
     needs: build-package
@@ -85,7 +85,7 @@ jobs:
           unzip -q nl2fta-milestone3.zip -d nl2fta-milestone3-extracted
           ls -la nl2fta-milestone3-extracted
 
-      - name: Generate semantic types for transaction (all descriptions)
+      - name: Generate semantic types for transactions (all descriptions)
         working-directory: nl2fta-milestone3-extracted
         env:
           CI: 'true'
@@ -103,15 +103,15 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
         run: |
           chmod +x scripts/generate-semantic-types.sh || true
-          # Generation uses evaluator/datasets/generation-inputs/transaction_inputs.csv
-          if [ ! -f "evaluator/datasets/generation-inputs/transaction_inputs.csv" ]; then
-            echo "❌ Missing evaluator/datasets/generation-inputs/transaction_inputs.csv" >&2
+          # Generation uses evaluator/datasets/generation-inputs/transactions_inputs.csv
+          if [ ! -f "evaluator/datasets/generation-inputs/transactions_inputs.csv" ]; then
+            echo "❌ Missing evaluator/datasets/generation-inputs/transactions_inputs.csv" >&2
             exit 1
           fi
           DESCRIPTIONS="1"
-          ./scripts/generate-semantic-types.sh --dataset transaction --descriptions "$DESCRIPTIONS" --default
+          ./scripts/generate-semantic-types.sh --dataset transactions --descriptions "$DESCRIPTIONS" --default
 
-      - name: Run evaluator on generated types (transaction)
+      - name: Run evaluator on generated types (transactions)
         working-directory: nl2fta-milestone3-extracted
         env:
           VECTOR_INDEX_ENABLED: 'false'
@@ -131,19 +131,19 @@ jobs:
         run: |
           chmod +x scripts/run-eval.sh
           DESCRIPTIONS="1"
-          ./scripts/run-eval.sh --dataset transaction --descriptions "$DESCRIPTIONS" --no-cleanup --default || true
+          ./scripts/run-eval.sh --dataset transactions --descriptions "$DESCRIPTIONS" --no-cleanup --default || true
           echo "Listing evaluator logs (if any):"
           ls -la evaluator/logs || true
           echo "Listing evaluator results (if any):"
           ls -la evaluator/results || true
 
-      - name: Upload transaction generation + eval artifacts
+      - name: Upload transactions generation + eval artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: transaction-generation-and-eval
+          name: transactions-generation-and-eval
           path: |
-            nl2fta-milestone3-extracted/evaluator/generated_semantic_types/transaction_description*_*.json
+            nl2fta-milestone3-extracted/evaluator/generated_semantic_types/transactions_description*_*.json
             nl2fta-milestone3-extracted/evaluator/results/**
             nl2fta-milestone3-extracted/evaluator/logs/**
           if-no-files-found: ignore
