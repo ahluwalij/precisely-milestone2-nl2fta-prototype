@@ -323,10 +323,13 @@ def _generate_for_dataset(
     if inputs_csv and inputs_csv.exists():
         rows = list(_iter_input_rows(inputs_csv))
         descs_from_header = _available_description_indices(inputs_csv)
-        to_run = descs_from_header or descriptions
+        # If user explicitly provided descriptions, use those; otherwise auto-detect from header
+        to_run = descriptions if descriptions else descs_from_header
         print(f"Using generation inputs: {inputs_csv}")
-        if descs_from_header:
-            print(f"Detected descriptions in inputs: {' '.join(str(d) for d in to_run)}")
+        if descriptions:
+            print(f"Using provided descriptions: {' '.join(str(d) for d in to_run)}")
+        elif descs_from_header:
+            print(f"Auto-detected descriptions from inputs: {' '.join(str(d) for d in to_run)}")
         for desc_idx in to_run:
             results: List[Dict[str, Any]] = []
             for row in rows:
