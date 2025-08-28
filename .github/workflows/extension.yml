@@ -1,12 +1,8 @@
 name: Extension Dataset - Generate & Evaluate
 
 on:
-  workflow_dispatch:
-    inputs:
-      descriptions:
-        description: "Space-separated description numbers to generate (default: '1 2 3 4 5 6')"
-        required: false
-        default: "1 2 3 4 5 6"
+  push:
+    branches: [ "**" ]
 
 jobs:
   build-package:
@@ -112,7 +108,7 @@ jobs:
             echo "❌ Missing evaluator/datasets/generation-inputs/extension_inputs.csv" >&2
             exit 1
           fi
-          DESCRIPTIONS="${{ github.event.inputs.descriptions || '1 2 3 4 5 6' }}"
+          DESCRIPTIONS="1"
           ./scripts/generate-semantic-types.sh --dataset extension --descriptions "$DESCRIPTIONS" --default
 
       - name: Run evaluator on generated types (extension)
@@ -134,7 +130,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
         run: |
           chmod +x scripts/run-eval.sh
-          DESCRIPTIONS="${{ github.event.inputs.descriptions || '1 2 3 4 5 6' }}"
+          DESCRIPTIONS="1"
           ./scripts/run-eval.sh --dataset extension --descriptions "$DESCRIPTIONS" --no-cleanup --default || true
           echo "Listing evaluator logs (if any):"
           ls -la evaluator/logs || true
