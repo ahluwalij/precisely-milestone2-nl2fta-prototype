@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.bedrockruntime.model.ValidationException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AwsBedrockService {
+public class AwsBedrockService implements LLMService {
 
   private final ObjectMapper objectMapper;
   private BedrockRuntimeClient bedrockRuntimeClient;
@@ -60,6 +60,11 @@ public class AwsBedrockService {
   private double temperature;
 
   private String currentRegion;
+
+  @Override
+  public boolean isConfigured() {
+    return isInitialized();
+  }
 
   public void initializeClient(String accessKeyId, String secretAccessKey, String region) {
     AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKeyId, secretAccessKey);

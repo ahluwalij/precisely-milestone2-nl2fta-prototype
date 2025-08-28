@@ -37,6 +37,7 @@ TIMESTAMP=""
 CLEANUP=true
 VERBOSE=false
 DEBUG_LOGGING=false
+DEFAULT_MODE=false
 
 # Global multi-file input (new normal) - now REQUIRED to specify inputs
 FILES_CSV=""           # comma-separated list of files/dirs for any dataset
@@ -140,6 +141,10 @@ while [[ $# -gt 0 ]]; do
             EVAL_MODE="custom-only"
             shift
             ;;
+        --default)
+            DEFAULT_MODE=true
+            shift
+            ;;
         --help)
             echo "Usage: $0 [OPTIONS]"
             echo ""
@@ -157,6 +162,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --full-data           Use full dataset rows (disables default row-cap truncation)"
             echo "  --data-dir DIR        Directory containing CSVs to evaluate (required if --files omitted)"
             echo "  --files LIST          Comma-separated files/dirs to evaluate (required if --data-dir omitted)"
+            echo "  --default             Use default Chainguard authentication (no org-specific config)"
             echo "  --sum-f1              Sum F1 scores across all datasets and descriptions (forces --dataset all --descriptions '1 2 3 4 5 6' --mode custom-only)"
             echo "  --help                Show this help message"
             echo ""
@@ -409,6 +415,113 @@ PY
     fi
     
     echo -e "${GREEN}✔${NC} Prerequisites satisfied"
+}
+
+# Function to install/update chainctl
+install_chainctl() {
+    echo -e "${YELLOW}Installing chainctl...${NC}"
+
+    # Platform-agnostic curl download per Chainguard docs
+    if ! command -v curl >/dev/null 2>&1; then
+        echo -e "${RED}❌ curl is required to install chainctl${NC}"; exit 1
+    fi
+    BIN_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+    BIN_ARCH=$(uname -m | sed 's/aarch64/arm64/')
+    TMP_CHAINCTL=$(mktemp -t chainctl.XXXXXX)
+    if ! curl -fsSL -o "$TMP_CHAINCTL" "https://dl.enforce.dev/chainctl/latest/chainctl_${BIN_OS}_${BIN_ARCH}"; then
+        echo -e "${RED}❌ Failed to download chainctl binary${NC}"
+        rm -f "$TMP_CHAINCTL"
+        exit 1
+    fi
+    chmod 0755 "$TMP_CHAINCTL"
+    if command -v sudo >/dev/null 2>&1; then
+        sudo install -o $UID -g $(id -g) -m 0755 "$TMP_CHAINCTL" /usr/local/bin/chainctl >/dev/null 2>&1 || true
+    fi
+    if ! command -v chainctl >/dev/null 2>&1; then
+        mkdir -p "$HOME/.local/bin"
+        install -m 0755 "$TMP_CHAINCTL" "$HOME/.local/bin/chainctl"
+        if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+            export PATH="$HOME/.local/bin:$PATH"
+            echo -e "${YELLOW}Added ~/.local/bin to PATH for this session${NC}"
+        fi
+    fi
+    rm -f "$TMP_CHAINCTL"
+    echo -e "${GREEN}✅ chainctl installed${NC}"
+}
+
+# Function to check and setup Chainguard authentication (headless/non-interactive)
+setup_chainguard() {
+    local use_default="${1:-false}"
+    echo -e "${BLUE}Setting up Chainguard authentication...${NC}"
+    # Enforce headless mode universally
+    export CHAINCTL_HEADLESS=1
+    export NO_BROWSER=1
+    export BROWSER=""
+
+    # Ensure chainctl is present
+    if ! command -v chainctl &> /dev/null; then
+        install_chainctl
+    else
+        echo -e "${GREEN}✅ chainctl is already installed${NC}"
+    fi
+
+    # Always run headless device login and (re)configure docker helper to avoid hangs in status
+    echo -e "${BLUE}Non-interactive Chainguard setup (headless)...${NC}"
+    mkdir -p ~/.docker
+    echo "If authentication is required, a device login URL and code will print below."
+
+    # Use appropriate Chainguard authentication based on default mode
+    if [ "$use_default" = true ]; then
+        chainctl auth login --headless || true
+        # Configure Docker credential helper (retry with sudo on permission errors)
+        CFG_STATUS=0
+        chainctl auth configure-docker --headless || CFG_STATUS=$?
+        if [ $CFG_STATUS -ne 0 ] || ! command -v docker-credential-cgr >/dev/null 2>&1; then
+            if command -v sudo >/dev/null 2>&1; then
+                echo -e "${YELLOW}Attempting to fix credential helper with elevated privileges...${NC}"
+                sudo chainctl auth configure-docker --headless || true
+            fi
+        fi
+    else
+        chainctl auth login --headless --org-name precisely.com || true
+        # Configure Docker credential helper (retry with sudo on permission errors)
+        CFG_STATUS=0
+        chainctl auth configure-docker --headless --org-name precisely.com || CFG_STATUS=$?
+        if [ $CFG_STATUS -ne 0 ] || ! command -v docker-credential-cgr >/dev/null 2>&1; then
+            if command -v sudo >/dev/null 2>&1; then
+                echo -e "${YELLOW}Attempting to fix credential helper with elevated privileges...${NC}"
+                sudo chainctl auth configure-docker --headless --org-name precisely.com || true
+            fi
+        fi
+    fi
+
+    # Fix credential helper symlink with proper permissions (system-wide)
+    if ! command -v docker-credential-cgr >/dev/null 2>&1; then
+        CHAINCTL_PATH="$(command -v chainctl || true)"
+        if [ -n "$CHAINCTL_PATH" ]; then
+            if command -v sudo >/dev/null 2>&1; then
+                sudo ln -sf "$CHAINCTL_PATH" /usr/local/bin/docker-credential-cgr 2>/dev/null || \
+                sudo install -o root -g root -m 0755 "$CHAINCTL_PATH" /usr/local/bin/docker-credential-cgr 2>/dev/null || \
+                sudo ln -sf "$CHAINCTL_PATH" /usr/bin/docker-credential-cgr 2>/dev/null || \
+                sudo install -o root -g root -m 0755 "$CHAINCTL_PATH" /usr/bin/docker-credential-cgr 2>/dev/null || true
+            else
+                echo -e "${YELLOW}⚠️  sudo not available to fix docker-credential-cgr in /usr/local/bin. Run as root:${NC}"
+                echo "ln -sf $(command -v chainctl) /usr/local/bin/docker-credential-cgr || install -o root -g root -m 0755 $(command -v chainctl) /usr/local/bin/docker-credential-cgr"
+            fi
+        fi
+    fi
+
+    if chainctl auth status 2>/dev/null | grep -q "Valid.*True"; then
+        echo -e "${GREEN}✅ Chainguard authentication is ready${NC}"
+    else
+        echo -e "${YELLOW}⚠️  Chainguard headless auth may require completing device flow in another terminal. Continuing; image pulls may fail if not completed.${NC}"
+    fi
+
+    # Final check for docker-credential-cgr
+    if ! command -v docker-credential-cgr >/dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  docker-credential-cgr not found. Chainguard image pulls may fail.${NC}"
+        echo -e "${YELLOW}   Run: sudo ln -sf \$(command -v chainctl) /usr/local/bin/docker-credential-cgr${NC}"
+    fi
 }
 
 start_backend() {
@@ -1206,7 +1319,12 @@ echo -e "${BLUE}║               NL2FTA Evaluation Suite                       
 echo -e "${BLUE}╚══════════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
+if [ "$DEFAULT_MODE" = true ]; then
+    echo -e "${YELLOW}📝 Using default Chainguard authentication (no org-specific config)${NC}"
+fi
+
 check_prerequisites
+setup_chainguard "$DEFAULT_MODE"
 
 # Rebuild backend before starting
 echo -e "${YELLOW}Skipping host Gradle build; using Dockerized backend (Dockerfile.dev) for evaluation...${NC}"

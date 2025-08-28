@@ -21,6 +21,8 @@ import com.nl2fta.classifier.dto.semantic_type.PatternUpdateResponse;
 import com.nl2fta.classifier.dto.semantic_type.SemanticTypeGenerationRequest;
 import com.nl2fta.classifier.service.CloudWatchLoggingService;
 import com.nl2fta.classifier.service.aws.AwsBedrockService;
+import com.nl2fta.classifier.service.aws.LLMService;
+import com.nl2fta.classifier.service.aws.LLMServiceSelector;
 import com.nl2fta.classifier.service.semantic_type.management.CustomSemanticTypeService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SemanticTypeGenerationService {
 
-  private final AwsBedrockService awsBedrockService;
+  private final LLMServiceSelector llmServiceSelector;
   private final SemanticTypePromptService promptService;
   private final SemanticTypeResponseParserService responseParserService;
   private final CustomSemanticTypeService customSemanticTypeService;
@@ -129,7 +131,8 @@ public class SemanticTypeGenerationService {
     log.info("On STEP 2 - NEW TYPE GENERATION, sending prompt");
     // Log the FULL prompt content to CloudWatch (not a preview)
     logGenerationEvent("SEMANTIC_TYPE_GENERATION_PROMPT", correlationId, request, null, prompt);
-    String llmResponse = awsBedrockService.invokeClaudeForSemanticTypeGeneration(prompt);
+    LLMService llmService = llmServiceSelector.getLLMService();
+    String llmResponse = llmService.invokeClaudeForSemanticTypeGeneration(prompt);
 
     GeneratedSemanticType result =
         responseParserService.parseGenerationResponse(llmResponse, request);
@@ -167,7 +170,14 @@ public class SemanticTypeGenerationService {
       Map<String, Object> data = new HashMap<>();
       data.put("eventType", eventType);
       data.put("correlationId", correlationId);
-      data.put("modelId", awsBedrockService != null ? awsBedrockService.getCurrentModelId() : null);
+      try {
+        LLMService llmService = llmServiceSelector.getLLMService();
+        data.put("modelId", llmService.getCurrentModelId());
+        data.put("llmProvider", llmServiceSelector.getActiveProvider());
+      } catch (Exception e) {
+        data.put("modelId", null);
+        data.put("llmProvider", "none");
+      }
 
       if (request != null) {
         Map<String, Object> req = new HashMap<>();
@@ -368,7 +378,8 @@ public class SemanticTypeGenerationService {
               request.getDescription());
 
       log.info("On DATA PATTERN IMPROVEMENT, sending this prompt:\n{}", prompt);
-      String claudeResponse = awsBedrockService.invokeClaudeForSemanticTypeGeneration(prompt);
+      LLMService llmService = llmServiceSelector.getLLMService();
+      String claudeResponse = llmService.invokeClaudeForSemanticTypeGeneration(prompt);
       PatternUpdateResponse updateResponse =
           responseParserService.parsePatternUpdateResponse(claudeResponse);
 
@@ -459,7 +470,8 @@ public class SemanticTypeGenerationService {
                   : "Improve the header patterns");
 
       log.info("On HEADER PATTERN IMPROVEMENT, sending this prompt:\n{}", prompt);
-      String claudeResponse = awsBedrockService.invokeClaudeForSemanticTypeGeneration(prompt);
+      LLMService llmService = llmServiceSelector.getLLMService();
+      String claudeResponse = llmService.invokeClaudeForSemanticTypeGeneration(prompt);
       PatternUpdateResponse updateResponse =
           responseParserService.parsePatternUpdateResponse(claudeResponse);
 

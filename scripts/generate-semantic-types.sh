@@ -45,11 +45,113 @@ AWS_REGION="${AWS_REGION:-us-east-1}"
 GEN_JAVA_OPTS="-XX:+UseContainerSupport -Xms512m -Xmx2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
 
 # Determine Docker Compose command (prefer v2)
-if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
-  COMPOSE="docker compose"
-else
-  COMPOSE="docker-compose"
-fi
+
+# Function to install/update chainctl
+install_chainctl() {
+    echo -e "${YELLOW}Installing chainctl...${NC}"
+
+    # Platform-agnostic curl download per Chainguard docs
+    if ! command -v curl >/dev/null 2>&1; then
+        echo -e "${RED}❌ curl is required to install chainctl${NC}"; exit 1
+    fi
+    BIN_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+    BIN_ARCH=$(uname -m | sed 's/aarch64/arm64/')
+    TMP_CHAINCTL=$(mktemp -t chainctl.XXXXXX)
+    if ! curl -fsSL -o "$TMP_CHAINCTL" "https://dl.enforce.dev/chainctl/latest/chainctl_${BIN_OS}_${BIN_ARCH}"; then
+        echo -e "${RED}❌ Failed to download chainctl binary${NC}"
+        rm -f "$TMP_CHAINCTL"
+        exit 1
+    fi
+    chmod 0755 "$TMP_CHAINCTL"
+    if command -v sudo >/dev/null 2>&1; then
+        sudo install -o $UID -g $(id -g) -m 0755 "$TMP_CHAINCTL" /usr/local/bin/chainctl >/dev/null 2>&1 || true
+    fi
+    if ! command -v chainctl >/dev/null 2>&1; then
+        mkdir -p "$HOME/.local/bin"
+        install -m 0755 "$TMP_CHAINCTL" "$HOME/.local/bin/chainctl"
+        if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+            export PATH="$HOME/.local/bin:$PATH"
+            echo -e "${YELLOW}Added ~/.local/bin to PATH for this session${NC}"
+        fi
+    fi
+    rm -f "$TMP_CHAINCTL"
+    echo -e "${GREEN}✅ chainctl installed${NC}"
+}
+
+# Function to check and setup Chainguard authentication (headless/non-interactive)
+setup_chainguard() {
+    local use_default="${1:-false}"
+    echo -e "${BLUE}Setting up Chainguard authentication...${NC}"
+    # Enforce headless mode universally
+    export CHAINCTL_HEADLESS=1
+    export NO_BROWSER=1
+    export BROWSER=""
+
+    # Ensure chainctl is present
+    if ! command -v chainctl &> /dev/null; then
+        install_chainctl
+    else
+        echo -e "${GREEN}✅ chainctl is already installed${NC}"
+    fi
+
+    # Always run headless device login and (re)configure docker helper to avoid hangs in status
+    echo -e "${BLUE}Non-interactive Chainguard setup (headless)...${NC}"
+    mkdir -p ~/.docker
+    echo "If authentication is required, a device login URL and code will print below."
+
+    # Use appropriate Chainguard authentication based on default mode
+    if [ "$use_default" = true ]; then
+        chainctl auth login --headless || true
+        # Configure Docker credential helper (retry with sudo on permission errors)
+        CFG_STATUS=0
+        chainctl auth configure-docker --headless || CFG_STATUS=$?
+        if [ $CFG_STATUS -ne 0 ] || ! command -v docker-credential-cgr >/dev/null 2>&1; then
+            if command -v sudo >/dev/null 2>&1; then
+                echo -e "${YELLOW}Attempting to fix credential helper with elevated privileges...${NC}"
+                sudo chainctl auth configure-docker --headless || true
+            fi
+        fi
+    else
+        chainctl auth login --headless --org-name precisely.com || true
+        # Configure Docker credential helper (retry with sudo on permission errors)
+        CFG_STATUS=0
+        chainctl auth configure-docker --headless --org-name precisely.com || CFG_STATUS=$?
+        if [ $CFG_STATUS -ne 0 ] || ! command -v docker-credential-cgr >/dev/null 2>&1; then
+            if command -v sudo >/dev/null 2>&1; then
+                echo -e "${YELLOW}Attempting to fix credential helper with elevated privileges...${NC}"
+                sudo chainctl auth configure-docker --headless --org-name precisely.com || true
+            fi
+        fi
+    fi
+
+    # Fix credential helper symlink with proper permissions (system-wide)
+    if ! command -v docker-credential-cgr >/dev/null 2>&1; then
+        CHAINCTL_PATH="$(command -v chainctl || true)"
+        if [ -n "$CHAINCTL_PATH" ]; then
+            if command -v sudo >/dev/null 2>&1; then
+                sudo ln -sf "$CHAINCTL_PATH" /usr/local/bin/docker-credential-cgr 2>/dev/null || \
+                sudo install -o root -g root -m 0755 "$CHAINCTL_PATH" /usr/local/bin/docker-credential-cgr 2>/dev/null || \
+                sudo ln -sf "$CHAINCTL_PATH" /usr/bin/docker-credential-cgr 2>/dev/null || \
+                sudo install -o root -g root -m 0755 "$CHAINCTL_PATH" /usr/bin/docker-credential-cgr 2>/dev/null || true
+            else
+                echo -e "${YELLOW}⚠️  sudo not available to fix docker-credential-cgr in /usr/local/bin. Run as root:${NC}"
+                echo "ln -sf $(command -v chainctl) /usr/local/bin/docker-credential-cgr || install -o root -g root -m 0755 $(command -v chainctl) /usr/local/bin/docker-credential-cgr"
+            fi
+        fi
+    fi
+
+    if chainctl auth status 2>/dev/null | grep -q "Valid.*True"; then
+        echo -e "${GREEN}✅ Chainguard authentication is ready${NC}"
+    else
+        echo -e "${YELLOW}⚠️  Chainguard headless auth may require completing device flow in another terminal. Continuing; image pulls may fail if not completed.${NC}"
+    fi
+
+    # Final check for docker-credential-cgr
+    if ! command -v docker-credential-cgr >/dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  docker-credential-cgr not found. Chainguard image pulls may fail.${NC}"
+        echo -e "${YELLOW}   Run: sudo ln -sf \$(command -v chainctl) /usr/local/bin/docker-credential-cgr${NC}"
+    fi
+}
 
 usage() {
   cat <<EOF
@@ -68,6 +170,7 @@ Options:
   --heap SIZE            JVM -Xmx size for backend (e.g., 2g). -Xms is set to 50% of this value
   --jvm-opts STRING      Full JAVA_OPTS override for backend
   --no-cleanup           Do not stop the generator backend after completion
+  --default              Use default Chainguard authentication (no org-specific config)
   --use-saved-credentials Use saved AWS credentials without prompting
   --help                 Show this help
 
@@ -79,6 +182,7 @@ EOF
 
 CLEANUP=true
 USE_SAVED_CREDENTIALS=false
+DEFAULT_MODE=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -88,6 +192,10 @@ while [[ $# -gt 0 ]]; do
     --files) FILES_CSV="$2"; shift 2;;
     --region) AWS_REGION="$2"; shift 2;;
     --no-cleanup) CLEANUP=false; shift;;
+    --default)
+        DEFAULT_MODE=true
+        shift
+        ;;
     --heap)
       HEAP_RAW="$2"; shift 2
       case "$HEAP_RAW" in
@@ -107,7 +215,19 @@ done
 check_prereqs() {
   echo -e "${BLUE}Checking prerequisites...${NC}"
   if ! docker info >/dev/null 2>&1; then
-    echo -e "${RED}❌ Docker is required but not running${NC}"; exit 1
+    echo -e "${RED}❌ Docker is required but not running${NC}"
+    echo -e "${YELLOW}Try: sudo systemctl start docker${NC}"
+    exit 1
+  fi
+  # Check Docker Compose availability
+  if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+    COMPOSE="docker compose"
+  elif command -v docker-compose >/dev/null 2>&1; then
+    COMPOSE="docker-compose"
+  else
+    echo -e "${RED}❌ Docker Compose is required${NC}"
+    echo -e "${YELLOW}Install with: sudo curl -L \"https://github.com/docker/compose/releases/latest/download/docker-compose-\$(uname -s)-\$(uname -m)\" -o /usr/bin/docker-compose && sudo chmod +x /usr/bin/docker-compose${NC}"
+    exit 1
   fi
   if ! command -v python3 >/dev/null 2>&1; then
     echo -e "${RED}❌ Python 3 is required${NC}"; exit 1
@@ -392,7 +512,12 @@ echo -e "${BLUE}╔════════════════════�
 echo -e "${BLUE}║               NL2FTA Semantic Type Generator                     ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════════════════════════════════╝${NC}"
 
+if [ "$DEFAULT_MODE" = true ]; then
+    echo -e "${YELLOW}📝 Using default Chainguard authentication (no org-specific config)${NC}"
+fi
+
 check_prereqs
+setup_chainguard "$DEFAULT_MODE"
 prompt_for_credentials
 start_backend
 run_generation
