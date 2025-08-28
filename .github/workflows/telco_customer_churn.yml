@@ -1,8 +1,7 @@
 name: Telco Customer Churn Dataset - Generate & Evaluate
 
 on:
-  push:
-    branches: [ "**" ]
+  workflow_dispatch:
 
 jobs:
   build-package:
