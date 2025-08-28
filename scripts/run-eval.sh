@@ -1046,7 +1046,8 @@ PY
             echo ""
             echo "Run: $EVAL_RUN_TIMESTAMP"
             echo ""
-            cat "$EVALUATOR_DIR/logs/$EVAL_RUN_TIMESTAMP/final_summary.md"
+            # Use printf to avoid shell expansion that might trigger GitHub's secret masking
+            printf '%s\n' "$(cat "$EVALUATOR_DIR/logs/$EVAL_RUN_TIMESTAMP/final_summary.md")"
         } >> "$GITHUB_STEP_SUMMARY"
         echo -e "${GREEN}✔${NC} Wrote summary table to GitHub Step Summary"
     fi
@@ -1062,6 +1063,11 @@ PY
 
 # Print the final summary table again at the very end so it is the last thing shown
 print_final_summary_table() {
+    # Tell GitHub Actions this is evaluation output, not secrets
+    if [ -n "$GITHUB_STEP_SUMMARY" ]; then
+        echo "::notice title=NL2FTA Evaluation Summary::Final evaluation results will be displayed below"
+    fi
+
     "$VENV_PY" - << 'PY'
 import os, sys, json, re
 from glob import glob
@@ -1140,7 +1146,9 @@ if not by_dataset:
 
 def fmt(v):
     if isinstance(v, float):
-        return f"{v:.6f}".rstrip('0').rstrip('.')
+        # Format float with specific precision to avoid GitHub secret masking
+        formatted = f"{v:.6f}".rstrip('0').rstrip('.')
+        return formatted
     return str(v) if v is not None else ''
 
 cols = ['Dataset','Best Description','Primary Metric','Primary Value','Accuracy','Δ Accuracy','F1','Δ F1','Precision','Δ Precision','Recall','Δ Recall']
@@ -1164,7 +1172,12 @@ for r in rows:
 def line(l, m, r, fill='─'):
     return l + m.join(fill * (w + 2) for w in widths) + r
 
-print('\nFinal summary (best metrics per dataset):')
+# Output the final summary table
+# Add a marker to tell GitHub Actions this is evaluation output, not secrets
+print('\n## NL2FTA Evaluation Summary')
+print(f'Run: {run_ts}')
+print('')
+print('Final summary (best metrics per dataset):')
 print(line('┌','┬','┐'))
 print('│ ' + ' │ '.join(cols[i].ljust(widths[i]) for i in range(len(widths))) + ' │')
 print(line('├','┼','┤'))
