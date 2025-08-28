@@ -112,7 +112,6 @@ jobs:
           ./scripts/generate-semantic-types.sh --dataset banking --descriptions "$DESCRIPTIONS" --default
 
       - name: Run evaluator on generated types (banking)
-        working-directory: nl2fta-milestone3-extracted
         env:
           VECTOR_INDEX_ENABLED: 'false'
           VECTOR_INDEX_REBUILD_ON_STARTUP: 'false'
