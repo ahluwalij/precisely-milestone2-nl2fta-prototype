@@ -208,16 +208,21 @@ jobs:
         working-directory: nl2fta-milestone3-extracted
         env:
           CI: 'true'
+          # LLM Configuration - defaults to OpenAI
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER || 'openai' }}
+          # OpenAI Configuration
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o' }}
+          OPENAI_MAX_TOKENS: ${{ secrets.OPENAI_MAX_TOKENS || '4096' }}
+          OPENAI_TEMPERATURE: ${{ secrets.OPENAI_TEMPERATURE || '0.7' }}
+          OPENAI_RETRY_MAX_ATTEMPTS: ${{ secrets.OPENAI_RETRY_MAX_ATTEMPTS || '3' }}
+          # AWS Configuration (optional, for Bedrock fallback)
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
         run: |
           chmod +x scripts/generate-semantic-types.sh || true
           # Generation uses evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv
-          if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${AWS_SECRET_ACCESS_KEY}" ]; then
-            echo "❌ AWS credentials not configured; Bedrock generation requires credentials." >&2
-            exit 1
-          fi
           if [ ! -f "evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv" ]; then
             echo "❌ Missing evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv" >&2
             exit 1
@@ -229,6 +234,18 @@ jobs:
         env:
           VECTOR_INDEX_ENABLED: 'false'
           VECTOR_INDEX_REBUILD_ON_STARTUP: 'false'
+          # LLM Configuration - defaults to OpenAI
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER || 'openai' }}
+          # OpenAI Configuration
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o' }}
+          OPENAI_MAX_TOKENS: ${{ secrets.OPENAI_MAX_TOKENS || '4096' }}
+          OPENAI_TEMPERATURE: ${{ secrets.OPENAI_TEMPERATURE || '0.7' }}
+          OPENAI_RETRY_MAX_ATTEMPTS: ${{ secrets.OPENAI_RETRY_MAX_ATTEMPTS || '3' }}
+          # AWS Configuration (optional, for Bedrock fallback)
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
         run: |
           chmod +x scripts/run-eval.sh
           ./scripts/run-eval.sh --dataset telco_5GTraffic --descriptions "1 5 6" --no-cleanup --default || true
