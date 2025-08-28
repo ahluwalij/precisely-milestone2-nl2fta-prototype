@@ -1,0 +1,57 @@
+<div class="login-container">
+  <div class="login-card">
+    <p-card>
+      <div class="login-content">
+        <div class="login-header">
+          <div class="logo-container">
+            <img src="/precisely.svg" alt="Precisely" class="logo" (error)="onImageError($event)" />
+            <h1 class="logo-text" style="display: none">Precisely</h1>
+          </div>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" class="login-form">
+          <div class="form-field">
+            <input
+              pInputText
+              id="username"
+              [(ngModel)]="username"
+              name="username"
+              placeholder="Enter your name"
+              [disabled]="isLoading"
+              class="username-input"
+            />
+          </div>
+          
+          <div class="password-row">
+            <p-password
+              id="password"
+              [(ngModel)]="password"
+              name="password"
+              [feedback]="false"
+              [toggleMask]="true"
+              placeholder="Enter password"
+              [disabled]="isLoading"
+              styleClass="password-input"
+              inputStyleClass="password-input-field"
+            />
+            <p-button
+              type="submit"
+              icon="pi pi-arrow-right"
+              [loading]="isLoading"
+              [disabled]="!password || !username"
+              styleClass="submit-button"
+              [rounded]="true"
+            />
+          </div>
+
+          <p-message
+            *ngIf="errorMessage"
+            severity="error"
+            [text]="errorMessage"
+            styleClass="error-message-centered"
+          />
+        </form>
+      </div>
+    </p-card>
+  </div>
+</div>

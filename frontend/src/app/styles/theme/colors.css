@@ -1,0 +1,105 @@
+:root {
+  /* Light Mode Colors - NL2FTA Theme */
+  --bg-primary: #fff;
+  --bg-secondary: #f5f5f7;
+  --bg-tertiary: #ebebed;
+  --bg-hover: #f0f0f2;
+  --bg-card: #fff;
+  --bg-input: #fff;
+  --bg-code: #f5f5f7;
+
+  /* Text Colors - Light Mode */
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #6a6a6a;
+  --text-muted: #9a9a9a;
+  --text-inverse: #fff;
+
+  /* Border Colors - Light Mode */
+  --border-primary: #e0e0e2;
+  --border-secondary: #d0d0d2;
+  --border-hover: #6d2c91;
+
+  /* Brand Colors - NL2FTA Purple Theme */
+  --brand-primary: #6d2c91;
+  --brand-primary-hover: #5a2478;
+  --brand-secondary: #8b4bb8;
+  --brand-success: #4caf50;
+  --brand-warning: #ff9800;
+  --brand-danger: #f44336;
+  --brand-info: #2196f3;
+
+  /* Brand Colors - Light Variants for UI elements */
+  --brand-primary-light: #f3e5f5;
+  --brand-primary-light-hover: #e1bee7;
+  --brand-primary-light-text: #6d2c91;
+
+  /* Semantic Colors - Light Mode */
+  --color-error-bg: #fee2e2;
+  --color-error-text: #991b1b;
+  --color-error-border: #fecaca;
+  --color-success-bg: #d1fae5;
+  --color-success-text: #065f46;
+  --color-success-border: #a7f3d0;
+  --color-warning-bg: #fef3c7;
+  --color-warning-text: #92400e;
+  --color-warning-border: #fde68a;
+  --color-info-bg: #dbeafe;
+  --color-info-text: #1e40af;
+  --color-info-border: #bfdbfe;
+
+  /* Data Visualization Colors */
+  --data-green: #4caf50;
+  --data-green-light: #81c784;
+  --data-green-dark: #388e3c;
+
+  /* Semantic Type Colors - Light Mode */
+  --semantic-bg: #fff3cd;
+  --semantic-text: #856404;
+  --semantic-border: #ffeaa7;
+  --semantic-none-bg: #f3e5f5;
+  --semantic-none-text: #6d2c91;
+  --semantic-none-border: #e1bee7;
+  --base-type-bg: #1a1a1a;
+  --base-type-text: #fff;
+  --base-type-border: #1a1a1a;
+
+  /* Shadows - Light Mode */
+  --shadow-sm: 0 1px 2px 0 rgb(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0, 0, 0, 0.1), 0 2px 4px -1px rgb(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgb(0, 0, 0, 0.1), 0 4px 6px -2px rgb(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgb(0, 0, 0, 0.1), 0 10px 10px -5px rgb(0, 0, 0, 0.04);
+  --shadow-brand: 0 8px 16px rgb(109, 44, 145, 0.1);
+  --shadow-hover: 0 4px 12px rgb(0, 0, 0, 0.1);
+
+  /* Focus Ring Shadows */
+  --focus-ring-brand: 0 0 0 0.2rem rgb(109, 44, 145, 0.2);
+  --focus-ring-brand-hover: 0 0 0 0.2rem rgb(109, 44, 145, 0.3);
+  --focus-ring-danger: 0 0 0 2px rgb(239, 68, 68, 0.5), 0 0 8px rgb(239, 68, 68, 0.3);
+  --focus-ring-danger-hover: 0 0 0 2px rgb(239, 68, 68, 0.7), 0 0 12px rgb(239, 68, 68, 0.4);
+
+  /* Backdrop Overlays */
+  --backdrop-light: rgb(0, 0, 0, 0.5);
+  --backdrop-heavy: rgb(0, 0, 0, 0.75);
+
+  /* Component specific colors - Light Mode */
+  --upload-border: #e0e0e2;
+  --upload-bg: #f5f5f7;
+  --upload-hover-border: #6d2c91;
+  --upload-hover-bg: #f3e5f5;
+  --upload-icon: #6d2c91;
+  --table-header-bg: #f5f5f7;
+  --table-border: #e0e0e2;
+  --table-hover-bg: #f0f0f2;
+  --accordion-bg: #f5f5f7;
+  --accordion-bg-active: #fff;
+  --accordion-hover-shadow: 0 4px 6px -1px rgb(0, 0, 0, 0.1), 0 2px 4px -1px rgb(0, 0, 0, 0.06);
+  --button-danger-hover-bg: #fee2e2;
+
+  /* Progress spinner */
+  --spinner-color: #6d2c91;
+
+  /* Header/Navigation */
+  --header-bg: #6d2c91;
+  --header-text: #fff;
+}

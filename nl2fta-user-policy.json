@@ -1,0 +1,76 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "BedrockModelAccess",
+			"Effect": "Allow",
+			"Action": [
+				"bedrock:InvokeModel",
+				"bedrock:InvokeModelWithResponseStream",
+				"bedrock:ListFoundationModels",
+				"bedrock:GetFoundationModel",
+				"bedrock:GetFoundationModelAvailability"
+			],
+			"Resource": "*"
+		},
+		{
+			"Sid": "BedrockModelAccessRequests",
+			"Effect": "Allow",
+			"Action": [
+				"bedrock:PutUseCaseForModelAccess",
+				"bedrock:GetUseCaseForModelAccess",
+				"bedrock:ListFoundationModelAgreementOffers",
+				"bedrock:CreateFoundationModelAgreement",
+				"bedrock:DeleteFoundationModelAgreement",
+				"bedrock:PutFoundationModelEntitlement"
+			],
+			"Resource": "*"
+		},
+		{
+			"Sid": "BedrockInferenceProfiles",
+			"Effect": "Allow",
+			"Action": [
+				"bedrock:ListInferenceProfiles",
+				"bedrock:GetInferenceProfile",
+				"bedrock:CreateInferenceProfile",
+				"bedrock:DeleteInferenceProfile",
+				"bedrock:TagResource",
+				"bedrock:UntagResource",
+				"bedrock:ListTagsForResource"
+			],
+			"Resource": "*"
+		},
+		{
+			"Sid": "S3BucketAccess",
+			"Effect": "Allow",
+			"Action": [
+				"s3:CreateBucket",
+				"s3:ListBucket",
+				"s3:GetBucketLocation"
+			],
+			"Resource": [
+				"arn:aws:s3:::nl2fta-*"
+			]
+		},
+		{
+			"Sid": "S3ObjectAccess",
+			"Effect": "Allow",
+			"Action": [
+				"s3:GetObject",
+				"s3:PutObject",
+				"s3:DeleteObject"
+			],
+			"Resource": [
+				"arn:aws:s3:::nl2fta-*/*"
+			]
+		},
+		{
+			"Sid": "STSCallerIdentity",
+			"Effect": "Allow",
+			"Action": [
+				"sts:GetCallerIdentity"
+			],
+			"Resource": "*"
+		}
+	]
+}

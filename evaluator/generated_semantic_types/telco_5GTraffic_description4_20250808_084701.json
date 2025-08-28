@@ -1,0 +1,572 @@
+{
+  "dataset": "telco_5GTraffic",
+  "description_number": 4,
+  "timestamp": "20250808_084923",
+  "generated_types": [
+    {
+      "resultType": "generated",
+      "semanticType": "Source",
+      "description": "IPv4 addresses specifically used to identify source network addresses in network traffic, logs, or communication records. These follow standard IPv4 formatting with four octets separated by dots, where each octet ranges from 0-255.",
+      "pluginType": "regex",
+      "regexPattern": "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "192.168.1.100",
+        "10.0.0.1",
+        "172.16.254.1",
+        "203.0.113.45",
+        "8.8.8.8",
+        "127.0.0.1",
+        "255.255.255.255",
+        "0.0.0.0"
+      ],
+      "negativeContentExamples": [
+        "192.168.1.256",
+        "10.0.0",
+        "172.16.254.1.1",
+        "203.0.113",
+        "8.8.8.8:80",
+        "192.168.1.100/24",
+        "fe80::1",
+        "localhost"
+      ],
+      "positiveHeaderExamples": [
+        "Source_IP",
+        "Src_IP_Address",
+        "Source_IP_Addr",
+        "Origin_IP",
+        "Src_IP",
+        "Source_Address",
+        "Client_IP",
+        "Sender_IP"
+      ],
+      "negativeHeaderExamples": [
+        "Source_Port",
+        "Origin_Hostname",
+        "Destination_IP",
+        "Target_IP",
+        "Source_MAC",
+        "Src_Domain",
+        "Source_URL",
+        "IP_Range"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*source.*ip.*address.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Source_IP_Address"
+          ],
+          "negativeExamples": [
+            "Destination_IP_Address"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*src.*ip.*addr.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Src_IP_Addr"
+          ],
+          "negativeExamples": [
+            "Dst_IP_Addr"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*source.*ip.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Source_IP"
+          ],
+          "negativeExamples": [
+            "Source_Port"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*src.*ip.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Src_IP"
+          ],
+          "negativeExamples": [
+            "Src_MAC"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*origin.*ip.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Origin_IP"
+          ],
+          "negativeExamples": [
+            "Origin_Hostname"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*source.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Source"
+          ],
+          "negativeExamples": [
+            "Target"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2680,
+      "explanation": "This semantic type identifies IPv4 addresses that specifically represent source addresses in network communications. It's commonly found in network logs, firewall records, web server logs, and security monitoring data where tracking the origin of network traffic is important. The type uses a precise regex pattern that validates proper IPv4 formatting with octets ranging from 0-255, ensuring data quality for network analysis and security monitoring applications. This differs from generic IPv4 addresses by focusing on the source context, making it valuable for network forensics and traffic analysis.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P4",
+      "generated_at": "2025-08-08T08:47:37.527083"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Destination",
+      "description": "IPv4 addresses specifically used as destination addresses in network traffic, logs, or routing contexts. These follow standard IPv4 format but are semantically identified as destination endpoints.",
+      "pluginType": "regex",
+      "regexPattern": "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "192.168.1.100",
+        "10.0.0.1",
+        "172.16.254.1",
+        "8.8.8.8",
+        "203.0.113.45",
+        "255.255.255.255",
+        "127.0.0.1",
+        "0.0.0.0"
+      ],
+      "negativeContentExamples": [
+        "192.168.1.256",
+        "10.0.0",
+        "172.16.254.1.1",
+        "8.8.8",
+        "256.256.256.256",
+        "192.168.-1.1",
+        "192.168.1.1:8080",
+        "192.168.1.a"
+      ],
+      "positiveHeaderExamples": [
+        "Destination_IP",
+        "Dst_IP_Address",
+        "Target_IP",
+        "Dest_Address",
+        "Destination_Host",
+        "Remote_IP",
+        "End_IP",
+        "To_IP"
+      ],
+      "negativeHeaderExamples": [
+        "Destination_Port",
+        "Destination_Hostname",
+        "Source_IP",
+        "Origin_IP",
+        "Local_IP",
+        "From_IP",
+        "Src_IP_Address",
+        "Client_Port"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*destination.*ip.*address.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Destination_IP_Address"
+          ],
+          "negativeExamples": [
+            "Source_IP_Address"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*dest.*ip.*addr.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Dest_IP_Addr"
+          ],
+          "negativeExamples": [
+            "Src_IP_Addr"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*dst.*ip.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Dst_IP"
+          ],
+          "negativeExamples": [
+            "Src_IP"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*target.*ip.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Target_IP"
+          ],
+          "negativeExamples": [
+            "Origin_IP"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*destination.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Destination"
+          ],
+          "negativeExamples": [
+            "Source"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*ip.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "IP"
+          ],
+          "negativeExamples": [
+            "Port"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2690,
+      "explanation": "This semantic type identifies IPv4 addresses that are specifically used as destination addresses in network contexts. While the format is identical to standard IPv4 addresses, the semantic context is important for network analysis, security monitoring, and traffic routing applications. The type is distinguished from general IPv4 addresses by column naming patterns that indicate destination, target, or endpoint usage. This specialization is valuable for network log analysis, firewall rule processing, and traffic flow monitoring where the directionality of IP addresses (source vs destination) is semantically significant.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P4",
+      "generated_at": "2025-08-08T08:48:14.683431"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Protocol",
+      "description": "Network protocol types representing standard communication protocols used in networking, including transport layer, application layer, and other networking protocols commonly found in network traffic analysis and configuration data.",
+      "pluginType": "list",
+      "regexPattern": "",
+      "listValues": [
+        "TCP",
+        "UDP",
+        "HTTP",
+        "HTTPS",
+        "FTP",
+        "SMTP",
+        "DNS",
+        "DHCP",
+        "SSH",
+        "TELNET",
+        "SNMP",
+        "ICMP",
+        "ARP",
+        "RARP",
+        "POP3",
+        "IMAP",
+        "NTP",
+        "TFTP",
+        "LDAP",
+        "SIP",
+        "RTP",
+        "RTCP",
+        "OSPF",
+        "BGP"
+      ],
+      "backout": "(?i)[A-Z]{2,5}[0-9]?",
+      "positiveContentExamples": [
+        "TCP",
+        "UDP",
+        "HTTP",
+        "HTTPS",
+        "FTP",
+        "SMTP",
+        "DNS",
+        "SSH"
+      ],
+      "negativeContentExamples": [
+        "80",
+        "443",
+        "Apache",
+        "Nginx",
+        "MySQL",
+        "PostgreSQL",
+        "Windows",
+        "Linux"
+      ],
+      "positiveHeaderExamples": [
+        "Protocol_Type",
+        "Network_Protocol",
+        "Comm_Protocol",
+        "Transport_Protocol",
+        "Net_Protocol_Type",
+        "Connection_Protocol",
+        "Protocol_Name",
+        "Network_Proto"
+      ],
+      "negativeHeaderExamples": [
+        "Service_Name",
+        "Port_Number",
+        "Server_Type",
+        "Application_Name",
+        "Database_Type",
+        "Operating_System",
+        "Host_Name",
+        "IP_Address"
+      ],
+      "confidenceThreshold": 92.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*network.*protocol.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Network_Protocol_Type"
+          ],
+          "negativeExamples": [
+            "Network_Service_Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*protocol.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Protocol_Type"
+          ],
+          "negativeExamples": [
+            "Service_Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*network.*protocol.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Network_Protocol"
+          ],
+          "negativeExamples": [
+            "Network_Service"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*comm.*protocol.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Comm_Protocol"
+          ],
+          "negativeExamples": [
+            "Comm_Method"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*net.*proto.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Net_Proto"
+          ],
+          "negativeExamples": [
+            "Net_Port"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*protocol.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Protocol"
+          ],
+          "negativeExamples": [
+            "Service"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2700,
+      "explanation": "This semantic type identifies network protocol types used in networking and telecommunications. It covers standard protocols from various layers of the network stack including transport protocols (TCP, UDP), application protocols (HTTP, FTP, SMTP), and network management protocols (SNMP, DHCP). This type is commonly found in network monitoring data, firewall logs, traffic analysis reports, and network configuration files. The list-based approach ensures accurate identification of established protocol names while the backout pattern catches protocol variations and newer protocols that follow standard naming conventions.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P4",
+      "generated_at": "2025-08-08T08:48:50.823975"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Length",
+      "description": "Integer values representing network packet length measurements in bytes, used for network analysis, bandwidth monitoring, and traffic analysis",
+      "pluginType": "regex",
+      "regexPattern": "\\d+",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "64",
+        "1500",
+        "576",
+        "1024",
+        "128",
+        "9000",
+        "46",
+        "65535"
+      ],
+      "negativeContentExamples": [
+        "-1",
+        "1500.5",
+        "1,024",
+        "1500 bytes",
+        "0x400",
+        "1.5KB",
+        "N/A",
+        "unlimited"
+      ],
+      "positiveHeaderExamples": [
+        "Packet_Length",
+        "Length_Bytes",
+        "Pkt_Len",
+        "Network_Packet_Length",
+        "Frame_Length",
+        "Message_Length",
+        "Data_Length",
+        "Packet_Size_Bytes"
+      ],
+      "negativeHeaderExamples": [
+        "Duration",
+        "Payload_Size",
+        "Packet_Count",
+        "Bandwidth",
+        "Timestamp",
+        "Protocol",
+        "Source_IP",
+        "Port_Number"
+      ],
+      "confidenceThreshold": 85.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*packet.*length.*bytes.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Packet_Length_Bytes"
+          ],
+          "negativeExamples": [
+            "Packet_Duration_Bytes"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*network.*packet.*length.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Network_Packet_Length"
+          ],
+          "negativeExamples": [
+            "Network_Packet_Count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*packet.*len.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Packet_Len"
+          ],
+          "negativeExamples": [
+            "Packet_ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*pkt.*length.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Pkt_Length"
+          ],
+          "negativeExamples": [
+            "Pkt_Count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*packet.*length.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Packet_Length"
+          ],
+          "negativeExamples": [
+            "Packet_Duration"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*length.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Length_Bytes"
+          ],
+          "negativeExamples": [
+            "Duration"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2710,
+      "explanation": "This semantic type identifies network packet length measurements expressed as integer byte counts. It's commonly used in network monitoring, traffic analysis, and performance optimization scenarios. The pattern matches positive integers representing the size of network packets, frames, or messages in bytes. This type is essential for analyzing network performance, detecting anomalies, and understanding data transmission patterns. It excludes negative values, decimals, formatted numbers, and non-numeric representations while focusing specifically on raw byte count measurements used in networking contexts.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P4",
+      "generated_at": "2025-08-08T08:49:23.859030"
+    }
+  ]
+}

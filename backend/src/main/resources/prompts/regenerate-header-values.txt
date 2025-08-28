@@ -1,0 +1,90 @@
+You are an expert in data classification and semantic type pattern refinement for the FTA library.
+
+Task: Improve the header patterns for semantic type "{{SEMANTIC_TYPE_NAME}}" based on specific user changes.
+
+CURRENT STATE:
+================
+Description: {{DESCRIPTION}}
+
+Current Header Patterns:
+{{#CURRENT_HEADER_PATTERNS}}
+{{#PATTERNS}}
+- Pattern: {{REGEXP}}
+  Confidence: {{CONFIDENCE}}
+  Mandatory: {{MANDATORY}}
+{{/PATTERNS}}
+{{/CURRENT_HEADER_PATTERNS}}
+{{^CURRENT_HEADER_PATTERNS}}No header patterns currently defined{{/CURRENT_HEADER_PATTERNS}}
+
+Current Positive Header Examples:
+{{#CURRENT_POSITIVE_HEADERS}}{{CURRENT_POSITIVE_HEADERS}}{{/CURRENT_POSITIVE_HEADERS}}
+{{^CURRENT_POSITIVE_HEADERS}}No positive header examples currently defined{{/CURRENT_POSITIVE_HEADERS}}
+
+Current Negative Header Examples:
+{{#CURRENT_NEGATIVE_HEADERS}}{{CURRENT_NEGATIVE_HEADERS}}{{/CURRENT_NEGATIVE_HEADERS}}
+{{^CURRENT_NEGATIVE_HEADERS}}No negative header examples currently defined{{/CURRENT_NEGATIVE_HEADERS}}
+
+USER CHANGES:
+================
+{{#HEADER_PATTERN_CHANGES}}
+Header Pattern Changes:
+{{#ADDED_PATTERNS}}- Added patterns: 
+{{#PATTERNS}}  • {{REGEXP}} (confidence: {{CONFIDENCE}})
+{{/PATTERNS}}{{/ADDED_PATTERNS}}
+{{#REMOVED_PATTERNS}}- Removed patterns: 
+{{#PATTERNS}}  • {{REGEXP}}
+{{/PATTERNS}}{{/REMOVED_PATTERNS}}
+{{#MODIFIED_PATTERNS}}- Modified patterns:
+{{#PATTERNS}}  • Changed "{{OLD_REGEXP}}" to "{{NEW_REGEXP}}"
+{{/PATTERNS}}{{/MODIFIED_PATTERNS}}
+{{/HEADER_PATTERN_CHANGES}}
+
+{{#EXAMPLE_CHANGES}}
+Example Changes:
+{{#HEADERS_TO_INCLUDE}}- User wants to INCLUDE these headers (should match): {{HEADERS_TO_INCLUDE}}{{/HEADERS_TO_INCLUDE}}
+{{#HEADERS_TO_EXCLUDE}}- User wants to EXCLUDE these headers (should NOT match): {{HEADERS_TO_EXCLUDE}}{{/HEADERS_TO_EXCLUDE}}
+{{#REMOVED_FROM_POSITIVE}}- Removed from positive examples: {{REMOVED_FROM_POSITIVE}}{{/REMOVED_FROM_POSITIVE}}
+{{#REMOVED_FROM_NEGATIVE}}- Removed from negative examples: {{REMOVED_FROM_NEGATIVE}}{{/REMOVED_FROM_NEGATIVE}}
+{{/EXAMPLE_CHANGES}}
+
+{{#NATURAL_LANGUAGE_FEEDBACK}}
+User Feedback: {{NATURAL_LANGUAGE_FEEDBACK}}
+{{/NATURAL_LANGUAGE_FEEDBACK}}
+
+PATTERN RULES:
+================
+- Use (?i) for case-insensitive matching
+- Use .* for flexible matching where needed
+- NO anchors (^ or $) - patterns should be flexible
+- ALL patterns MUST have confidence: 95 and mandatory: true (these are fixed values, do not change)
+- Patterns should be specific enough to avoid false positives
+
+RESPONSE FORMAT (XML):
+<headerPatternUpdate>
+  <headerPatterns>
+    {{#EACH_PATTERN}}
+    <pattern>
+      <regExp>{{PATTERN}}</regExp>
+      <confidence>95</confidence>
+      <mandatory>true</mandatory>
+      <changeType>{{CHANGE_TYPE}}</changeType> <!-- new/modified/unchanged -->
+      {{#IF_NEW_OR_MODIFIED}}
+      <positiveExample>{{POSITIVE_EXAMPLE}}</positiveExample>
+      <negativeExample>{{NEGATIVE_EXAMPLE}}</negativeExample>
+      <rationale>{{PATTERN_RATIONALE}}</rationale>
+      {{/IF_NEW_OR_MODIFIED}}
+    </pattern>
+    {{/EACH_PATTERN}}
+  </headerPatterns>
+  <changeValidation>
+    <includeValidation>
+      <!-- For each header user wants to include -->
+      <validation header="user header" matchedBy="pattern regex or 'none'" explanation="why it matches/doesn't match"/>
+    </includeValidation>
+    <excludeValidation>
+      <!-- For each header user wants to exclude -->
+      <validation header="user header" matchedBy="pattern regex or 'none'" explanation="why it's correctly excluded"/>
+    </excludeValidation>
+  </changeValidation>
+  <overallRationale>Explanation of what was improved and how it addresses user's changes</overallRationale>
+</headerPatternUpdate>

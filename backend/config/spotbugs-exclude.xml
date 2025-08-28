@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Exclude warnings about exposing internal representation for DTOs/POJOs -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Class name="~.*\.dto\..*"/>
+    </Match>
+    
+    <!-- Exclude warnings about exposing internal representation for configuration classes -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Class name="~.*\.config\..*"/>
+    </Match>
+    
+    <!-- Exclude internationalization warnings for internal string operations -->
+    <Match>
+        <Bug pattern="DM_CONVERT_CASE"/>
+    </Match>
+    
+    <!-- Allow mutable objects in service layer data classes -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Class name="~.*\.service\.storage\..*"/>
+    </Match>
+    
+    <!-- Exclude resource leak warnings for unit tests using mocked objects -->
+    <Match>
+        <Bug pattern="OBL_UNSATISFIED_OBLIGATION"/>
+        <Class name="~.*UnitTest.*"/>
+    </Match>
+    
+    <!-- Exclude null pointer warnings for unit tests with controlled test conditions -->
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+        <Class name="~.*UnitTest.*"/>
+    </Match>
+    
+    <!-- Exclude specific null pointer warnings in health endpoint tests -->
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH"/>
+        <Class name="~.*TableClassificationControllerUnitTest.*"/>
+        <Method name="shouldReturnCurrentTimestampInHealthResponse"/>
+    </Match>
+</FindBugsFilter> 

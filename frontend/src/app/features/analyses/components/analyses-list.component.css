@@ -1,0 +1,198 @@
+@import '../../../styles/theme/buttons.css';
+
+.analyses-section {
+  margin-top: 2rem;
+}
+
+.analyses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.analyses-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.analyses-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.analyses-count {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding: 0.5rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+}
+
+.load-more-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+}
+
+.load-more-section button {
+  min-width: 200px;
+}
+
+.past-analyses-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0 1rem;
+  position: relative;
+}
+
+.past-analyses-divider::before,
+.past-analyses-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-primary);
+}
+
+.past-analyses-divider::before {
+  margin-right: 1rem;
+}
+
+.past-analyses-divider::after {
+  margin-left: 1rem;
+}
+
+.past-analyses-text {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* Lazy loading placeholder styles */
+.lazy-load-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+}
+
+.lazy-load-placeholder i {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--purple-primary);
+}
+
+.lazy-load-placeholder p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+}
+
+:host ::ng-deep .p-accordion .p-accordion-tab {
+  background: var(--bg-card);
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+:host ::ng-deep .p-accordion .p-accordion-tab:hover {
+  box-shadow: 0 4px 8px rgb(0, 0, 0, 0.1);
+}
+
+/* Add border to the first past analysis (first tab after the divider) */
+:host ::ng-deep .past-analyses-divider + .p-accordionpanel {
+  border-top: 1px solid var(--p-accordion-header-border-color);
+}
+
+:host ::ng-deep .p-accordion .p-accordion-header {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+}
+
+:host ::ng-deep .p-accordion .p-accordion-header:not(.p-disabled).p-highlight {
+  background: var(--bg-primary);
+}
+
+:host ::ng-deep .p-accordion .p-accordion-header-link {
+  padding: 1rem 1.5rem;
+  color: var(--text-primary);
+  transition: background-color 0.2s ease;
+}
+
+:host ::ng-deep .p-accordion .p-accordion-header-link:focus {
+  box-shadow: none;
+}
+
+:host ::ng-deep .p-accordion .p-accordion-content {
+  padding: 0;
+  background: var(--bg-card);
+}
+
+:host ::ng-deep .p-accordion .p-accordion-toggle-icon {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .analyses-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .analyses-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .analyses-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .analyses-count {
+    font-size: 0.8125rem;
+    padding: 0.375rem 0.75rem;
+  }
+
+  .load-more-section {
+    margin-top: 1rem;
+    padding: 0.75rem;
+  }
+
+  .load-more-section button {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .past-analyses-divider {
+    margin: 1rem 0 0.75rem;
+  }
+
+  .past-analyses-text {
+    font-size: 0.8125rem;
+  }
+
+  .past-analyses-divider::before,
+  .past-analyses-divider::after {
+    margin: 0 0.75rem;
+  }
+
+  .lazy-load-placeholder {
+    padding: 2rem 1rem;
+  }
+}

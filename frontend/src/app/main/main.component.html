@@ -1,0 +1,31 @@
+<app-header></app-header>
+
+<!-- Hero Description Section -->
+<section class="hero-description">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Semantic Analysis Platform</h1>
+      <p class="hero-subtitle">
+        Unlock the semantic structure of your tabular data with intelligent type detection.
+        Semantically type datasets using your own custom semantic types generated using AWS Bedrock.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <app-semantic-types-list></app-semantic-types-list>
+
+  <app-file-upload 
+    (fileUploaded)="onFileUploaded($event)"
+    (filesUploaded)="onMultipleFilesUploaded($event)">
+  </app-file-upload>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <app-analyses-list></app-analyses-list>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

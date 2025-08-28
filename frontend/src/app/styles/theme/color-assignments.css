@@ -1,0 +1,75 @@
+/*
+ * Color Assignments - Semantic Mappings
+ * Maps design system colors to UI purposes
+ * This creates a semantic layer between raw colors and usage
+ */
+
+:root {
+  /* ==========================================
+   * BACKGROUNDS
+   * ========================================== */
+  --bg-primary: var(--grey-0); /* Main background - white */
+  --bg-secondary: var(--grey-10); /* Secondary areas */
+  --bg-tertiary: var(--grey-20); /* Tertiary/disabled */
+  --bg-dark: var(--grey-100); /* Dark mode/inverted */
+  --bg-hover: var(--grey-10); /* Hover states */
+  --bg-selected: var(--purple-tertiary); /* Selected items */
+
+  /* ==========================================
+   * TEXT
+   * ========================================== */
+  --text-primary: var(--grey-90); /* Main text */
+  --text-secondary: var(--grey-70); /* Secondary text */
+  --text-tertiary: var(--grey-60); /* Tertiary/muted */
+  --text-disabled: var(--grey-45); /* Disabled text */
+  --text-inverted: var(--grey-0); /* Text on dark bg */
+  --text-link: var(--purple-primary); /* Links */
+  --text-link-hover: var(--purple-60); /* Link hover */
+
+  /* ==========================================
+   * BORDERS
+   * ========================================== */
+  --border-default: var(--grey-30); /* Default borders */
+  --border-light: var(--grey-20); /* Light borders */
+  --border-dark: var(--grey-40); /* Emphasized borders */
+  --border-focus: var(--purple-primary); /* Focus state */
+  --border-error: var(--alert-error); /* Error state */
+
+  /* ==========================================
+   * BUTTONS
+   * ========================================== */
+  --btn-primary-bg: var(--purple-primary);
+  --btn-primary-hover: var(--purple-60);
+  --btn-primary-active: var(--purple-100);
+  --btn-primary-text: var(--grey-0);
+  --btn-secondary-bg: var(--grey-0);
+  --btn-secondary-hover: var(--grey-10);
+  --btn-secondary-border: var(--grey-30);
+  --btn-secondary-text: var(--grey-90);
+  --btn-disabled-bg: var(--grey-20);
+  --btn-disabled-text: var(--grey-45);
+
+  /* ==========================================
+   * STATUS COLORS
+   * ========================================== */
+  --status-error: var(--alert-error);
+  --status-error-bg: var(--pink-tertiary);
+  --status-error-border: var(--pink-secondary);
+  --status-warning: var(--alert-warning);
+  --status-warning-bg: rgba(255, 184, 0, 0.1); /* 10% opacity */
+  --status-warning-border: var(--alert-warning);
+  --status-success: var(--alert-success);
+  --status-success-bg: var(--teal-tertiary);
+  --status-success-border: var(--teal-secondary);
+  --status-info: var(--alert-info);
+  --status-info-bg: var(--teal-tertiary);
+  --status-info-border: var(--teal-secondary);
+
+  /* ==========================================
+   * SHADOWS
+   * ========================================== */
+  --shadow-sm: 0 1px 2px 0 rgba(29, 29, 29, 0.05); /* grey-100 5% */
+  --shadow-md: 0 4px 6px -1px rgba(29, 29, 29, 0.1); /* grey-100 10% */
+  --shadow-lg: 0 10px 15px -3px rgba(29, 29, 29, 0.1); /* grey-100 10% */
+  --shadow-brand: 0 8px 16px rgba(91, 28, 181, 0.1); /* purple-primary 10% */
+}

@@ -1,0 +1,2148 @@
+{
+  "dataset": "fintech_bank_transaction",
+  "description_number": 5,
+  "timestamp": "20250808_113826",
+  "generated_types": [
+    {
+      "resultType": "generated",
+      "semanticType": "TransactionID",
+      "description": "Transaction Reference: TX + 6 digits",
+      "pluginType": "regex",
+      "regexPattern": "TX\\d{6}",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "TX123456",
+        "TX000001",
+        "TX999999",
+        "TX456789",
+        "TX100000",
+        "TX555555",
+        "TX789012",
+        "TX234567"
+      ],
+      "negativeContentExamples": [
+        "TX12345",
+        "TX1234567",
+        "TXA23456",
+        "RX123456",
+        "tx123456",
+        "TX 123456",
+        "T123456",
+        "123456"
+      ],
+      "positiveHeaderExamples": [
+        "transaction_reference",
+        "txn_ref",
+        "tx_reference",
+        "transaction_ref_id",
+        "txn_reference_number",
+        "tx_ref_code",
+        "transaction_id",
+        "reference_number"
+      ],
+      "negativeHeaderExamples": [
+        "payment_reference",
+        "order_reference",
+        "customer_reference",
+        "invoice_reference",
+        "account_reference",
+        "product_reference",
+        "batch_reference",
+        "system_reference"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*transaction.*reference.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "transaction_reference"
+          ],
+          "negativeExamples": [
+            "payment_reference"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*txn.*ref.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "txn_ref"
+          ],
+          "negativeExamples": [
+            "order_ref"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*tx.*ref.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "tx_ref_id"
+          ],
+          "negativeExamples": [
+            "rx_ref_id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*transaction.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "transaction_id"
+          ],
+          "negativeExamples": [
+            "customer_id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*reference.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "reference"
+          ],
+          "negativeExamples": [
+            "preference"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5330,
+      "explanation": "This semantic type identifies transaction reference codes that follow a specific format of \"TX\" followed by exactly 6 digits. This is commonly used in financial systems, payment processing, and transaction tracking systems to provide unique identifiers for individual transactions. The pattern ensures strict adherence to the TX prefix and 6-digit numeric suffix, making it highly reliable for identifying this specific type of transaction reference in datasets.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:29:38.904540"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "AccountID",
+      "description": "Customer Account Reference with AC prefix followed by numeric sequence",
+      "pluginType": "regex",
+      "regexPattern": "AC\\d{4,12}",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "AC1234",
+        "AC567890",
+        "AC9876543210",
+        "AC0001",
+        "AC123456789",
+        "AC4567",
+        "AC987654",
+        "AC111222333444"
+      ],
+      "negativeContentExamples": [
+        "AC123",
+        "BC1234",
+        "AC12345678901234",
+        "AC",
+        "AC12A4",
+        "ac1234",
+        "AC-1234",
+        "AC 1234"
+      ],
+      "positiveHeaderExamples": [
+        "customer_account_reference",
+        "cust_acct_ref",
+        "customer_account_id",
+        "account_reference",
+        "customer_account_number",
+        "acct_ref",
+        "customer_ref",
+        "account_id"
+      ],
+      "negativeHeaderExamples": [
+        "vendor_account_reference",
+        "supplier_account_id",
+        "employee_id",
+        "transaction_reference",
+        "invoice_number",
+        "order_reference",
+        "payment_reference",
+        "product_code"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*customer.*account.*reference.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "customer_account_reference"
+          ],
+          "negativeExamples": [
+            "vendor_account_reference"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*customer.*account.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "customer_account_id"
+          ],
+          "negativeExamples": [
+            "supplier_account_id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*cust.*acct.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "cust_acct_ref"
+          ],
+          "negativeExamples": [
+            "emp_acct_ref"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*account.*ref.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "account_ref"
+          ],
+          "negativeExamples": [
+            "payment_ref"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*account.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "account"
+          ],
+          "negativeExamples": [
+            "discount"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5340,
+      "explanation": "This semantic type identifies customer account references that follow a specific format with an \"AC\" prefix followed by a numeric sequence of 4 to 12 digits. This pattern is commonly used in financial systems, CRM platforms, and customer management databases to uniquely identify customer accounts. The AC prefix likely stands for \"Account Customer\" or similar business terminology. The numeric sequence provides sufficient range for large customer bases while maintaining a consistent, recognizable format for customer service and administrative purposes.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:30:07.245945"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "TransactionAmount",
+      "description": "Transaction Value: decimal amount in base currency",
+      "pluginType": "regex",
+      "regexPattern": "-?\\d{1,3}(?:,\\d{3})*(?:\\.\\d{1,4})?|-?\\d+(?:\\.\\d{1,4})?",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "1234.56",
+        "-567.89",
+        "1,234,567.89",
+        "0.99",
+        "-1,000.00",
+        "999999.9999",
+        "42",
+        "-0.01"
+      ],
+      "negativeContentExamples": [
+        "$1,234.56",
+        "1,234.567.89",
+        "1.234,56",
+        "USD 500.00",
+        "1,23,456.78",
+        "12.345.67",
+        "abc123.45",
+        "1234.567890"
+      ],
+      "positiveHeaderExamples": [
+        "transaction_value",
+        "txn_amount",
+        "sale_amount",
+        "payment_value",
+        "gross_amount",
+        "net_value",
+        "total_amount",
+        "purchase_value"
+      ],
+      "negativeHeaderExamples": [
+        "transaction_id",
+        "customer_count",
+        "product_code",
+        "order_date",
+        "item_quantity",
+        "discount_percent",
+        "tax_rate",
+        "account_number"
+      ],
+      "confidenceThreshold": 88.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*transaction.*(?:value|amount|total).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "transaction_value"
+          ],
+          "negativeExamples": [
+            "transaction_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(?:txn|trans).*(?:value|amount|total).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "txn_amount"
+          ],
+          "negativeExamples": [
+            "txn_id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(?:sale|purchase|payment).*(?:value|amount).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "sale_amount"
+          ],
+          "negativeExamples": [
+            "sale_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(?:gross|net).*(?:value|amount).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "gross_amount"
+          ],
+          "negativeExamples": [
+            "gross_weight"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(?:value|amount|total).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "amount"
+          ],
+          "negativeExamples": [
+            "quantity"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*value.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "value"
+          ],
+          "negativeExamples": [
+            "volume"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5350,
+      "explanation": "This semantic type identifies decimal monetary amounts used in financial transactions. It matches numeric values that represent currency amounts in their base unit (e.g., dollars, euros) with up to 4 decimal places for precision. The pattern supports both positive and negative values, optional thousands separators (commas), and decimal portions. It's commonly used for transaction amounts, payment values, account balances, and other financial data where the currency symbol is stored separately or implied by context. The regex excludes currency symbols and non-standard number formats to focus on the pure numeric representation of monetary values.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:30:40.118601"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "TransactionDate",
+      "description": "Processing timestamp representing the complete date and time when a transaction or operation was executed",
+      "pluginType": "regex",
+      "regexPattern": "\\d{4}-\\d{2}-\\d{2}[\\sT]\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|[+-]\\d{2}:?\\d{2})?|\\d{2}/\\d{2}/\\d{4}\\s\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(\\s?(AM|PM))?|\\d{2}-\\d{2}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?|\\d{10,13}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?([+-]\\d{2}:\\d{2}|Z)?",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "2024-01-15 14:23:45.123456",
+        "2024-01-15T14:23:45.123Z",
+        "01/15/2024 02:23:45 PM",
+        "2024-01-15T14:23:45+05:30",
+        "15-01-2024 14:23:45",
+        "2024-01-15 14:23:45",
+        "1705327425",
+        "1705327425123"
+      ],
+      "negativeContentExamples": [
+        "2024-01-15",
+        "14:23:45",
+        "January 15, 2024",
+        "2024/01/15",
+        "15-Jan-2024",
+        "Q1 2024",
+        "2024-W03",
+        "Mon, 15 Jan 2024"
+      ],
+      "positiveHeaderExamples": [
+        "processing_timestamp",
+        "transaction_execution_time",
+        "processed_at",
+        "execution_timestamp",
+        "process_completion_time",
+        "txn_processed_ts",
+        "processing_datetime",
+        "exec_timestamp"
+      ],
+      "negativeHeaderExamples": [
+        "created_at",
+        "updated_at",
+        "scheduled_time",
+        "start_time",
+        "end_time",
+        "birth_date",
+        "due_date",
+        "expiry_date"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*processing.*timestamp.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "processing_timestamp"
+          ],
+          "negativeExamples": [
+            "creation_timestamp"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*transaction.*execution.*time.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "transaction_execution_time"
+          ],
+          "negativeExamples": [
+            "transaction_start_time"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*process.*time.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "process_time"
+          ],
+          "negativeExamples": [
+            "wait_time"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(exec|execution).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "execution_ts"
+          ],
+          "negativeExamples": [
+            "scheduled_ts"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*processed.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "processed_at"
+          ],
+          "negativeExamples": [
+            "submitted_at"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(timestamp|ts).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "timestamp"
+          ],
+          "negativeExamples": [
+            "duration"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5360,
+      "explanation": "This semantic type identifies processing timestamps that capture the exact moment when a transaction or operation was executed or completed. It differs from creation timestamps or scheduled times by specifically representing when processing actually occurred. The pattern supports various timestamp formats including ISO 8601, Unix timestamps, and common regional date-time formats with optional timezone information and microsecond precision. This is crucial for transaction processing systems, audit trails, and performance monitoring where the exact execution time needs to be recorded.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:31:15.040452"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "TransactionType",
+      "description": "Transaction Direction: debit or credit classification",
+      "pluginType": "list",
+      "regexPattern": "",
+      "listValues": [
+        "DEBIT",
+        "CREDIT",
+        "DEBIT",
+        "CREDIT",
+        "DEBIT",
+        "CREDIT",
+        "DR",
+        "CR",
+        "DR",
+        "CR",
+        "DR",
+        "CR",
+        "D",
+        "C",
+        "D",
+        "C",
+        "IN",
+        "OUT",
+        "IN",
+        "OUT",
+        "IN",
+        "OUT"
+      ],
+      "backout": "(?i)(debit|credit|dr|cr|in|out|[dc])",
+      "positiveContentExamples": [
+        "debit",
+        "credit",
+        "DEBIT",
+        "CREDIT",
+        "DR",
+        "CR",
+        "IN",
+        "OUT"
+      ],
+      "negativeContentExamples": [
+        "pending",
+        "approved",
+        "declined",
+        "processing",
+        "completed",
+        "failed",
+        "cancelled",
+        "refund"
+      ],
+      "positiveHeaderExamples": [
+        "transaction_direction",
+        "debit_credit",
+        "dr_cr_indicator",
+        "txn_direction",
+        "direction",
+        "transaction_type",
+        "debit_credit_flag",
+        "flow_direction"
+      ],
+      "negativeHeaderExamples": [
+        "transaction_amount",
+        "account_balance",
+        "transaction_status",
+        "payment_method",
+        "currency_code",
+        "merchant_name",
+        "transaction_date",
+        "reference_number"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*transaction.*direction.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "transaction_direction"
+          ],
+          "negativeExamples": [
+            "transaction_amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*debit.*credit.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "debit_credit_indicator"
+          ],
+          "negativeExamples": [
+            "debit_amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(dr|cr).*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "dr_cr_type"
+          ],
+          "negativeExamples": [
+            "account_type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*txn.*direction.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "txn_direction"
+          ],
+          "negativeExamples": [
+            "txn_status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(in|out).*flow.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "in_out_flow"
+          ],
+          "negativeExamples": [
+            "cash_flow"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*direction.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "direction"
+          ],
+          "negativeExamples": [
+            "description"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5370,
+      "explanation": "This semantic type identifies transaction direction indicators that classify financial transactions as either debits or credits. It recognizes common variations including full words (debit/credit), standard abbreviations (DR/CR), single letters (D/C), and flow indicators (IN/OUT). This classification is fundamental in accounting and financial systems to indicate whether a transaction increases or decreases an account balance. The type uses a finite list approach since there are only a limited number of standard ways to represent transaction direction in financial data systems.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:31:47.938557"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Location",
+      "description": "Transaction Origin: city or regional location name where a transaction originated",
+      "pluginType": "regex",
+      "regexPattern": "[A-Za-z](?:[A-Za-z\\s\\-\\.']{1,48}[A-Za-z])?",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "New York",
+        "Los Angeles",
+        "Chicago",
+        "San Francisco",
+        "Boston",
+        "Miami",
+        "Seattle",
+        "Denver"
+      ],
+      "negativeContentExamples": [
+        "12345",
+        "NY",
+        "CA",
+        "user@email.com",
+        "123 Main Street",
+        "2024-01-15",
+        "$500.00"
+      ],
+      "positiveHeaderExamples": [
+        "transaction_origin_city",
+        "origin_city",
+        "from_city",
+        "source_location",
+        "txn_origin",
+        "origin_location",
+        "departure_city",
+        "starting_city"
+      ],
+      "negativeHeaderExamples": [
+        "destination_city",
+        "to_city",
+        "arrival_city",
+        "target_location",
+        "transaction_amount",
+        "origin_country",
+        "city_code",
+        "postal_code"
+      ],
+      "confidenceThreshold": 85.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*transaction.*origin.*city.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "transaction_origin_city"
+          ],
+          "negativeExamples": [
+            "transaction_destination_city"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*origin.*city.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "origin_city_name"
+          ],
+          "negativeExamples": [
+            "destination_city_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*txn.*origin.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "txn_origin_location"
+          ],
+          "negativeExamples": [
+            "txn_destination_location"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*from.*city.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "from_city"
+          ],
+          "negativeExamples": [
+            "to_city"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*source.*location.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "source_location"
+          ],
+          "negativeExamples": [
+            "target_location"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*origin.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "origin"
+          ],
+          "negativeExamples": [
+            "destination"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5380,
+      "explanation": "This semantic type identifies city or regional location names that represent the origin point of financial transactions. It's commonly used in payment processing, banking, and e-commerce systems to track where transactions are initiated. The pattern matches typical city names with proper capitalization, allowing for spaces, hyphens, apostrophes, and periods commonly found in place names. This helps distinguish transaction origins from destinations and other location-related fields in transaction data.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:32:25.590408"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "DeviceID",
+      "description": "Device Reference: D + 6-digit device number",
+      "pluginType": "regex",
+      "regexPattern": "D\\d{6}",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "D123456",
+        "D000001",
+        "D999999",
+        "D567890",
+        "D100200",
+        "D050505",
+        "D777888",
+        "D444333"
+      ],
+      "negativeContentExamples": [
+        "D12345",
+        "D1234567",
+        "d123456",
+        "DEV123456",
+        "D123ABC",
+        "123456",
+        "D-123456",
+        "D 123456"
+      ],
+      "positiveHeaderExamples": [
+        "device_reference",
+        "device_ref_id",
+        "device_id",
+        "device_reference_number",
+        "device_ref",
+        "equipment_device_ref",
+        "primary_device_reference",
+        "device_identifier"
+      ],
+      "negativeHeaderExamples": [
+        "device_name",
+        "device_type",
+        "device_serial_number",
+        "device_model",
+        "device_status",
+        "device_location",
+        "device_manufacturer",
+        "device_description"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*device.*reference.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "device_reference_id"
+          ],
+          "negativeExamples": [
+            "device_serial_number"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*device.*ref.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "device_ref"
+          ],
+          "negativeExamples": [
+            "device_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*device.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "device_id"
+          ],
+          "negativeExamples": [
+            "device_type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*device.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "device"
+          ],
+          "negativeExamples": [
+            "location"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*reference.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "reference"
+          ],
+          "negativeExamples": [
+            "description"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5390,
+      "explanation": "This semantic type identifies device reference codes that follow a specific format: the letter 'D' followed by exactly 6 digits. This pattern is commonly used in industrial, manufacturing, or inventory management systems to uniquely identify devices, equipment, or assets. The format provides a standardized way to reference devices with a clear prefix indicator ('D' for Device) and a numeric identifier that allows for up to one million unique device references (000000-999999). This type of identifier is useful for tracking, maintenance scheduling, asset management, and cross-referencing devices across different systems or databases.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:32:56.318747"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "IP Address",
+      "description": "Network Address: four-octet IP address format",
+      "pluginType": "regex",
+      "regexPattern": "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "192.168.1.1",
+        "10.0.0.1",
+        "172.16.254.1",
+        "8.8.8.8",
+        "127.0.0.1",
+        "255.255.255.255",
+        "0.0.0.0",
+        "203.0.113.45"
+      ],
+      "negativeContentExamples": [
+        "256.1.1.1",
+        "192.168.1",
+        "192.168.1.1.1",
+        "192.168.-1.1",
+        "192.168.1.256",
+        "2001:db8::1",
+        "192.168.1.a"
+      ],
+      "positiveHeaderExamples": [
+        "ip_address",
+        "server_ip",
+        "client_ipv4",
+        "host_address",
+        "source_ip_addr",
+        "network_address",
+        "destination_ip",
+        "ipv4_addr"
+      ],
+      "negativeHeaderExamples": [
+        "ipv6_address",
+        "mac_address",
+        "email_address",
+        "street_address",
+        "postal_address",
+        "web_address",
+        "ip_port",
+        "subnet_mask"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*ipv4.*address.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "server_ipv4_address"
+          ],
+          "negativeExamples": [
+            "ipv6_address"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*ip.*address.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "client_ip_address"
+          ],
+          "negativeExamples": [
+            "mac_address"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*network.*addr.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "network_addr"
+          ],
+          "negativeExamples": [
+            "email_addr"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*host.*ip.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "host_ip"
+          ],
+          "negativeExamples": [
+            "host_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*ip.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "source_ip"
+          ],
+          "negativeExamples": [
+            "zip_code"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*address.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "address"
+          ],
+          "negativeExamples": [
+            "street_address"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5400,
+      "explanation": "This semantic type identifies IPv4 addresses, which are 32-bit network addresses expressed in dotted decimal notation with four octets separated by periods. Each octet can range from 0 to 255. IPv4 addresses are fundamental to network communication and are commonly found in server logs, network configuration files, security data, and system monitoring datasets. The regex pattern ensures strict validation of the four-octet format while preventing invalid values like octets greater than 255 or malformed addresses.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:33:29.793029"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "MerchantID",
+      "description": "Vendor Code: M + 3-digit merchant identifier",
+      "pluginType": "regex",
+      "regexPattern": "M\\d{3}",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "M001",
+        "M123",
+        "M456",
+        "M789",
+        "M000",
+        "M999",
+        "M250",
+        "M847"
+      ],
+      "negativeContentExamples": [
+        "M12",
+        "M1234",
+        "V123",
+        "m123",
+        "M12A",
+        "123",
+        "MA23",
+        "M-123"
+      ],
+      "positiveHeaderExamples": [
+        "vendor_code",
+        "merchant_code",
+        "supplier_code",
+        "vendor_id",
+        "merchant_id",
+        "vndr_cd",
+        "merch_code",
+        "vendor_identifier"
+      ],
+      "negativeHeaderExamples": [
+        "vendor_name",
+        "customer_code",
+        "product_code",
+        "vendor_address",
+        "merchant_name",
+        "order_code",
+        "invoice_number",
+        "employee_id"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*vendor.*code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vendor_code"
+          ],
+          "negativeExamples": [
+            "vendor_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*merchant.*code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "merchant_code"
+          ],
+          "negativeExamples": [
+            "merchant_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*supplier.*code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "supplier_code"
+          ],
+          "negativeExamples": [
+            "supplier_address"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(vendor|merchant).*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vendor_id"
+          ],
+          "negativeExamples": [
+            "customer_id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*vendor.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vendor"
+          ],
+          "negativeExamples": [
+            "customer"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "code"
+          ],
+          "negativeExamples": [
+            "name"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5410,
+      "explanation": "This semantic type identifies vendor codes that follow a specific format: the letter 'M' followed by exactly 3 digits. This appears to be a standardized merchant or vendor identification system commonly used in business applications for tracking suppliers, merchants, or business partners. The format provides a compact, structured way to reference vendors in databases and transaction systems, with the 'M' prefix clearly indicating it's a merchant/vendor identifier and the 3-digit suffix allowing for up to 1000 unique vendor codes (M000-M999).",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:34:01.093496"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Channel",
+      "description": "Service Channel: method of transaction delivery or service interaction",
+      "pluginType": "list",
+      "regexPattern": "",
+      "listValues": [
+        "ONLINE",
+        "MOBILE APP",
+        "PHONE",
+        "IN-PERSON",
+        "ATM",
+        "BRANCH",
+        "MAIL",
+        "EMAIL",
+        "CHAT",
+        "KIOSK",
+        "DRIVE-THROUGH",
+        "WEB PORTAL",
+        "CALL CENTER",
+        "SELF-SERVICE",
+        "COUNTER",
+        "DIGITAL",
+        "TELEPHONE",
+        "WALK-IN",
+        "IVR",
+        "SMS"
+      ],
+      "backout": "(?i).*(online|mobile|phone|person|atm|branch|mail|email|chat|kiosk|drive|web|call|self|counter|digital|telephone|walk|ivr|sms|portal|app).*",
+      "positiveContentExamples": [
+        "Online",
+        "Mobile App",
+        "Phone",
+        "In-Person",
+        "ATM",
+        "Branch",
+        "Mail",
+        "Email"
+      ],
+      "negativeContentExamples": [
+        "Credit Card",
+        "Checking Account",
+        "Transfer",
+        "Deposit",
+        "Withdrawal",
+        "Payment",
+        "Balance Inquiry",
+        "Account Opening"
+      ],
+      "positiveHeaderExamples": [
+        "service_channel",
+        "transaction_channel",
+        "delivery_method",
+        "interaction_channel",
+        "channel_type",
+        "access_method",
+        "contact_channel",
+        "channel"
+      ],
+      "negativeHeaderExamples": [
+        "service_type",
+        "transaction_amount",
+        "payment_method",
+        "account_type",
+        "customer_id",
+        "transaction_date",
+        "service_fee",
+        "channel_cost"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*service.*channel.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "service_channel"
+          ],
+          "negativeExamples": [
+            "service_type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*transaction.*channel.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "transaction_channel"
+          ],
+          "negativeExamples": [
+            "transaction_amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*delivery.*method.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "delivery_method"
+          ],
+          "negativeExamples": [
+            "payment_method"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*interaction.*channel.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "interaction_channel"
+          ],
+          "negativeExamples": [
+            "interaction_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(channel|method).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "channel"
+          ],
+          "negativeExamples": [
+            "amount"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5420,
+      "explanation": "This semantic type identifies service channels, which represent the method or medium through which a transaction or service interaction is delivered. Common in banking, retail, and customer service contexts, service channels help organizations track how customers prefer to interact with their services. Examples include online banking, mobile apps, phone calls, in-person visits, ATMs, and mail. This classification is crucial for analyzing customer behavior patterns, optimizing service delivery, and understanding channel preferences across different demographics or transaction types.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:34:32.629417"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "CustomerAge",
+      "description": "Customer Demographics: age in years",
+      "pluginType": "regex",
+      "regexPattern": "\\d{1,3}",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "25",
+        "42",
+        "18",
+        "65",
+        "33",
+        "7",
+        "89",
+        "101"
+      ],
+      "negativeContentExamples": [
+        "25.5",
+        "-5",
+        "1234",
+        "25 years",
+        "twenty-five",
+        "N/A",
+        "Unknown",
+        "25.0"
+      ],
+      "positiveHeaderExamples": [
+        "customer_age",
+        "age",
+        "client_age",
+        "age_years",
+        "current_age",
+        "person_age",
+        "age_in_years",
+        "member_age"
+      ],
+      "negativeHeaderExamples": [
+        "age_group",
+        "age_range",
+        "birth_date",
+        "years_employed",
+        "stage",
+        "vintage",
+        "experience_years",
+        "tenure"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*customer.*age.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "customer_age"
+          ],
+          "negativeExamples": [
+            "customer_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*client.*age.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "client_age_years"
+          ],
+          "negativeExamples": [
+            "client_status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*age.*years.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "age_in_years"
+          ],
+          "negativeExamples": [
+            "years_experience"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*current.*age.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "current_age"
+          ],
+          "negativeExamples": [
+            "current_status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*age.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "age"
+          ],
+          "negativeExamples": [
+            "stage"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5430,
+      "explanation": "This semantic type identifies customer age data expressed as whole numbers representing years. It matches integer values typically ranging from 0 to around 120, representing a person's age in years. The pattern is designed to capture demographic age information commonly found in customer databases, survey data, and registration forms. It excludes decimal ages, negative values, text representations, and very large numbers that would be unrealistic for human age. This type is particularly useful for customer segmentation, demographic analysis, and age-based business intelligence reporting.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:35:04.182034"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "CustomerOccupation",
+      "description": "Professional job titles and employment roles across various industries and organizational levels",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^(chief|senior|principal|lead|head|director|manager|supervisor|coordinator|specialist|analyst|engineer|developer|consultant|associate|assistant|executive|officer|president|vice\\s+president|vp|ceo|cfo|cto|coo|cmo|administrator|technician|representative|agent|clerk|secretary|receptionist|accountant|lawyer|attorney|doctor|nurse|teacher|professor|architect|designer|writer|editor|reporter|sales|marketing|human\\s+resources|hr|it|software|hardware|network|database|web|mobile|frontend|backend|fullstack|devops|qa|quality\\s+assurance|business\\s+analyst|project\\s+manager|product\\s+manager|operations|finance|legal|compliance|audit|research|scientist|intern|trainee|junior|mid-level|entry-level)[\\s\\-]*(.*)|.*\\b(manager|director|engineer|analyst|specialist|coordinator|supervisor|consultant|associate|assistant|representative|agent|developer|designer|administrator|technician|officer|executive|president|secretary|clerk|accountant|lawyer|attorney|doctor|nurse|teacher|professor|architect|writer|editor|reporter|scientist|intern|trainee)\\b.*",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "Software Engineer",
+        "Senior Marketing Manager",
+        "Chief Executive Officer",
+        "Database Administrator",
+        "Human Resources Specialist",
+        "Project Coordinator",
+        "Financial Analyst",
+        "Customer Service Representative"
+      ],
+      "negativeContentExamples": [
+        "Full-time",
+        "Part-time",
+        "Contract",
+        "Active",
+        "Terminated",
+        "On Leave",
+        "Probation",
+        "Temporary"
+      ],
+      "positiveHeaderExamples": [
+        "job_title",
+        "position_title",
+        "employment_category",
+        "professional_role",
+        "work_title",
+        "occupation",
+        "job_position",
+        "role_title"
+      ],
+      "negativeHeaderExamples": [
+        "employment_status",
+        "job_description",
+        "salary_grade",
+        "department",
+        "hire_date",
+        "employee_id",
+        "work_location",
+        "manager_name"
+      ],
+      "confidenceThreshold": 88.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*employment.*category.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "employment_category"
+          ],
+          "negativeExamples": [
+            "employment_status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(job|position).*title.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "job_title"
+          ],
+          "negativeExamples": [
+            "job_description"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(professional|work).*role.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "professional_role"
+          ],
+          "negativeExamples": [
+            "user_role"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(occupation|career).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "occupation"
+          ],
+          "negativeExamples": [
+            "education"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(position|role).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "position"
+          ],
+          "negativeExamples": [
+            "location"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*title.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "title"
+          ],
+          "negativeExamples": [
+            "book_title"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5440,
+      "explanation": "This semantic type identifies professional job titles and employment roles across various industries and organizational levels. It captures formal position titles that describe what someone does professionally, ranging from entry-level positions to executive roles. The pattern recognizes common job title structures including prefixes (Senior, Chief, Lead), core role terms (Manager, Engineer, Analyst), and industry-specific titles. This is distinct from employment status (full-time, part-time) or other employment-related attributes, focusing specifically on the professional designation or role title that describes the nature of the work performed.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:36:12.924616"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "TransactionDuration",
+      "description": "Processing Time: seconds elapsed during transaction",
+      "pluginType": "regex",
+      "regexPattern": "\\d+(\\.\\d+)?",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "0.125",
+        "1.5",
+        "3.847",
+        "12",
+        "0.003",
+        "45.2",
+        "120",
+        "0.95"
+      ],
+      "negativeContentExamples": [
+        "-1.5",
+        "abc",
+        "12:30:45",
+        "2023-01-15",
+        "N/A",
+        "1.5s",
+        "timeout",
+        "1,234.56"
+      ],
+      "positiveHeaderExamples": [
+        "processing_time",
+        "transaction_processing_seconds",
+        "elapsed_time",
+        "proc_duration",
+        "processing_duration_sec",
+        "execution_time",
+        "response_time",
+        "process_elapsed_time"
+      ],
+      "negativeHeaderExamples": [
+        "processing_date",
+        "process_count",
+        "processing_status",
+        "time_zone",
+        "creation_time",
+        "timestamp",
+        "processing_id",
+        "time_format"
+      ],
+      "confidenceThreshold": 85.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*processing.*time.*seconds.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "processing_time_seconds"
+          ],
+          "negativeExamples": [
+            "processing_date_seconds"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*transaction.*processing.*time.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "transaction_processing_time"
+          ],
+          "negativeExamples": [
+            "transaction_processing_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*processing.*duration.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "processing_duration"
+          ],
+          "negativeExamples": [
+            "processing_status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*elapsed.*time.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "elapsed_time"
+          ],
+          "negativeExamples": [
+            "elapsed_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*proc.*time.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "proc_time"
+          ],
+          "negativeExamples": [
+            "proc_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*time.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "time"
+          ],
+          "negativeExamples": [
+            "date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5450,
+      "explanation": "This semantic type identifies numeric values representing processing time measured in seconds. It captures the duration elapsed during transaction processing, typically as decimal numbers representing fractional seconds. This is commonly used in performance monitoring, transaction logging, and system analytics to measure how long operations take to complete. The pattern matches positive decimal numbers without units, as the seconds unit is implied by the context and column naming.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:36:48.599084"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "LoginAttempts",
+      "description": "Authentication Count: number of login tries or authentication attempts",
+      "pluginType": "regex",
+      "regexPattern": "\\d+",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "0",
+        "1",
+        "3",
+        "5",
+        "12",
+        "25",
+        "100",
+        "999"
+      ],
+      "negativeContentExamples": [
+        "-1",
+        "3.5",
+        "1.0",
+        "abc",
+        "N/A",
+        "unlimited",
+        "2023-01-01"
+      ],
+      "positiveHeaderExamples": [
+        "authentication_count",
+        "login_attempts",
+        "auth_tries",
+        "signin_count",
+        "failed_login_count",
+        "successful_auth_attempts",
+        "login_try_count",
+        "auth_attempt_number"
+      ],
+      "negativeHeaderExamples": [
+        "user_count",
+        "password_length",
+        "session_timeout",
+        "account_balance",
+        "login_timestamp",
+        "auth_token",
+        "user_id",
+        "login_duration"
+      ],
+      "confidenceThreshold": 85.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*(auth|login).*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "authentication_count"
+          ],
+          "negativeExamples": [
+            "user_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(auth|login).*(attempt|try|tries).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "login_attempts"
+          ],
+          "negativeExamples": [
+            "password_attempts"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(signin|sign_in).*(count|attempt).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "signin_count"
+          ],
+          "negativeExamples": [
+            "signup_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(failed|success).*(login|auth).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "failed_login_count"
+          ],
+          "negativeExamples": [
+            "failed_payment_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*(try|tries|attempt).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "login_tries"
+          ],
+          "negativeExamples": [
+            "retry_delay"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "count"
+          ],
+          "negativeExamples": [
+            "amount"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5460,
+      "explanation": "This semantic type identifies numeric values representing authentication counts, specifically the number of login attempts or authentication tries. It's commonly used in security logs, user account management systems, and authentication monitoring to track how many times a user has attempted to log in. The values are typically non-negative integers, with 0 representing no attempts and higher numbers indicating multiple authentication tries. This information is crucial for security analysis, detecting brute force attacks, and implementing account lockout policies.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:37:18.835742"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "AccountBalance",
+      "description": "Available Funds: current account balance amount",
+      "pluginType": "regex",
+      "regexPattern": "-?\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?|\\d+\\.\\d{2}|\\d+",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "1,250.75",
+        "500.00",
+        "15,000",
+        "0.50",
+        "125000.99",
+        "2,500",
+        "75.25",
+        "10000"
+      ],
+      "negativeContentExamples": [
+        "$1,250.75",
+        "USD 500.00",
+        "1,250.755",
+        "1.250,75",
+        "N/A",
+        "PENDING",
+        "1,25,000",
+        "abc123"
+      ],
+      "positiveHeaderExamples": [
+        "available_funds",
+        "current_balance",
+        "account_balance",
+        "avail_bal",
+        "available_amount",
+        "current_funds",
+        "balance_available",
+        "funds_available"
+      ],
+      "negativeHeaderExamples": [
+        "total_deposits",
+        "credit_limit",
+        "minimum_balance",
+        "pending_balance",
+        "transaction_amount",
+        "interest_earned",
+        "fees_charged",
+        "withdrawal_limit"
+      ],
+      "confidenceThreshold": 85.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*available.*funds.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "available_funds"
+          ],
+          "negativeExamples": [
+            "total_funds"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*current.*balance.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "current_balance"
+          ],
+          "negativeExamples": [
+            "previous_balance"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*account.*balance.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "account_balance"
+          ],
+          "negativeExamples": [
+            "credit_balance"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*avail.*bal.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "avail_bal"
+          ],
+          "negativeExamples": [
+            "min_bal"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*funds.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "funds"
+          ],
+          "negativeExamples": [
+            "bonds"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*balance.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "balance"
+          ],
+          "negativeExamples": [
+            "amount"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5470,
+      "explanation": "This semantic type identifies monetary amounts representing available funds or current account balances. It matches numeric values that could represent currency amounts, including whole numbers and decimal values with up to two decimal places, with or without comma separators for thousands. The pattern is designed to capture the raw numeric representation of available funds without currency symbols or other formatting, as these are typically stored as pure numeric values in financial systems. This type is commonly used in banking applications, financial reports, and account management systems to represent the current spendable balance in an account.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:37:54.688462"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "PreviousTransactionDate",
+      "description": "Timestamp representing the last transaction time, typically stored as epoch seconds or milliseconds",
+      "pluginType": "regex",
+      "regexPattern": "\\d{10}|\\d{13}",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "1672531200",
+        "1672531200000",
+        "1640995200",
+        "1640995200000",
+        "1609459200",
+        "1609459200000",
+        "1577836800",
+        "1577836800000"
+      ],
+      "negativeContentExamples": [
+        "167253120",
+        "16725312000000",
+        "2023-01-01",
+        "1672531200.5",
+        "abc1672531200",
+        "1672531200def",
+        "-1672531200",
+        "0"
+      ],
+      "positiveHeaderExamples": [
+        "last_transaction_timestamp",
+        "last_txn_time",
+        "last_transaction_ts",
+        "final_transaction_timestamp",
+        "most_recent_transaction_time",
+        "latest_txn_timestamp",
+        "last_purchase_timestamp",
+        "previous_transaction_time"
+      ],
+      "negativeHeaderExamples": [
+        "first_transaction_timestamp",
+        "next_transaction_time",
+        "transaction_count",
+        "transaction_amount",
+        "user_creation_timestamp",
+        "login_timestamp",
+        "session_timestamp",
+        "current_timestamp"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*last.*transaction.*timestamp.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "last_transaction_timestamp"
+          ],
+          "negativeExamples": [
+            "first_transaction_timestamp"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*last.*txn.*time.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "last_txn_time"
+          ],
+          "negativeExamples": [
+            "next_txn_time"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*last.*transaction.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "last_transaction"
+          ],
+          "negativeExamples": [
+            "pending_transaction"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*transaction.*timestamp.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "transaction_timestamp"
+          ],
+          "negativeExamples": [
+            "login_timestamp"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*last.*ts.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "last_ts"
+          ],
+          "negativeExamples": [
+            "created_ts"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*timestamp.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "timestamp"
+          ],
+          "negativeExamples": [
+            "username"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 5480,
+      "explanation": "This semantic type identifies timestamps that represent the last transaction time for a user, account, or entity. It's commonly used in financial systems, e-commerce platforms, and user activity tracking to record when the most recent transaction occurred. The timestamp is typically stored as Unix epoch time in either seconds (10 digits) or milliseconds (13 digits) format. This information is crucial for determining account activity, calculating time since last purchase, identifying dormant accounts, and implementing business rules based on transaction recency. The pattern specifically looks for numeric timestamps while the header patterns identify columns that semantically represent \"last transaction\" concepts.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "description_pattern": "P5",
+      "generated_at": "2025-08-08T11:38:26.916823"
+    }
+  ]
+}

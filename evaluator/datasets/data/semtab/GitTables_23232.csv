@@ -1,0 +1,11 @@
+IDENTIFIER,,,
+version,,,
+col0,col1,col2,col3
+Changes:,,,
+root/battlegroundsPremiumDbfId,:,IntNode	Added,
+root/faction,:,TextNode	Added,
+root/techLevel,:,IntNode	Added,
+root/howToEarn,:,TextNode	Removed,
+root/howToEarnGolden,:,TextNode	Removed,
+{,,,
+};,,,

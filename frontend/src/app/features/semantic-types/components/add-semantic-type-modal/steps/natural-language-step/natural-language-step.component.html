@@ -1,0 +1,278 @@
+<div class="step-content">
+  <!-- AWS Credentials Tip -->
+  <div *ngIf="!awsConfigured" class="aws-credentials-tip">
+    <div class="tip-content">
+      <i class="pi pi-info-circle tip-icon"></i>
+      <span class="tip-message">
+        AWS credentials are not configured.
+        <a href="#" (click)="openAwsConfigModal(); $event.preventDefault()" class="tip-link">
+          Configure AWS Bedrock
+        </a>
+        to enable semantic type generation.
+      </span>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <p-message *ngIf="generationError()" severity="error" [text]="generationError()"> </p-message>
+
+  <div class="form-field">
+    <label for="nl-description">
+      <span class="required-field">Description of semantic type</span>
+    </label>
+    <textarea
+      id="nl-description"
+      pTextarea
+      [ngModel]="nlDescription()"
+      (ngModelChange)="onNlDescriptionChange($event)"
+      placeholder="Describe what this semantic type identifies"
+      rows="3"
+      class="w-full"
+    ></textarea>
+  </div>
+
+  <!-- Examples Section -->
+  <div class="examples-section">
+    <!-- Content Examples Subsection -->
+    <div class="examples-subsection">
+      <div class="examples-subsection-header">
+        <h4>Data Value Examples</h4>
+        <i
+          class="pi pi-info-circle help-icon"
+          pTooltip="Examples of actual data values that would fit this type"
+          tooltipPosition="top"
+          style="cursor: help"
+        ></i>
+      </div>
+
+      <div class="examples-columns">
+        <div class="examples-column">
+          <h5>
+            <span>Positive Examples</span>
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Examples of data values that should match this semantic type"
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            ></i>
+          </h5>
+          <div class="examples-list">
+            <div
+              *ngFor="
+                let example of nlPositiveContentExamples();
+                trackBy: trackByExampleId;
+                let i = index
+              "
+              class="example-item"
+            >
+              <input
+                type="text"
+                pInputText
+                [ngModel]="example.value"
+                (ngModelChange)="updateExample(example.id, $event, 'nlPositiveContent')"
+                (focus)="i === 0 ? onNlFirstPositiveContentFocus() : null"
+                (blur)="i === 0 ? onNlFirstPositiveContentBlur() : null"
+                [placeholder]="getExamplePlaceholder(i, 'positiveContent')"
+                class="example-input"
+              />
+              <button
+                *ngIf="example.removable"
+                pButton
+                type="button"
+                icon="pi pi-times"
+                class="p-button-text p-button-danger p-button-sm p-button-icon-only"
+                (click)="removeExample(example.id, 'nlPositiveContent')"
+                aria-label="Remove example"
+              ></button>
+            </div>
+          </div>
+          <button
+            pButton
+            type="button"
+            label="Add Positive Example"
+            icon="pi pi-plus"
+            class="p-button-primary p-button-sm add-example-btn"
+            (click)="addExample('nlPositiveContent')"
+          ></button>
+        </div>
+
+        <div class="examples-column">
+          <h5>
+            Negative Examples
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Examples of data values that should NOT match this semantic type"
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            ></i>
+          </h5>
+          <div class="examples-list">
+            <div
+              *ngFor="
+                let example of nlNegativeContentExamples();
+                trackBy: trackByExampleId;
+                let i = index
+              "
+              class="example-item"
+            >
+              <input
+                type="text"
+                pInputText
+                [ngModel]="example.value"
+                (ngModelChange)="updateExample(example.id, $event, 'nlNegativeContent')"
+                [placeholder]="getExamplePlaceholder(i, 'negativeContent')"
+                class="example-input"
+              />
+              <button
+                *ngIf="example.removable"
+                pButton
+                type="button"
+                icon="pi pi-times"
+                class="p-button-text p-button-danger p-button-sm p-button-icon-only"
+                (click)="removeExample(example.id, 'nlNegativeContent')"
+                aria-label="Remove example"
+              ></button>
+            </div>
+          </div>
+          <button
+            pButton
+            type="button"
+            label="Add Negative Example"
+            icon="pi pi-plus"
+            class="p-button-primary p-button-sm add-example-btn"
+            (click)="addExample('nlNegativeContent')"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Pattern Examples Subsection -->
+    <div class="examples-subsection">
+      <div class="examples-subsection-header">
+        <h4>Header Pattern Examples</h4>
+        <i
+          class="pi pi-info-circle help-icon"
+          pTooltip="Examples of column headers/names that would identify this semantic type"
+          tooltipPosition="top"
+          style="cursor: help"
+        ></i>
+      </div>
+
+      <div class="examples-columns">
+        <div class="examples-column">
+          <h5>
+            Positive Examples
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Examples of column headers/names that should identify this semantic type"
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            ></i>
+          </h5>
+          <div class="examples-list">
+            <div
+              *ngFor="
+                let example of nlPositiveHeaderExamples();
+                trackBy: trackByExampleId;
+                let i = index
+              "
+              class="example-item"
+            >
+              <input
+                type="text"
+                pInputText
+                [ngModel]="example.value"
+                (ngModelChange)="updateExample(example.id, $event, 'nlPositiveHeader')"
+                [placeholder]="getExamplePlaceholder(i, 'positiveHeader')"
+                class="example-input"
+              />
+              <button
+                *ngIf="example.removable"
+                pButton
+                type="button"
+                icon="pi pi-times"
+                class="p-button-text p-button-danger p-button-sm p-button-icon-only"
+                (click)="removeExample(example.id, 'nlPositiveHeader')"
+                aria-label="Remove example"
+              ></button>
+            </div>
+          </div>
+          <button
+            pButton
+            type="button"
+            label="Add Positive Example"
+            icon="pi pi-plus"
+            class="p-button-primary p-button-sm add-example-btn"
+            (click)="addExample('nlPositiveHeader')"
+          ></button>
+        </div>
+
+        <div class="examples-column">
+          <h5>
+            Negative Examples
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Examples of column headers/names that should NOT identify this semantic type"
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            ></i>
+          </h5>
+          <div class="examples-list">
+            <div
+              *ngFor="
+                let example of nlNegativeHeaderExamples();
+                trackBy: trackByExampleId;
+                let i = index
+              "
+              class="example-item"
+            >
+              <input
+                type="text"
+                pInputText
+                [ngModel]="example.value"
+                (ngModelChange)="updateExample(example.id, $event, 'nlNegativeHeader')"
+                [placeholder]="getExamplePlaceholder(i, 'negativeHeader')"
+                class="example-input"
+              />
+              <button
+                *ngIf="example.removable"
+                pButton
+                type="button"
+                icon="pi pi-times"
+                class="p-button-text p-button-danger p-button-sm p-button-icon-only"
+                (click)="removeExample(example.id, 'nlNegativeHeader')"
+                aria-label="Remove example"
+              ></button>
+            </div>
+          </div>
+          <button
+            pButton
+            type="button"
+            label="Add Negative Example"
+            icon="pi pi-plus"
+            class="p-button-primary p-button-sm add-example-btn"
+            (click)="addExample('nlNegativeHeader')"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button
+      pButton
+      type="button"
+      [label]="isGenerating() ? 'Generating...' : 'Generate Semantic Type'"
+      [icon]="isGenerating() ? 'pi pi-spinner pi-spin' : 'pi pi-sparkles'"
+      class="p-button-primary"
+      [disabled]="!canGenerate() || isGenerating() || !awsConfigured"
+      [pTooltip]="!awsConfigured ? 'You need to configure AWS Bedrock to enable semantic type generation' : ''"
+      tooltipPosition="top"
+      (click)="generateSemanticType()"
+    >
+      <span class="p-button-label">{{
+        isGenerating() ? 'Generating...' : 'Generate Semantic Type'
+      }}</span>
+    </button>
+  </div>
+</div>

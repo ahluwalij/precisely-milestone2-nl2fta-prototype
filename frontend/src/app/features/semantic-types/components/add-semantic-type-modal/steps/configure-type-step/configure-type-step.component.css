@@ -1,0 +1,466 @@
+/* Configure Type Step Component Styles */
+
+.step-content {
+  padding: var(--space-6) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  gap: var(--space-6);
+}
+
+/* Feedback Section */
+.feedback-section {
+  background-color: var(--surface-50);
+  border: 1px solid var(--surface-200);
+  border-radius: var(--border-radius-medium);
+  padding: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.feedback-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.feedback-prompt span {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.feedback-buttons {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.feedback-button {
+  font-size: 1.25rem;
+  padding: var(--space-2);
+  transition: all 0.2s ease;
+}
+
+.feedback-button:hover {
+  transform: scale(1.1);
+}
+
+/* Structured Header Patterns Display */
+.structured-patterns-display {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background-color: var(--surface-100);
+  border-radius: var(--border-radius-medium);
+  border: 1px solid var(--surface-300);
+}
+
+.pattern-with-examples {
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--surface-300);
+}
+
+.pattern-with-examples:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.pattern-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.pattern-index {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.pattern-regex {
+  font-family: monospace;
+  background-color: var(--surface-200);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-small);
+  font-size: 0.875rem;
+}
+
+.pattern-examples {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-left: var(--space-4);
+}
+
+.pattern-positive-examples,
+.pattern-negative-examples {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.examples-label {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  min-width: 70px;
+}
+
+.example-chip {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-small);
+  font-size: 0.8125rem;
+  font-family: monospace;
+}
+
+.example-chip.positive {
+  background-color: var(--success-100);
+  color: var(--success-800);
+  border: 1px solid var(--success-300);
+}
+
+.example-chip.negative {
+  background-color: var(--danger-100);
+  color: var(--danger-800);
+  border: 1px solid var(--danger-300);
+}
+
+/* Hide dropdown arrow for disabled plugin type field */
+#plugin-type.p-disabled .p-dropdown-trigger,
+#plugin-type[disabled] .p-dropdown-trigger,
+:host ::ng-deep #plugin-type.p-disabled .p-dropdown-trigger,
+:host ::ng-deep p-dropdown[disabled] .p-dropdown-trigger {
+  display: none;
+}
+
+/* Adjust padding for disabled dropdown to compensate for missing arrow */
+:host ::ng-deep #plugin-type.p-disabled .p-dropdown-label,
+:host ::ng-deep p-dropdown[disabled] .p-dropdown-label {
+  padding-right: var(--space-3);
+}
+
+/* Examples Section - Add vertical gap between subsections */
+.examples-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.form-field label,
+.form-label,
+.form-field legend {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.form-field fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.required-field::after {
+  content: ' *';
+  color: var(--alert-error);
+}
+
+.label-hint {
+  font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  display: inline;
+  margin-left: var(--space-2);
+}
+
+.help-icon {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.help-icon:hover {
+  color: var(--purple-primary);
+}
+
+#regex-pattern,
+#header-patterns-list {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
+  background: var(--bg-card);
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+
+#regex-pattern:focus,
+#header-patterns-list:focus {
+  border-color: var(--purple-primary);
+  box-shadow: var(--focus-ring-brand);
+}
+
+/* List of Values Section */
+.list-values-field fieldset {
+  background: var(--bg-secondary);
+  border: 2px solid var(--purple-tertiary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-sm);
+}
+
+.list-values-field fieldset legend {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  color: var(--purple-primary);
+  background: var(--bg-card);
+  padding: var(--space-2) var(--space-4);
+  border: 2px solid var(--purple-primary);
+  border-radius: var(--radius-lg);
+}
+
+/* Regex Pattern Section */
+.regex-pattern-field fieldset {
+  background: var(--bg-secondary);
+  border: 2px solid var(--purple-tertiary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-sm);
+}
+
+.regex-pattern-field fieldset legend {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  color: var(--purple-primary);
+  background: var(--bg-card);
+  padding: var(--space-2) var(--space-4);
+  border: 2px solid var(--purple-primary);
+  border-radius: var(--radius-lg);
+}
+
+/* Header Patterns Section */
+.header-patterns-field fieldset {
+  background: var(--bg-secondary);
+  border: 2px solid var(--purple-tertiary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-sm);
+}
+
+.header-patterns-field fieldset legend {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  color: var(--purple-primary);
+  background: var(--bg-card);
+  padding: var(--space-2) var(--space-4);
+  border: 2px solid var(--purple-primary);
+  border-radius: var(--radius-lg);
+}
+
+.examples-subsection {
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  transition: box-shadow 0.2s ease;
+}
+
+.examples-subsection:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.examples-subsection h4,
+.examples-subsection-header h4 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+}
+
+.examples-subsection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.examples-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.example-item {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.example-input {
+  flex: 1;
+}
+
+.example-input[readonly] {
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.examples-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+
+/* Examples columns with stronger specificity */
+.examples-columns .examples-column {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+/* Positive examples (first column) - green styling */
+.examples-section .examples-columns .examples-column:first-child {
+  border-color: var(--color-success-border);
+  background: var(--color-success-bg);
+}
+
+/* Negative examples (last column) - red styling */
+.examples-section .examples-columns .examples-column:last-child {
+  border-color: var(--color-error-border);
+  background: var(--color-error-bg);
+}
+
+.examples-column h5 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-align: left;
+  border-radius: var(--radius-base);
+}
+
+/* Positive examples header styling */
+.examples-section .examples-columns .examples-column:first-child h5 {
+  color: var(--color-success-text);
+  background: transparent;
+}
+
+/* Negative examples header styling */
+.examples-section .examples-columns .examples-column:last-child h5 {
+  color: var(--color-error-text);
+  background: transparent;
+}
+
+.add-example-btn {
+  width: 100%;
+  text-align: center;
+  font-size: var(--font-size-sm);
+}
+
+/* Generate More Examples Field */
+.generate-more-field {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.generate-more-field label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.generate-more-button-container {
+  margin-top: var(--space-3);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Include/Exclude Buttons */
+.examples-section .example-item .include-button {
+  color: var(--color-success-text);
+}
+
+.examples-section .example-item .include-button:hover {
+  background: transparent;
+}
+
+.examples-section .example-item .exclude-button {
+  color: var(--color-error-text);
+}
+
+.examples-section .example-item .exclude-button:hover {
+  background: transparent;
+}
+
+/* Regenerate Feedback Section */
+.regenerate-feedback-section {
+  background: var(--bg-secondary);
+  border: 2px solid var(--purple-tertiary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.regenerate-feedback-section button {
+  margin-top: var(--space-3);
+}
+
+/* Form Actions */
+.form-actions {
+  margin: var(--space-8) calc(-1 * var(--space-8)) calc(-1 * var(--space-11));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-8);
+  border-top: 1px solid var(--border-primary);
+  position: sticky;
+  bottom: 0;
+  background: var(--p-dialog-background);
+  z-index: var(--z-index-fixed);
+  min-height: calc(var(--space-16) + var(--space-2));
+}
+
+.form-actions-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+/* Utility Classes */
+.w-full {
+  width: 100%;
+}
+
+/* Error Message */
+.error-message {
+  margin-top: var(--space-2);
+}
+
+::ng-deep .p-message-error {
+  margin-top: var(--space-2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .examples-columns {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .generate-more-button-container {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,113 @@
+<div class="analysis-card">
+  <div class="card-header">
+    <div class="file-info">
+      <h3>{{ analysis.fileName }}</h3>
+      <p class="upload-time">
+        {{ analysis.uploadTime | date: 'medium' }}
+      </p>
+    </div>
+    <div class="file-stats">
+      <span class="stat-badge">
+        <i class="pi pi-th-large"></i>
+        {{ analysis.classificationResults.processingMetadata.analyzedColumns || 0 }}
+        columns
+      </span>
+      <span class="stat-badge">
+        <i class="pi pi-list"></i>
+        {{ analysis.classificationResults.processingMetadata.totalRowsProcessed || 0 }}
+        rows
+      </span>
+    </div>
+    <p-button
+      icon="pi pi-times"
+      severity="danger"
+      [text]="true"
+      [rounded]="true"
+      (onClick)="onRemove($event)"
+      styleClass="remove-btn"
+      pTooltip="Delete this analysis"
+      tooltipPosition="top"
+    >
+    </p-button>
+  </div>
+
+  <div class="analysis-content">
+    <p-table
+      [value]="analysis.tableData || []"
+      [columns]="analysis.dynamicColumns || []"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} rows"
+      [tableStyle]="{ width: '100%' }"
+      styleClass="data-analysis-table"
+    >
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" class="column-header">
+            <div class="column-info">
+              <div class="column-name">{{ col.field }}</div>
+              <div class="type-badges">
+                <span
+                  class="badge semantic-type-badge"
+                  [class.badge-none]="col.semanticType === 'none'"
+                  [class.badge-custom]="isCustomSemanticType(col.semanticType, col.isBuiltIn)"
+                  [class.badge-ootb]="
+                    !isCustomSemanticType(col.semanticType, col.isBuiltIn) && col.semanticType !== 'none'
+                  "
+                >
+                  {{ col.semanticType }}
+                </span>
+                <span class="badge base-type-badge">
+                  {{ col.baseType }}
+                </span>
+              </div>
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns" class="data-cell">
+            {{ rowData[col.field] || '-' }}
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="(analysis.dynamicColumns || []).length" class="empty-message">
+            No data available
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <div class="analysis-info">
+      <div class="type-legend">
+        <div class="legend-item">
+          <span class="legend-badge legend-custom"></span>
+          <span>Custom</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge legend-ootb"></span>
+          <span>Predefined</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge legend-none"></span>
+          <span>Unassigned</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-badge legend-base"></span>
+          <span>Base Type</span>
+        </div>
+      </div>
+      <span class="last-analyzed">
+        <i class="pi pi-clock"></i>
+        Last analyzed: {{ analysis.lastAnalyzedAt | date: 'medium' }}
+      </span>
+    </div>
+  </div>
+</div>

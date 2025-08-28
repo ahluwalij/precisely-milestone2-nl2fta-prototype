@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    
+    <!-- Console appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    
+    <!-- Application loggers -->
+    <logger name="com.nl2fta.classifier" level="INFO"/>
+    <logger name="com.nl2fta.classifier.service.TableClassificationService" level="INFO"/>
+    
+    <!-- Reduce startup noise -->
+    <logger name="com.nl2fta.classifier.config.AwsCredentialsValidator" level="WARN"/>
+    <logger name="com.nl2fta.classifier.service.storage.FileBasedCustomSemanticTypeRepository" level="WARN"/>
+    <logger name="com.nl2fta.classifier.service.storage.HybridCustomSemanticTypeRepository" level="WARN"/>
+    <logger name="com.nl2fta.classifier.service.storage.S3CustomSemanticTypeRepository" level="WARN"/>
+    <logger name="com.nl2fta.classifier.service.vector.S3VectorStorageService" level="WARN"/>
+    <logger name="com.nl2fta.classifier.service.vector.VectorEmbeddingService" level="WARN"/>
+    <logger name="com.nl2fta.classifier.service.aws.AwsCredentialsService" level="WARN"/>
+    <logger name="com.nl2fta.classifier.config.CloudWatchLoggingConfig" level="WARN"/>
+    
+    <!-- Library loggers -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="com.cobber.fta" level="ERROR"/>
+    <logger name="software.amazon.awssdk" level="WARN"/>
+</configuration>

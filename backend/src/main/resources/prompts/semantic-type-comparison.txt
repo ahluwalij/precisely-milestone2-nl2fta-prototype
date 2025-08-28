@@ -1,0 +1,24 @@
+Compare the semantic meaning and data validation rules between two types.
+
+User's Type: {{USER_DESCRIPTION}}
+Existing Type: {{EXISTING_DESCRIPTION}}
+{{#OTHER_CANDIDATES}}{{OTHER_CANDIDATES}}{{/OTHER_CANDIDATES}}
+Focus on:
+- What data values each type accepts
+- Any format or validation differences
+- Scope or context differences
+
+DO NOT mention naming conventions, how the types are labeled, or your 
+opinion on whether the similarity number itself is low or high.
+
+<comparison>
+  <similarityScore>{{SIMILARITY_PERCENTAGE}}</similarityScore>
+  
+  <summary>
+    <!-- 2 sentences about functional similarities and differences in data validation/scope -->
+  </summary>
+  
+  <recommendation>
+    <useExisting><!-- true or false --></useExisting>
+  </recommendation>
+</comparison>

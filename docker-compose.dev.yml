@@ -1,0 +1,196 @@
+# Define all configuration values
+# To override ports, set environment variables before running docker-compose:
+# BACKEND_PORT=8082 FRONTEND_PORT=4201 docker-compose -f docker-compose.dev.yml up
+
+name: nl_fta_prototype-dev
+
+x-config:
+  # Backend configuration
+  backend-port: &backend-port 8081
+  backend-host: &backend-host backend
+
+  # Frontend configuration
+  frontend-port: &frontend-port 4200 # Container internal port (Angular default)
+  frontend-api-url: &frontend-api-url /api
+  frontend-api-host: &frontend-api-host http://backend:${BACKEND_PORT:-8081}
+  frontend-max-file-size: &frontend-max-file-size 10485760
+  frontend-max-rows: &frontend-max-rows 1000
+
+  # Authentication configuration
+  auth-password: &auth-password ${AUTH_PASSWORD}
+  jwt-secret: &jwt-secret ${JWT_SECRET}
+
+# Define all environment variables as anchors
+x-backend-env: &backend-env # Server configuration
+  SPRING_PROFILES_ACTIVE: dev
+  APP_ENVIRONMENT: development
+  BACKEND_PORT: *backend-port
+  SERVER_PORT: ${BACKEND_PORT:-8081}
+  SERVER_SERVLET_CONTEXT_PATH: /
+  CONTEXT_PATH: /
+
+  # JVM options (overridable via env JAVA_OPTS). Use flags compatible across JDKs.
+  JAVA_OPTS: ${JAVA_OPTS:-"-Xms512m -Xmx2g -XX:+UseG1GC -Djava.security.egd=file:/dev/./urandom"}
+
+  # FTA Configuration
+  FTA_VERSION: 16.0.3
+  FTA_DETECT_WINDOW: 20
+  FTA_MAX_CARDINALITY: 12000
+  FTA_CACHE_ENABLED: true
+  FTA_CACHE_MAX_SIZE: 1000
+  FTA_CACHE_EXPIRE_AFTER_WRITE_MINUTES: 60
+
+  # Application defaults
+  APP_DEFAULTS_MAX_SAMPLES: 1000
+  APP_DEFAULTS_LOCALE: en-US
+  APP_UPLOAD_MAX_FILE_SIZE: 10485760
+  APP_UPLOAD_MAX_ROWS: 1000
+  APP_UPLOAD_ALLOWED_EXTENSIONS: csv,sql
+
+  # Logging (development levels)
+  LOGGING_LEVEL_ROOT: INFO
+  LOGGING_LEVEL_COM_NL2FTA: DEBUG
+
+  # CORS (only origins are configurable; methods/headers/credentials are fixed in code)
+  CORS_ALLOWED_ORIGINS: http://localhost:4200
+
+  # Management endpoints (optional; keep minimal in dev)
+  MANAGEMENT_ENDPOINTS_INCLUDE: health,info,metrics
+  MANAGEMENT_HEALTH_SHOW_DETAILS: always
+
+  # AWS Bedrock defaults (no credentials or model ID)
+  AWS_BEDROCK_CLAUDE_MODEL_ID: ${AWS_BEDROCK_CLAUDE_MODEL_ID:-us.anthropic.claude-sonnet-4-20250514-v1:0}
+  AWS_BEDROCK_RETRY_MAX_ATTEMPTS: 5
+  AWS_BEDROCK_RETRY_INITIAL_DELAY_MS: 1000
+  AWS_BEDROCK_RETRY_MAX_DELAY_MS: 60000
+  AWS_BEDROCK_RETRY_JITTER_MS: 1000
+  AWS_BEDROCK_ANTHROPIC_VERSION: bedrock-2023-05-31
+  AWS_BEDROCK_MAX_TOKENS: 4096
+  AWS_BEDROCK_TEMPERATURE: 0
+  # Prefill key used by frontend config endpoint
+  AWS_BEDROCK_MODEL_ID: ${AWS_BEDROCK_MODEL_ID:-us.anthropic.claude-sonnet-4-20250514-v1:0}
+
+  # User AWS Credentials for prefilling UI
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+
+  # Global AWS region
+  AWS_REGION: ${AWS_REGION:-us-east-1}
+
+  # CloudWatch Configuration (auto-enabled when admin credentials are present)
+  AWS_CLOUDWATCH_ENABLED: ${AWS_CLOUDWATCH_ENABLED:-false}
+  AWS_CLOUDWATCH_LOG_GROUP: ${AWS_CLOUDWATCH_LOG_GROUP:-/aws/nl2fta}
+  AWS_CLOUDWATCH_LOG_STREAM: ${AWS_CLOUDWATCH_LOG_STREAM:-application-logs}
+  AWS_CLOUDWATCH_ADMIN_ACCESS_KEY_ID: ${AWS_CLOUDWATCH_ADMIN_ACCESS_KEY_ID:-}
+  AWS_CLOUDWATCH_ADMIN_SECRET_ACCESS_KEY: ${AWS_CLOUDWATCH_ADMIN_SECRET_ACCESS_KEY:-}
+  AWS_CLOUDWATCH_ADMIN_REGION: ${AWS_CLOUDWATCH_ADMIN_REGION:-us-east-1}
+
+  # Vector index controls
+  VECTOR_INDEX_ENABLED: ${VECTOR_INDEX_ENABLED:-true}
+  VECTOR_INDEX_REBUILD_ON_STARTUP: ${VECTOR_INDEX_REBUILD_ON_STARTUP:-false}
+
+  # Service info
+  SERVICE_NAME: backend
+  SERVICE_VERSION: 1.0.0
+  API_VERSION: v1
+
+x-frontend-env: &frontend-env # Frontend configuration (runtime)
+  PORT: *frontend-port
+  API_URL: *frontend-api-url
+  API_HOST: *frontend-api-host
+  MAX_FILE_SIZE: *frontend-max-file-size
+  MAX_ROWS: *frontend-max-rows
+  NODE_ENV: docker
+  BACKEND_PORT: *backend-port
+
+  # Authentication configuration
+  AUTH_PASSWORD: *auth-password
+  JWT_SECRET: *jwt-secret
+
+  # HTTP Service Configuration
+  HTTP_TIMEOUT_MS: 30000
+  HTTP_RETRY_COUNT: 2
+  HTTP_LONG_TIMEOUT_MS: 60000
+
+  # UI Configuration
+  BASE_Z_INDEX: 10000
+
+  # Semantic Type Configuration
+  DEFAULT_HIGH_THRESHOLD: 95
+  DEFAULT_MEDIUM_THRESHOLD: 80
+  DEFAULT_LOW_THRESHOLD: 50
+  HIGH_THRESHOLD_MIN: 90
+  HIGH_THRESHOLD_MAX: 100
+  MEDIUM_THRESHOLD_MIN: 70
+  MEDIUM_THRESHOLD_MAX: 89
+  LOW_THRESHOLD_MIN: 0
+  LOW_THRESHOLD_MAX: 69
+
+  # Animation and Delay Configuration
+  NOTIFICATION_DELAY_MS: 1000
+  REANALYSIS_DELAY_MS: 1000
+
+  # AWS defaults for frontend SSR-only autofill (not exposed by backend API)
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  AWS_REGION: ${AWS_REGION:-us-east-1}
+  AWS_BEDROCK_MODEL_ID: ${AWS_BEDROCK_MODEL_ID:-us.anthropic.claude-sonnet-4-20250514-v1:0}
+
+services:
+  # Backend service with hot reload
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${BACKEND_PORT:-8081}:${BACKEND_PORT:-8081}"
+    environment:
+      <<: *backend-env
+    volumes:
+      - ./backend/src:/app/src
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "sh",
+          "-c",
+          "ps aux | grep -q '[j]ava.*bootRun' && echo 'Service is running'",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - fta-network
+
+  # Frontend service with hot reload
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${FRONTEND_PORT:-4200}:4200"
+    environment:
+      <<: *frontend-env
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/server:/app/server
+      - ./frontend/angular.json:/app/angular.json
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/tsconfig.app.json:/app/tsconfig.app.json
+      - ./frontend/proxy.conf.js:/app/proxy.conf.js
+      - /app/node_modules # Prevent overwriting container's node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - fta-network
+
+volumes:
+  gradle-cache:
+
+networks:
+  fta-network:
+    driver: bridge

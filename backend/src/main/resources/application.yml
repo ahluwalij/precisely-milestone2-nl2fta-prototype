@@ -1,0 +1,170 @@
+spring:
+  application:
+    name: ${APP_NAME:backend}
+  
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: NON_NULL
+    serialization:
+      indent-output: true
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+  
+  mvc:
+    throw-exception-if-no-handler-found: true
+    static-path-pattern: /static/**
+  
+  web:
+    resources:
+      add-mappings: false
+    
+server:
+  port: ${BACKEND_PORT:8081}
+  forward-headers-strategy: native
+  error:
+    include-message: always
+    include-stacktrace: never
+  tomcat:
+    connection-timeout: 60000
+    keep-alive-timeout: 60000
+    max-http-form-post-size: 10MB
+    max-swallow-size: 10MB
+
+# FTA Configuration
+fta:
+  version: ${FTA_VERSION:16.0.3}
+  detect-window: ${FTA_DETECT_WINDOW:20}
+  max-cardinality: ${FTA_MAX_CARDINALITY:12000}
+  enable-default-semantic-types: ${FTA_ENABLE_DEFAULT_SEMANTIC_TYPES:false}
+  custom-types-file: ${FTA_CUSTOM_TYPES_FILE:config/custom-semantic-types.json}
+  plugin-resource: ${FTA_PLUGIN_RESOURCE:/reference/plugins.json}
+  plugin-registration-name: ${FTA_PLUGIN_REGISTRATION_NAME:custom_types}
+  cache:
+    enabled: ${FTA_CACHE_ENABLED:true}
+    max-size: ${FTA_CACHE_MAX_SIZE:1000}
+    expire-after-write-minutes: ${FTA_CACHE_EXPIRE_AFTER_WRITE_MINUTES:60}
+
+# API Configuration - Single prefix for all endpoints
+api:
+  version: v1
+  defaults:
+    locale: en-US
+
+# Service Configuration
+service:
+  info:
+    name: ${SERVICE_NAME:backend}
+    version: ${SERVICE_VERSION:1.0.0}
+    description: ${SERVICE_DESCRIPTION:REST API for classifying table columns using FTA (Fast Text Analysis) library. This service analyzes table data to identify base types and semantic types for each column.}
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui/index.html
+    operations-sorter: method
+    tags-sorter: alpha
+  packages-to-scan: com.nl2fta.classifier.controller
+  paths-to-match: /**
+  info:
+    title: FTA Table Classifier API
+    version: 1.0.0
+    description: ${service.info.description}
+    license:
+      name: Apache 2.0
+      url: https://www.apache.org/licenses/LICENSE-2.0
+  servers:
+    - url: http://localhost:${server.port}
+      description: Local development server
+    - url: https://api.nl2fta.com
+      description: Production server
+  
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENDPOINTS_INCLUDE:health,info,metrics}
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_HEALTH_SHOW_DETAILS:always}
+
+# Logging
+logging:
+  level:
+    ROOT: INFO
+    com.nl2fta.classifier: DEBUG
+    org.springframework: WARN
+    com.cobber.fta: ERROR
+    software.amazon.awssdk: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+
+# App memory/response safeguards
+app:
+  environment: ${APP_ENVIRONMENT:production}
+  classification:
+    # Include input data back in classification response. Disable for very wide tables to avoid OOMs.
+    return-data: ${CLASSIFY_RETURN_DATA:true}
+    # Hard caps to protect heap when dealing with extremely wide/large CSVs
+    max-response-columns: ${CLASSIFY_MAX_RESPONSE_COLUMNS:200}
+    max-response-rows: ${CLASSIFY_MAX_RESPONSE_ROWS:100}
+    # Limit noisy debug logging for extremely wide tables
+    debug-log-max-columns: ${CLASSIFY_DEBUG_LOG_MAX_COLUMNS:100}
+
+
+# CORS Configuration
+cors:
+  # Use allowedOriginPatterns via WebConfig. Default to wildcard to allow all origins by default.
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:*}
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: "*"
+  allow-credentials: true
+
+# AWS Bedrock Configuration
+aws:
+  # Admin region for CloudWatch logging (used by backend)
+  region: ${AWS_REGION:us-east-1}
+  bedrock:
+    temperature: 0
+    claude:
+      model-id: ${AWS_BEDROCK_CLAUDE_MODEL_ID:us.anthropic.claude-sonnet-4-20250514-v1:0}
+    embedding:
+      model-id: ${AWS_BEDROCK_EMBEDDING_MODEL_ID:amazon.titan-embed-text-v2:0}
+    retry:
+      max-attempts: 5
+      initial-delay-ms: 1000
+      max-delay-ms: 60000
+  # S3 Storage Configuration
+  s3:
+    # S3 buckets are automatically generated with unique names per account and region
+    # No bucket configuration needed here
+  # AWS Credentials for prefilling (optional - only for hosted demos)
+  credentials:
+    access-key-id: ""
+    secret-access-key: ""
+  # CloudWatch Configuration
+  cloudwatch:
+    enabled: false
+    log-group: /aws/nl2fta
+    log-stream: application-logs
+    admin-access-key-id: ""
+    admin-secret-access-key: ""
+    # Filtering controls
+    filter:
+      enabled: true
+      min-level: INFO
+      allowed-loggers: com.nl2fta.classifier.service.semantic_type.generation,com.nl2fta.classifier.controller.semantic_type
+      allow-event-types: SEMANTIC_TYPE_GENERATION_REQUEST,SEMANTIC_TYPE_GENERATION_PROMPT,SEMANTIC_TYPE_GENERATION_RESULT,USER_FEEDBACK
+      exclude-message-patterns: 'Could not find resource: /reference/.*|No values loaded from resource .*|DEBUG: repository\.findAll\(.*\)|Final merged types count: .*|Getting only custom semantic types'
+      include-frontend: false
+
+# Vector Index Configuration
+vector:
+  index:
+    enabled: true
+    rebuild-on-startup: false
+

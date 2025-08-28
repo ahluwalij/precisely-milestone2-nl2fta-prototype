@@ -1,0 +1,66 @@
+codecov:
+  require_ci_to_pass: true
+  notify:
+    wait_for_ci: true
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+  status:
+    project:
+      default:
+        target: 85%
+        threshold: 1%
+        if_ci_failed: error
+    patch:
+      default:
+        target: 80%
+        threshold: 2%
+        if_ci_failed: error
+
+parsers:
+  gcov:
+    branch_detection:
+      conditional: true
+      loop: true
+      method: false
+      macro: false
+
+comment:
+  layout: "header, diff, flags, components, footer"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+  branches:
+    - main
+    - master
+
+github_checks:
+  annotations: true
+
+flags:
+  backend:
+    paths:
+      - backend/src/main/java/
+    carryforward: true
+  frontend:
+    paths:
+      - frontend/src/
+    carryforward: true
+
+component_management:
+  default_rules:
+    flag_regexes:
+      - "backend"
+      - "frontend"
+  individual_components:
+    - component_id: backend
+      name: Backend
+      flag_regexes:
+        - "backend"
+    - component_id: frontend
+      name: Frontend
+      flag_regexes:
+        - "frontend" 

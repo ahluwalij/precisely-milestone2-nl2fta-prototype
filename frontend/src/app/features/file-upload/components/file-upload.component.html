@@ -1,0 +1,76 @@
+<p-card class="upload-section">
+  <div class="upload-container">
+    <div
+      class="file-drop-zone"
+      (click)="fileInput.click()"
+      (keyup.enter)="fileInput.click()"
+      (keyup.space)="fileInput.click()"
+      (drop)="onDrop($event)"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      [class.drag-over]="isDragOver()"
+      [class.has-file]="uploadedFile()"
+      role="button"
+      tabindex="0"
+      aria-label="Click or drop file to upload"
+    >
+      <input
+        #fileInput
+        type="file"
+        [accept]="getAcceptedFileTypes()"
+        (change)="onFileInputChange($event)"
+        style="display: none"
+        multiple
+      />
+
+      <div class="upload-icon-wrapper">
+        <i class="pi pi-cloud-upload upload-icon"></i>
+      </div>
+
+      <h3 class="upload-title">
+        {{ uploadedFiles().length > 0 ? uploadedFiles().length + ' files selected' : 
+           uploadedFile() ? uploadedFile()!.name : 'Drop your files here' }}
+      </h3>
+      <p class="upload-subtitle">
+        {{ processingFiles() ? 'Processing ' + uploadedFiles().length + ' files...' :
+           uploadedFile() ? 'File uploaded - analyzing...' : 'or click to browse' }}
+      </p>
+
+      <div class="upload-hint" *ngIf="!uploadedFile() && uploadedFiles().length === 0">
+        <span class="file-type-badge">CSV/SQL</span>
+        <span class="size-hint">Maximum file size: 10MB per file</span>
+      </div>
+
+      <p class="upload-instruction" *ngIf="!uploadedFile() && uploadedFiles().length === 0">
+        Upload CSV or SQL files to automatically analyze column data types
+      </p>
+
+      <!-- Integrated template buttons -->
+      <div class="template-quick-access" *ngIf="!uploadedFile() && uploadedFiles().length === 0">
+        <span class="template-label">Quick start:</span>
+        <button
+          type="button"
+          class="template-mini-btn"
+          (click)="useTemplate('sql', $event)"
+          title="Use Employee SQL Template"
+        >
+          <i class="pi pi-database"></i>
+          <span>SQL Template</span>
+        </button>
+        <button
+          type="button"
+          class="template-mini-btn"
+          (click)="useTemplate('csv', $event)"
+          title="Use Employee CSV Template"
+        >
+          <i class="pi pi-file"></i>
+          <span>CSV Template</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</p-card>
+
+<div *ngIf="errorMessage()" class="error-container">
+  <p-message severity="error" [text]="errorMessage()"></p-message>
+</div>

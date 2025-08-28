@@ -1,0 +1,538 @@
+#!/bin/bash
+
+#
+# Enhanced E2E Integration Test Runner
+# 
+# This script runs the comprehensive E2E integration test suite with detailed logging.
+# You can run the full test suite or individual component tests.
+#
+# Usage: ./run-integration-tests.sh [component|all] [--ci|--non-interactive] [--skip-aws-validation]
+#
+
+# Script to run E2E integration tests with AWS Bedrock
+# This test makes REAL calls to AWS Bedrock and requires valid credentials
+# Interactive mode only - will prompt for AWS credentials
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}╔══════════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${BLUE}║        Enhanced E2E Integration Test Runner                      ║${NC}"
+echo -e "${BLUE}╚══════════════════════════════════════════════════════════════════╝${NC}"
+echo ""
+
+# Function to show usage
+show_usage() {
+    echo "Usage: $0 [COMPONENT_NAME|all] [OPTIONS]"
+    echo ""
+    echo "This script runs the enhanced E2E integration test suite."
+    echo "You will be prompted to enter your AWS credentials securely."
+    echo ""
+    echo "Options:"
+    echo "  --use-saved-credentials    Use saved AWS credentials without prompting"
+    echo "  --non-interactive         Run in non-interactive mode (for CI)"
+    echo "  --skip-aws-validation     Skip AWS credentials validation"
+    echo ""
+    echo "Available component tests:"
+    echo "  aws          - AWS Connectivity & Authentication only"
+    echo "  file         - File Upload & Initial Classification only"
+    echo "  llm          - LLM Semantic Type Generation only"
+    echo "  vector       - Vector Storage & Embedding only"
+    echo "  similarity   - Similarity Search & Checking only"
+    echo "  reclassify   - Re-classification with Custom Types only"
+    echo "  validation   - End-to-End Workflow Validation only"
+    echo "  all          - Run complete E2E test suite (default)"
+    echo ""
+    echo "Examples:"
+    echo "  $0              # Run full test suite"
+    echo "  $0 all          # Run full test suite"
+    echo "  $0 aws          # Run only AWS connectivity test"
+    echo "  $0 llm          # Run only LLM generation test"
+    echo ""
+    echo "Note: These tests make REAL API calls to AWS Bedrock and will incur charges."
+}
+
+# Handle help flag
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    show_usage
+    exit 0
+fi
+
+# Parse args
+NON_INTERACTIVE=false
+SKIP_AWS_VALIDATION=false
+USE_SAVED_CREDENTIALS=false
+COMPONENT="all"
+for arg in "$@"; do
+  case "$arg" in
+    aws|file|llm|vector|similarity|reclassify|validation|all)
+      COMPONENT="$arg";;
+    --ci|--non-interactive)
+      NON_INTERACTIVE=true;;
+    --skip-aws-validation)
+      SKIP_AWS_VALIDATION=true;;
+    --use-saved-credentials)
+      USE_SAVED_CREDENTIALS=true;;
+  esac
+done
+
+# Default to non-interactive when running in CI
+if [[ "$CI" == "true" ]]; then
+  NON_INTERACTIVE=true
+fi
+
+# Map component names to test methods
+case "$COMPONENT" in
+    "aws")
+        TEST_METHOD="test01_AwsConnectivityAndAuthentication"
+        TEST_DESCRIPTION="AWS Connectivity & Authentication Test"
+        ;;
+    "file")
+        TEST_METHOD="test02_FileUploadAndInitialClassification"
+        TEST_DESCRIPTION="File Upload & Initial Classification Test"
+        ;;
+    "llm")
+        TEST_METHOD="test03_LlmSemanticTypeGeneration"
+        TEST_DESCRIPTION="LLM Semantic Type Generation Test"
+        ;;
+    "vector")
+        TEST_METHOD="test04_VectorStorageAndEmbedding"
+        TEST_DESCRIPTION="Vector Storage & Embedding Test"
+        ;;
+    "similarity")
+        TEST_METHOD="test05_SimilaritySearchAndChecking"
+        TEST_DESCRIPTION="Similarity Search & Checking Test"
+        ;;
+    "reclassify")
+        TEST_METHOD="test06_ReclassificationWithCustomTypes"
+        TEST_DESCRIPTION="Re-classification with Custom Types Test"
+        ;;
+    "validation")
+        TEST_METHOD="test07_EndToEndWorkflowValidation"
+        TEST_DESCRIPTION="End-to-End Workflow Validation Test"
+        ;;
+    "all")
+        TEST_METHOD=""
+        TEST_DESCRIPTION="Complete Enhanced E2E Integration Test Suite"
+        ;;
+    *)
+        echo -e "${RED}Error: Unknown component '$COMPONENT'${NC}"
+        echo ""
+        show_usage
+        exit 1
+        ;;
+esac
+
+# Allow multiple flags/args (component + options)
+
+# Credentials file path (used in interactive mode)
+CREDENTIALS_FILE="$(dirname "$0")/../backend/.aws-credentials"
+
+# Function to load credentials from file
+load_credentials() {
+    if [[ -f "$CREDENTIALS_FILE" ]]; then
+        source "$CREDENTIALS_FILE"
+        return 0
+    fi
+    return 1
+}
+
+# Function to save credentials to file
+save_credentials() {
+    cat > "$CREDENTIALS_FILE" << EOF
+# AWS Credentials for E2E Integration Test
+# This file is automatically generated and gitignored
+ACCESS_KEY_ID="$ACCESS_KEY_ID"
+SECRET_ACCESS_KEY="$SECRET_ACCESS_KEY"
+AWS_REGION="$AWS_REGION"
+EOF
+    chmod 600 "$CREDENTIALS_FILE"
+}
+
+# Function to validate AWS credentials and permissions
+validate_aws_credentials() {
+    echo -e "${BLUE}🔒 Validating AWS credentials and permissions...${NC}"
+    echo ""
+    
+    # Create a temporary config file for AWS CLI
+    local temp_config_dir=$(mktemp -d)
+    local temp_credentials_file="$temp_config_dir/credentials"
+    local temp_config_file="$temp_config_dir/config"
+    
+    # Write credentials to temporary file
+    cat > "$temp_credentials_file" << EOF
+[default]
+aws_access_key_id = $ACCESS_KEY_ID
+aws_secret_access_key = $SECRET_ACCESS_KEY
+EOF
+    
+    # Write config to temporary file
+    cat > "$temp_config_file" << EOF
+[default]
+region = $AWS_REGION
+output = json
+EOF
+    
+    # Export AWS config paths
+    export AWS_CONFIG_FILE="$temp_config_file"
+    export AWS_SHARED_CREDENTIALS_FILE="$temp_credentials_file"
+    
+    local validation_failed=false
+    
+    # Check if aws CLI is available
+    if ! command -v aws &> /dev/null; then
+        echo -e "${RED}❌ AWS CLI not found${NC}"
+        echo "Please install AWS CLI to validate credentials."
+        echo "Visit: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"
+        validation_failed=true
+    else
+        # Test 1: Basic credential validation
+        echo -e "${YELLOW}  • Testing basic credential validity...${NC}"
+        if aws sts get-caller-identity &>/dev/null; then
+            local caller_identity=$(aws sts get-caller-identity 2>/dev/null)
+            local user_arn=$(echo "$caller_identity" | grep -o '"Arn": "[^"]*"' | cut -d'"' -f4)
+            echo -e "${GREEN}    ✅ Credentials are valid${NC}"
+            echo -e "    User: $user_arn"
+        else
+            echo -e "${RED}    ❌ Invalid AWS credentials${NC}"
+            echo "    Please check your Access Key ID and Secret Access Key."
+            validation_failed=true
+        fi
+        
+        # Test 2: Bedrock service access
+        if [[ "$validation_failed" == false ]]; then
+            echo -e "${YELLOW}  • Testing Bedrock service access...${NC}"
+            if aws bedrock list-foundation-models --region "$AWS_REGION" &>/dev/null; then
+                echo -e "${GREEN}    ✅ Bedrock service accessible${NC}"
+            else
+                echo -e "${RED}    ❌ Cannot access Bedrock service${NC}"
+                echo "    Required permissions: bedrock:ListFoundationModels, bedrock:InvokeModel"
+                echo "    Please ensure your credentials have Bedrock access in region: $AWS_REGION"
+                validation_failed=true
+            fi
+        fi
+        
+        # Test 3: S3 service access (if needed for tests)
+        if [[ "$validation_failed" == false ]]; then
+            echo -e "${YELLOW}  • Testing S3 service access...${NC}"
+            if aws s3 ls &>/dev/null; then
+                echo -e "${GREEN}    ✅ S3 service accessible${NC}"
+            else
+                echo -e "${YELLOW}    ⚠️  S3 access limited or unavailable${NC}"
+                echo "    Some tests may require S3 permissions: s3:ListBucket, s3:GetObject, s3:PutObject"
+            fi
+        fi
+        
+        # Test 4: Check if region supports Bedrock
+        if [[ "$validation_failed" == false ]]; then
+            echo -e "${YELLOW}  • Verifying Bedrock availability in region...${NC}"
+            local bedrock_models=$(aws bedrock list-foundation-models --region "$AWS_REGION" 2>/dev/null)
+            if [[ -n "$bedrock_models" ]]; then
+                local model_count=$(echo "$bedrock_models" | grep -c '"modelId"' || echo "0")
+                echo -e "${GREEN}    ✅ Bedrock available in $AWS_REGION ($model_count models)${NC}"
+            else
+                echo -e "${RED}    ❌ Bedrock not available in region: $AWS_REGION${NC}"
+                echo "    Please use a region where Bedrock is available (e.g., us-east-1, us-east-2)"
+                validation_failed=true
+            fi
+        fi
+    fi
+    
+    # Clean up temporary files
+    rm -rf "$temp_config_dir"
+    unset AWS_CONFIG_FILE
+    unset AWS_SHARED_CREDENTIALS_FILE
+    
+    if [[ "$validation_failed" == true ]]; then
+        echo ""
+        echo -e "${RED}❌ Credential validation failed${NC}"
+        echo -e "${RED}Please fix the issues above before running the integration tests.${NC}"
+        echo ""
+        echo -e "${YELLOW}Common solutions:${NC}"
+        echo "  • Verify your AWS Access Key ID and Secret Access Key are correct"
+        echo "  • Ensure your AWS user/role has the required permissions:"
+        echo "    - bedrock:ListFoundationModels"
+        echo "    - bedrock:InvokeModel"
+        echo "    - s3:ListBucket, s3:GetObject, s3:PutObject (for some tests)"
+        echo "  • Try a different AWS region (e.g., us-east-1, us-east-2)"
+        echo "  • Check if Bedrock is enabled in your AWS account"
+        return 1
+    else
+        echo ""
+        echo -e "${GREEN}✅ All credential validations passed${NC}"
+        echo ""
+        return 0
+    fi
+}
+
+# Try to load existing credentials
+if [[ "$NON_INTERACTIVE" == true ]]; then
+    ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-}"
+    SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-}"
+    AWS_REGION="${AWS_REGION:-us-east-1}"
+elif [[ "$USE_SAVED_CREDENTIALS" == true ]]; then
+    if load_credentials; then
+        echo -e "${GREEN}Using saved credentials (non-interactive)${NC}"
+        echo -e "  Access Key ID: ${ACCESS_KEY_ID:0:4}****${ACCESS_KEY_ID: -4}"
+        echo -e "  Region: $AWS_REGION"
+    else
+        echo -e "${RED}❌ No saved credentials found and --use-saved-credentials specified${NC}"
+        echo "Please run the script without --use-saved-credentials first to save credentials, or use --non-interactive with AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables."
+        exit 1
+    fi
+elif load_credentials; then
+    echo -e "${GREEN}Found saved AWS credentials${NC}"
+    echo -e "  Access Key ID: ${ACCESS_KEY_ID:0:4}****${ACCESS_KEY_ID: -4}"
+    echo -e "  Region: $AWS_REGION"
+    echo ""
+    echo -n "Use saved credentials? (Y/n): "
+    read -r USE_SAVED
+
+    if [[ "$USE_SAVED" =~ ^[Nn]$ ]]; then
+        echo -e "${YELLOW}Please provide new AWS credentials:${NC}"
+        echo ""
+        
+        echo -n "AWS Access Key ID: "
+        read -r ACCESS_KEY_ID
+        
+        echo -n "AWS Secret Access Key: "
+        read -rs SECRET_ACCESS_KEY
+        echo ""
+        
+        echo -n "AWS Region [us-east-1]: "
+        read -r AWS_REGION
+        if [[ -z "$AWS_REGION" ]]; then
+            AWS_REGION="us-east-1"
+        fi
+        
+        echo ""
+        
+        # Save new credentials
+        save_credentials
+        echo -e "${GREEN}✅ New credentials saved${NC}"
+    fi
+else
+    # No saved credentials, prompt for them
+    echo -e "${YELLOW}Please provide your AWS User credentials (User Credentials, not Admin Credentials):${NC}"
+    echo ""
+    
+    echo -n "AWS User Access Key ID: "
+    read -r ACCESS_KEY_ID
+    
+    echo -n "AWS User Secret Access Key: "
+    read -rs SECRET_ACCESS_KEY
+    echo ""
+    
+    echo -n "AWS Region [us-east-1]: "
+    read -r AWS_REGION
+    if [[ -z "$AWS_REGION" ]]; then
+        AWS_REGION="us-east-1"
+    fi
+    
+    echo ""
+    
+    # Save credentials
+    save_credentials
+    echo -e "${GREEN}✅ Credentials saved for future use${NC}"
+fi
+
+# Validate that we have credentials
+if [[ -z "$ACCESS_KEY_ID" || -z "$SECRET_ACCESS_KEY" ]]; then
+    echo -e "${RED}Error: AWS credentials are required${NC}"
+    echo "Please provide valid AWS Access Key ID and Secret Access Key."
+    exit 1
+fi
+
+# Validate AWS credentials and permissions (unless skipped)
+if [[ "$SKIP_AWS_VALIDATION" != true ]]; then
+  if ! validate_aws_credentials; then
+      echo -e "${RED}Stopping test execution due to credential validation failure.${NC}"
+      exit 1
+  fi
+fi
+
+# Warning about costs
+echo -e "${YELLOW}⚠️  WARNING: This test makes REAL API calls to AWS Bedrock${NC}"
+echo -e "${YELLOW}   This will incur charges on your AWS account.${NC}"
+echo ""
+echo -e "${BLUE}Test Configuration:${NC}"
+echo -e "  Access Key ID: ${ACCESS_KEY_ID:0:4}****${ACCESS_KEY_ID: -4}"
+echo -e "  Region: $AWS_REGION"
+echo -e "  Test: $TEST_DESCRIPTION"
+if [[ -n "$TEST_METHOD" ]]; then
+    echo -e "  Component: $TEST_METHOD"
+fi
+echo ""
+
+# Confirm before proceeding (interactive only)
+if [[ "$NON_INTERACTIVE" != true ]]; then
+  echo -n "Do you want to proceed? (y/N): "
+  read -r CONFIRM
+  if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
+      echo -e "${YELLOW}Test cancelled by user${NC}"
+      exit 0
+  fi
+fi
+
+echo ""
+echo -e "${GREEN}Starting Enhanced E2E Integration Test...${NC}"
+echo ""
+
+# Paths
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO_ROOT/backend"
+
+# Centralized logs in repo root
+mkdir -p "$REPO_ROOT/test_logs"
+
+# Check if gradle-wrapper.jar exists and regenerate if missing
+GRADLE_WRAPPER_JAR="gradle/wrapper/gradle-wrapper.jar"
+if [[ ! -f "$GRADLE_WRAPPER_JAR" ]]; then
+    echo -e "${YELLOW}⚠️  Gradle wrapper JAR not found. Regenerating...${NC}"
+    echo ""
+    
+    # Check if gradle command is available
+    if ! command -v gradle &> /dev/null; then
+        echo -e "${RED}Error: 'gradle' command not found${NC}"
+        echo "Please install Gradle or ensure it's in your PATH."
+        echo "Visit: https://gradle.org/install/"
+        exit 1
+    fi
+    
+    echo -e "${BLUE}Running: gradle wrapper${NC}"
+    if gradle wrapper; then
+        echo -e "${GREEN}✅ Gradle wrapper regenerated successfully${NC}"
+        echo ""
+    else
+        echo -e "${RED}❌ Failed to regenerate Gradle wrapper${NC}"
+        echo "Please check your Gradle installation and try again."
+        exit 1
+    fi
+else
+    echo -e "${GREEN}✅ Gradle wrapper found${NC}"
+fi
+
+# Export credentials as environment variables for the test
+export AWS_ACCESS_KEY_ID="$ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$SECRET_ACCESS_KEY"
+export AWS_REGION="$AWS_REGION"
+export AWS_INTEGRATION_TEST="true"
+
+# Debug: Verify credentials are set
+echo -e "${BLUE}Debug: Verifying environment variables are set...${NC}"
+if [[ -n "$AWS_ACCESS_KEY_ID" && -n "$AWS_SECRET_ACCESS_KEY" && -n "$AWS_REGION" ]]; then
+    echo -e "${GREEN}✅ Environment variables confirmed${NC}"
+else
+    echo -e "${RED}❌ Environment variables not properly set${NC}"
+    echo "AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-NOT SET}"
+    echo "AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:+SET}"
+    echo "AWS_REGION: ${AWS_REGION:-NOT SET}"
+fi
+
+# Generate timestamp for log file
+LOG_TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+LOG_FILE="$REPO_ROOT/test_logs/integration_e2e_${LOG_TIMESTAMP}.log"
+
+# Build the test command
+if [[ -n "$TEST_METHOD" ]]; then
+    # Run specific test method
+    TEST_FILTER="EnhancedE2EIntegrationTest#${TEST_METHOD}"
+else
+    # Run all tests in the class
+    TEST_FILTER="EnhancedE2EIntegrationTest"
+fi
+
+# Run the enhanced E2E integration test
+echo -e "${BLUE}Running: ./gradlew cleanTest test --tests '$TEST_FILTER' --rerun-tasks --console=plain${NC}"
+echo ""
+
+# Enhanced logging for the E2E test with trace-level AWS service logs
+export GRADLE_OPTS="-XX:+EnableDynamicAgentLoading -Djdk.instrument.traceUsage=false -Dlogging.level.com.nl2fta=DEBUG -Dlogging.level.com.nl2fta.classifier.service.aws=TRACE -Dlogging.level.com.nl2fta.classifier.service.vector=TRACE"
+
+echo -e "${YELLOW}⏳ Starting test execution with real-time output...${NC}"
+echo ""
+
+# Try different approaches for real-time output based on available tools
+if command -v unbuffer >/dev/null 2>&1; then
+    # Use unbuffer (from expect package) for best real-time output
+    echo -e "${BLUE}Using unbuffer for optimal real-time output${NC}"
+    GRADLE_CMD="unbuffer ./gradlew cleanTest test --tests '$TEST_FILTER' --rerun-tasks --console=plain --warning-mode=summary --info"
+elif command -v stdbuf >/dev/null 2>&1; then
+    # Use stdbuf (GNU coreutils) to disable buffering
+    echo -e "${BLUE}Using stdbuf for real-time output${NC}"
+    GRADLE_CMD="stdbuf -oL -eL ./gradlew cleanTest test --tests '$TEST_FILTER' --rerun-tasks --console=plain --warning-mode=summary --info"
+else
+    # Fallback: use script command to force pseudo-TTY (works on macOS/Linux)
+    if command -v script >/dev/null 2>&1; then
+        echo -e "${BLUE}Using script command for real-time output${NC}"
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS script syntax
+            GRADLE_CMD="script -q /dev/null ./gradlew cleanTest test --tests '$TEST_FILTER' --rerun-tasks --console=plain --warning-mode=summary --info"
+        else
+            # Linux script syntax
+            GRADLE_CMD="script -qec \"./gradlew cleanTest test --tests '$TEST_FILTER' --rerun-tasks --console=plain --warning-mode=summary --info\" /dev/null"
+        fi
+    else
+        # Last resort: direct execution (may buffer)
+        echo -e "${YELLOW}No unbuffering tools available - output may be delayed${NC}"
+        GRADLE_CMD="./gradlew cleanTest test --tests '$TEST_FILTER' --rerun-tasks --console=plain --warning-mode=summary --info"
+    fi
+fi
+
+# Execute the command and capture output to both console and log file
+# Use PIPESTATUS to capture the exit code when using pipe with tee
+eval "$GRADLE_CMD" 2>&1 | tee "$LOG_FILE"
+TEST_EXIT_CODE=${PIPESTATUS[0]}
+
+if [[ $TEST_EXIT_CODE -eq 0 ]]; then
+    echo ""
+    echo -e "${GREEN}✅ Enhanced E2E Integration Test PASSED!${NC}"
+    echo -e "${GREEN}   $TEST_DESCRIPTION completed successfully${NC}"
+    if [[ "$COMPONENT" == "all" ]]; then
+        echo -e "${GREEN}   • All 7 component tests passed${NC}"
+        echo -e "${GREEN}   • AWS services integrated successfully${NC}"
+        echo -e "${GREEN}   • Custom semantic type generated and applied${NC}"
+        echo -e "${GREEN}   • Full E2E workflow validated${NC}"
+    else
+        echo -e "${GREEN}   • Component test completed successfully${NC}"
+    fi
+    echo ""
+    
+    # Show log file location
+    echo -e "${BLUE}📋 Test logs saved to:${NC}"
+    echo -e "   ${LOG_FILE}"
+    
+    # Check for enhanced E2E test logs
+    echo ""
+else
+    echo ""
+    echo -e "${RED}❌ Enhanced E2E Integration Test FAILED!${NC}"
+    echo -e "${RED}   Check the logs above for error details${NC}"
+    echo ""
+    
+    # Show log file location even on failure
+    
+    # Check for enhanced E2E test logs on failure too
+    echo -e "${YELLOW}📋 Test logs saved to:${NC}"
+    echo -e "   ${LOG_FILE}"
+    
+    echo ""
+    exit 1
+fi
+
+# Clean up environment variables
+unset AWS_ACCESS_KEY_ID
+unset AWS_SECRET_ACCESS_KEY
+unset AWS_REGION
+unset AWS_INTEGRATION_TEST
+unset GRADLE_OPTS
+
+echo -e "${BLUE}╔══════════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${BLUE}║        Enhanced E2E Integration Test Complete                    ║${NC}"
+echo -e "${BLUE}╚══════════════════════════════════════════════════════════════════╝${NC}"

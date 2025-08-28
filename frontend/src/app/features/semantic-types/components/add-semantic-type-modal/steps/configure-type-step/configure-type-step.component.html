@@ -1,0 +1,523 @@
+<div class="step-content">
+  <!-- Basic Fields -->
+  <div class="form-field">
+    <label for="config-type-name" class="required-field">Semantic Type Name</label>
+    <input
+      id="config-type-name"
+      type="text"
+      pInputText
+      [ngModel]="configTypeName()"
+      (ngModelChange)="onConfigTypeNameChange($event)"
+      placeholder="Enter semantic type name"
+      class="w-full"
+    />
+  </div>
+
+  <div class="form-field">
+    <label for="config-description" class="required-field">Description</label>
+    <textarea
+      id="config-description"
+      pTextarea
+      [ngModel]="configDescription()"
+      (ngModelChange)="onConfigDescriptionChange($event)"
+      placeholder="Describe what this semantic type identifies"
+      rows="3"
+      class="w-full"
+    ></textarea>
+  </div>
+
+  <div class="form-field">
+    <label for="plugin-type" class="required-field">Plugin Type</label>
+    <p-dropdown
+      id="plugin-type"
+      [ngModel]="pluginType()"
+      (ngModelChange)="onPluginTypeChange($event)"
+      [options]="pluginTypeOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Select plugin type"
+      class="w-full"
+      [disabled]="true"
+    ></p-dropdown>
+  </div>
+
+  <!-- Examples Section -->
+  <div class="examples-section">
+    <!-- Data Values Subsection -->
+    <div class="examples-subsection">
+      <div class="examples-subsection-header">
+        <h4>Data Values</h4>
+        <i
+          class="pi pi-info-circle help-icon"
+          pTooltip="Define the pattern/values and provide examples of actual data that would match this semantic type"
+          tooltipPosition="top"
+          style="cursor: help"
+        ></i>
+      </div>
+
+      <!-- Pattern/Values Field -->
+      <div class="form-field regex-pattern-field" *ngIf="pluginType() === 'regex'">
+        <fieldset>
+          <legend class="required-field">
+            Regex Pattern
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Use single backslashes for regex metacharacters (e.g., \d for digits, \w for word characters). Double backslashes (\\d) will be treated as literal text."
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            >
+            </i>
+          </legend>
+          <input
+            id="regex-pattern"
+            type="text"
+            pInputText
+            [ngModel]="regexPattern()"
+            (ngModelChange)="onRegexPatternChange($event)"
+            placeholder="e.g, ^EMP\d{6}$"
+            class="w-full"
+          />
+        </fieldset>
+      </div>
+
+      <div class="form-field list-values-field" *ngIf="pluginType() === 'list'">
+        <fieldset>
+          <legend class="required-field">
+            List of Values
+            <span class="label-hint">
+              (paste an array like ["value1", "value2", ...] to populate)
+            </span>
+          </legend>
+          <div class="examples-list">
+            <div
+              *ngFor="let value of listValues(); trackBy: trackByExampleId; let i = index"
+              class="example-item"
+            >
+              <input
+                type="text"
+                pInputText
+                [ngModel]="value.value"
+                [readonly]="true"
+                (paste)="i === 0 ? handleListValuesPaste($event) : null"
+                placeholder="Enter value"
+                class="example-input"
+              />
+              <button
+                *ngIf="value.removable"
+                pButton
+                type="button"
+                label="Remove"
+                icon="pi pi-times"
+                class="p-button-text p-button-danger p-button-sm"
+                (click)="removeExample(value.id, 'listValues')"
+                aria-label="Remove value"
+              ></button>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- Data Examples Columns -->
+      <div class="examples-columns">
+        <div class="examples-column">
+          <h5>
+            <span>Positive Examples</span>
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Examples of data values that should match this semantic type"
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            ></i>
+          </h5>
+          <div class="examples-list">
+            <div
+              *ngFor="
+                let example of configPositiveContentExamples();
+                trackBy: trackByExampleId;
+                let i = index
+              "
+              class="example-item"
+            >
+              <input
+                type="text"
+                pInputText
+                [ngModel]="example.value"
+                [readonly]="true"
+                (focus)="i === 0 ? onConfigFirstPositiveContentFocus() : null"
+                (blur)="i === 0 ? onConfigFirstPositiveContentBlur() : null"
+                [placeholder]="getExamplePlaceholder(i, 'positiveContent')"
+                class="example-input"
+              />
+              <!-- <button
+                *ngIf="example.removable"
+                pButton
+                type="button"
+                label="Exclude"
+                icon="pi pi-minus"
+                class="p-button-text p-button-sm exclude-button"
+                (click)="excludeExample(example.id, 'configPositiveContent')"
+                aria-label="Exclude from positive examples"
+              ></button> -->
+            </div>
+          </div>
+        </div>
+
+        <div class="examples-column">
+          <h5>
+            Negative Examples
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Examples of data values that should NOT match this semantic type"
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            ></i>
+          </h5>
+          <div class="examples-list">
+            <div
+              *ngFor="
+                let example of configNegativeContentExamples();
+                trackBy: trackByExampleId;
+                let i = index
+              "
+              class="example-item"
+            >
+              <input
+                type="text"
+                pInputText
+                [ngModel]="example.value"
+                [readonly]="true"
+                [placeholder]="getExamplePlaceholder(i, 'negativeContent')"
+                class="example-input"
+              />
+              <!-- <button
+                *ngIf="example.removable"
+                pButton
+                type="button"
+                label="Include"
+                icon="pi pi-plus"
+                class="p-button-text p-button-sm include-button"
+                (click)="includeExample(example.id, 'configNegativeContent')"
+                aria-label="Include as positive example"
+              ></button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate Data Value Examples -->
+      <!-- <div class="form-field generate-more-field">
+        <label for="data-values-more-input">
+          Edit Data Value Plugin
+          <i
+            class="pi pi-info-circle help-icon"
+            pTooltip="Describe how you'd like to change the data value plugin"
+            tooltipPosition="top"
+            style="margin-left: 0.5rem; cursor: help"
+          ></i>
+        </label>
+        <textarea
+          id="data-values-more-input"
+          pTextarea
+          [ngModel]="dataValuesMoreExamplesInput()"
+          (ngModelChange)="stateService.setDataValuesMoreExamplesInput($event)"
+          placeholder="You can ask to add or delete positive examples, negative examples, or both. The plugin pattern (regex, list, etc.) will also be updated to match your request. For example: 'Generate 2 more positive examples with international names', or 'Add 1 negative example that's a number'"
+          rows="3"
+          class="w-full"
+        ></textarea>
+
+        <p-message
+          *ngIf="dataValuesGenerationError()"
+          severity="error"
+          [text]="dataValuesGenerationError()"
+          class="error-message"
+        >
+        </p-message>
+
+        <div class="generate-more-button-container" *ngIf="showDataValuesRegenerateButton()">
+          <button
+            pButton
+            type="button"
+            [label]="isGeneratingMoreDataExamples() ? 'Generating...' : 'Edit Data Value Rules'"
+            [icon]="isGeneratingMoreDataExamples() ? 'pi pi-spinner pi-spin' : 'pi pi-sparkles'"
+            class="p-button-primary p-button-sm"
+            [disabled]="isGeneratingMoreDataExamples() || isGeneratingMoreHeaderExamples()"
+            (click)="generateMoreDataValueExamples()"
+            pTooltip="Generate new rules based on your changes to the examples"
+            tooltipPosition="top"
+          ></button>
+        </div>
+      </div> -->
+    </div> 
+
+    <!-- Header Patterns Subsection -->
+    <div class="examples-subsection">
+      <div class="examples-subsection-header">
+        <h4>Header Patterns</h4>
+        <i
+          class="pi pi-info-circle help-icon"
+          pTooltip="Define regex patterns that match column names and provide examples of headers that should and shouldn't match"
+          tooltipPosition="top"
+          style="cursor: help"
+        ></i>
+      </div>
+
+      <!-- Header Patterns Field -->
+      <div class="form-field header-patterns-field">
+        <fieldset>
+          <legend class="required-field">
+            Header Regex Patterns
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Enter multiple regex patterns separated by commas. Each pattern will be used to match column headers."
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            >
+            </i>
+          </legend>
+          <textarea
+            id="header-patterns-list"
+            pTextarea
+            [ngModel]="headerPatterns()"
+            (ngModelChange)="onHeaderPatternsChange($event)"
+            placeholder="(?i)(employee_id|emp_id|staff_id), (?i).*_id.*, (?i)staff.*"
+            rows="2"
+            class="w-full"
+          ></textarea>
+        </fieldset>
+      </div>
+
+      <!-- Header Examples Columns -->
+      <div class="examples-columns">
+        <div class="examples-column">
+          <h5>
+            Positive Examples
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Examples of column headers/names that should identify this semantic type"
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            ></i>
+          </h5>
+          <div class="examples-list">
+            <div
+              *ngFor="
+                let example of configPositiveHeaderExamples();
+                trackBy: trackByExampleId;
+                let i = index
+              "
+              class="example-item"
+            >
+              <input
+                type="text"
+                pInputText
+                [ngModel]="example.value"
+                [readonly]="true"
+                [placeholder]="getExamplePlaceholder(i, 'positiveHeader')"
+                class="example-input"
+              />
+              <!-- <button
+                *ngIf="example.removable"
+                pButton
+                type="button"
+                label="Exclude"
+                icon="pi pi-minus"
+                class="p-button-text p-button-sm exclude-button"
+                (click)="excludeExample(example.id, 'configPositiveHeader')"
+                aria-label="Exclude from positive examples"
+              ></button> -->
+            </div>
+          </div>
+        </div>
+
+        <div class="examples-column">
+          <h5>
+            Negative Examples
+            <i
+              class="pi pi-info-circle help-icon"
+              pTooltip="Examples of column headers/names that should NOT identify this semantic type"
+              tooltipPosition="top"
+              style="margin-left: 0.5rem; cursor: help"
+            ></i>
+          </h5>
+          <div class="examples-list">
+            <div
+              *ngFor="
+                let example of configNegativeHeaderExamples();
+                trackBy: trackByExampleId;
+                let i = index
+              "
+              class="example-item"
+            >
+              <input
+                type="text"
+                pInputText
+                [ngModel]="example.value"
+                [readonly]="true"
+                [placeholder]="getExamplePlaceholder(i, 'negativeHeader')"
+                class="example-input"
+              />
+              <!-- <button
+                *ngIf="example.removable"
+                pButton
+                type="button"
+                label="Include"
+                icon="pi pi-plus"
+                class="p-button-text p-button-sm include-button"
+                (click)="includeExample(example.id, 'configNegativeHeader')"
+                aria-label="Include as positive example"
+              ></button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Header Patterns -->
+      <!-- <div class="form-field generate-more-field">
+        <label for="header-patterns-more-input">
+          Edit Header Patterns
+          <i
+            class="pi pi-info-circle help-icon"
+            pTooltip="Suggest edits to the header patterns and it's examples"
+            tooltipPosition="top"
+            style="margin-left: 0.5rem; cursor: help"
+          ></i>
+        </label>
+        <textarea
+          id="header-patterns-more-input"
+          pTextarea
+          [ngModel]="headerPatternsMoreExamplesInput()"
+          (ngModelChange)="stateService.setHeaderPatternsMoreExamplesInput($event)"
+          placeholder="You can ask to add or delete positive examples, negative examples, or both. For example: 'Generate 2 more positive examples with abbreviations', or 'Add 1 negative example using camelCase'"
+          rows="3"
+          class="w-full"
+        ></textarea>
+
+        <p-message
+          *ngIf="headerPatternsGenerationError()"
+          severity="error"
+          [text]="headerPatternsGenerationError()"
+          class="error-message"
+        >
+        </p-message>
+
+        <div class="generate-more-button-container" *ngIf="showHeaderPatternsRegenerateButton()">
+          <button
+            pButton
+            type="button"
+            [label]="isGeneratingMoreHeaderExamples() ? 'Generating...' : 'Edit Header Pattern Rules'"
+            [icon]="isGeneratingMoreHeaderExamples() ? 'pi pi-spinner pi-spin' : 'pi pi-sparkles'"
+            class="p-button-primary p-button-sm"
+            [disabled]="isGeneratingMoreHeaderExamples() || isGeneratingMoreDataExamples()"
+            (click)="generateMoreHeaderPatternExamples()"
+            pTooltip="Generate new rules based on your changes to the examples"
+            tooltipPosition="top"
+          ></button>
+        </div>
+      </div> -->
+    </div>
+  </div>
+
+  <!-- Configuration Fields Outside Examples -->
+  <div class="form-field">
+    <label for="confidence-threshold">
+      Data Threshold (%)
+      <i
+        class="pi pi-info-circle help-icon"
+        pTooltip="Minimum percentage of data values that must match this pattern for the semantic type to be detected"
+        tooltipPosition="top"
+        style="margin-left: 0.5rem; cursor: help"
+      >
+      </i>
+    </label>
+    <input
+      id="confidence-threshold"
+      type="number"
+      pInputText
+      [ngModel]="confidenceThreshold()"
+      (ngModelChange)="onConfidenceThresholdChange($event)"
+      placeholder="95"
+      min="1"
+      max="100"
+      class="w-full"
+    />
+  </div>
+
+
+  <!-- Feedback Section -->
+  <div class="feedback-section">
+    <div class="feedback-prompt">
+      <span>Are you satisfied with the generated semantic type?</span>
+      <div class="feedback-buttons">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-thumbs-up"
+          class="p-button-text p-button-success feedback-button"
+          (click)="onThumbsUp()"
+          pTooltip="I'm satisfied with this semantic type"
+          tooltipPosition="top"
+        ></button>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-thumbs-down"
+          class="p-button-text p-button-danger feedback-button"
+          (click)="onThumbsDown()"
+          pTooltip="This semantic type needs improvement"
+          tooltipPosition="top"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <!-- Error Message -->
+    <p-message *ngIf="saveError()" severity="error" [text]="saveError()"> </p-message>
+
+    <div class="form-actions-buttons" style="display: flex; justify-content: space-between;">
+      <button
+        pButton
+        type="button"
+        label="Back"
+        icon="pi pi-arrow-left"
+        class="p-button-secondary"
+        (click)="goBackToFirstStep()"
+      >
+        <span class="p-button-label">Back</span>
+      </button>
+
+      <div style="display: flex; gap: 0.5rem;">
+        <button
+          *ngIf="showRestoreButton()"
+          pButton
+          type="button"
+          label="Restore Defaults"
+          icon="pi pi-refresh"
+          class="p-button-secondary"
+          (click)="restoreDefaults()"
+          pTooltip="Restore all fields to their original generated values"
+          tooltipPosition="top"
+        >
+          <span class="p-button-label">Restore Defaults</span>
+        </button>
+
+        <button
+          pButton
+          type="button"
+          [label]="isSaving() ? 'Saving...' : saveButtonLabel()"
+          [icon]="isSaving() ? 'pi pi-spinner pi-spin' : 'pi pi-save'"
+          class="p-button-primary"
+          [disabled]="!canSave() || isSaving()"
+          [pTooltip]="saveDisabledTooltip()"
+          [tooltipPosition]="'top'"
+          [showDelay]="100"
+          (click)="saveSemanticType()"
+        >
+          <span class="p-button-label">{{ isSaving() ? 'Saving...' : saveButtonLabel() }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

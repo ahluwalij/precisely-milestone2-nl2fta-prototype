@@ -1,0 +1,29 @@
+FROM cgr.dev/chainguard/node:latest-dev
+
+USER root
+
+RUN mkdir -p /app && \
+    chown -R node:node /app
+
+USER node
+
+WORKDIR /app
+
+COPY --chown=node:node package*.json ./
+COPY --chown=node:node .npmrc ./
+
+RUN npm ci --silent
+
+COPY --chown=node:node angular.json tsconfig*.json ./
+COPY --chown=node:node proxy.conf.js ./
+COPY --chown=node:node src ./src
+COPY --chown=node:node public ./public
+COPY --chown=node:node server ./server
+
+ARG FRONTEND_PORT=4200
+
+EXPOSE ${FRONTEND_PORT}
+
+ENTRYPOINT []
+
+CMD ["npm", "run", "start"] 

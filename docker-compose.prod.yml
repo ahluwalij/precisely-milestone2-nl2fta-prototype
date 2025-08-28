@@ -1,0 +1,68 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8081:8081"
+    environment:
+      # Server Configuration
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8081
+      - JAVA_OPTS=${JAVA_OPTS:--Xmx2g -Xms1g}
+      
+      # CORS Configuration (only origins are configurable)
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:4200,http://localhost:4000,http://localhost:3000,http://localhost:80,http://localhost}
+      
+      # User AWS Configuration for prefilling (set by deployment script)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_BEDROCK_MODEL_ID=${AWS_BEDROCK_MODEL_ID:-us.anthropic.claude-sonnet-4-20250514-v1:0}
+      
+      # Global AWS region
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      
+      # Authentication (set by deployment script)
+      - AUTH_PASSWORD=${AUTH_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      
+      # CloudWatch Configuration (auto-enabled when admin creds are present)
+      - AWS_CLOUDWATCH_ENABLED=${AWS_CLOUDWATCH_ENABLED:-false}
+      - AWS_CLOUDWATCH_LOG_GROUP=${AWS_CLOUDWATCH_LOG_GROUP:-/aws/nl2fta}
+      - AWS_CLOUDWATCH_LOG_STREAM=${AWS_CLOUDWATCH_LOG_STREAM:-application-logs}
+      - AWS_CLOUDWATCH_ADMIN_ACCESS_KEY_ID=${AWS_CLOUDWATCH_ADMIN_ACCESS_KEY_ID:-}
+      - AWS_CLOUDWATCH_ADMIN_SECRET_ACCESS_KEY=${AWS_CLOUDWATCH_ADMIN_SECRET_ACCESS_KEY:-}
+      - AWS_CLOUDWATCH_ADMIN_REGION=${AWS_CLOUDWATCH_ADMIN_REGION:-us-east-1}
+      
+      # Logging
+      - LOGGING_LEVEL_ROOT=${LOGGING_LEVEL_ROOT:-INFO}
+      - LOGGING_LEVEL_COM_NL2FTA=${LOGGING_LEVEL_COM_NL2FTA:-INFO}
+    volumes:
+      - ./backend/config:/app/config
+      - backend-data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+        # VITE_API_BASE_URL is not used in build now
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - AUTH_PASSWORD=${AUTH_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      # AWS defaults for SSR-only autofill (kept server-side; not exposed via backend API)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_BEDROCK_MODEL_ID=${AWS_BEDROCK_MODEL_ID:-us.anthropic.claude-sonnet-4-20250514-v1:0}
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend-data:
+    driver: local

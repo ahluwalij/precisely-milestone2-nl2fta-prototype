@@ -1,0 +1,195 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--purple-100) 0%, var(--purple-primary) 100%);
+  padding: var(--space-4);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.login-content {
+  padding: 40px 32px 32px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo-container {
+  margin-bottom: 0;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  filter: brightness(0) saturate(100%) invert(19%) sepia(75%) saturate(1811%) hue-rotate(261deg)
+    brightness(91%) contrast(95%);
+}
+
+.logo-text {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--purple-primary);
+  margin: 0;
+  padding: var(--space-3) 0;
+}
+
+.login-header p {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.form-field {
+  width: 100%;
+  max-width: 280px;
+}
+
+.username-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-default);
+  font-size: 15px;
+  transition: all 0.2s ease;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.username-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(91, 28, 181, 0.1);
+  outline: none;
+}
+
+.password-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+}
+
+/* Custom password input styling */
+:host ::ng-deep .password-input {
+  flex: 1;
+}
+
+:host ::ng-deep .password-input .p-password {
+  width: 100%;
+}
+
+:host ::ng-deep .password-input-field {
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-default);
+  font-size: 15px;
+  transition: all 0.2s ease;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+:host ::ng-deep .password-input-field:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(91, 28, 181, 0.1);
+  outline: none;
+}
+
+/* Submit button styling */
+:host ::ng-deep .submit-button {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+}
+
+:host ::ng-deep .submit-button .p-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--btn-primary-bg);
+  border: none;
+  transition: all 0.2s ease;
+  color: var(--btn-primary-text);
+}
+
+:host ::ng-deep .submit-button .p-button:hover {
+  background: var(--btn-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(91, 28, 181, 0.3);
+}
+
+:host ::ng-deep .submit-button .p-button:active {
+  transform: translateY(0);
+}
+
+/* Error message styling */
+:host ::ng-deep .error-message-centered {
+  width: 100%;
+  max-width: 280px;
+}
+
+:host ::ng-deep .error-message-centered .p-message {
+  width: 100%;
+  justify-content: center;
+  background: var(--status-error-bg);
+  border: 1px solid var(--status-error-border);
+  color: var(--status-error);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 16px;
+  }
+
+  .login-content {
+    padding: 32px 24px 24px;
+  }
+
+  .login-header {
+    margin-bottom: 24px;
+  }
+
+  .logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .password-row {
+    max-width: 100%;
+  }
+
+  :host ::ng-deep .error-message-centered {
+    max-width: 100%;
+  }
+
+  :host ::ng-deep .password-input-field {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}

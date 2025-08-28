@@ -1,0 +1,48 @@
+# Build artifacts
+.gradle/
+build/
+out/
+bin/
+target/
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# Environment
+.env
+.env.local
+.aws-credentials
+*.log
+logs/
+
+# Test
+src/test/
+*.test.sh
+
+# Documentation
+*.md
+docs/
+
+# Version control
+.git/
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.tmp
+*.swp
+*~ 

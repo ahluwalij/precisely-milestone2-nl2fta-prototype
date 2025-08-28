@@ -1,0 +1,17 @@
+FROM cgr.dev/chainguard/gradle:latest
+
+WORKDIR /app
+
+COPY --chown=nonroot:nonroot build.gradle .
+COPY --chown=nonroot:nonroot settings.gradle .
+
+RUN gradle dependencies --no-daemon
+
+COPY --chown=nonroot:nonroot src src
+COPY --chown=nonroot:nonroot config config
+
+EXPOSE 8081
+
+ENTRYPOINT []
+
+CMD ["gradle", "bootRun", "--no-daemon"] 

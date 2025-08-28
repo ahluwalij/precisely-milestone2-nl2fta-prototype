@@ -1,0 +1,210 @@
+/*
+ * Component Overrides - Design System Implementation
+ * Applies new design system colors to specific components
+ * This file gradually replaces old color usage
+ */
+
+/* ==========================================
+ * LOGIN COMPONENT
+ * ========================================== */
+.login-container {
+  background: linear-gradient(135deg, var(--purple-100) 0%, var(--purple-primary) 100%);
+}
+
+.login-card {
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.login-header {
+  color: var(--text-primary);
+}
+
+.logo {
+  /* Keep existing filter but use design system color */
+  filter: brightness(0) saturate(100%) invert(19%) sepia(75%) saturate(1811%) hue-rotate(261deg)
+    brightness(91%) contrast(95%);
+}
+
+/* Password input styling */
+:host ::ng-deep .password-input-field {
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border-default);
+  color: var(--text-primary);
+}
+
+:host ::ng-deep .password-input-field:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(91, 28, 181, 0.1); /* purple-primary 10% */
+}
+
+/* Submit button */
+:host ::ng-deep .submit-button .p-button {
+  background: var(--btn-primary-bg);
+  border: none;
+  color: var(--btn-primary-text);
+}
+
+:host ::ng-deep .submit-button .p-button:hover {
+  background: var(--btn-primary-hover);
+  box-shadow: 0 4px 12px rgba(91, 28, 181, 0.3); /* purple-primary 30% */
+}
+
+/* Error messages */
+:host ::ng-deep .error-message-centered .p-message {
+  background: var(--status-error-bg);
+  border: 1px solid var(--status-error-border);
+  color: var(--status-error);
+}
+
+/* ==========================================
+ * HEADER COMPONENT
+ * ========================================== */
+.app-header {
+  background: var(--purple-primary);
+  color: var(--text-inverted);
+}
+
+.brand-logo {
+  /* Keep white logo for dark header */
+  filter: brightness(0) invert(1);
+}
+
+/* Increase specificity for profile button hover */
+.app-header .profile-button:hover,
+:host ::ng-deep .app-header .profile-button:hover {
+  background: rgba(255, 255, 255, 0.1); /* white 10% overlay */
+}
+
+/* ==========================================
+ * MAIN CONTENT
+ * ========================================== */
+.hero-description {
+  background: var(--purple-60);
+  color: var(--text-inverted);
+}
+
+.container {
+  background: var(--bg-primary);
+}
+
+/* Hero section container should be transparent */
+.hero-description .container {
+  background: transparent;
+}
+
+/* ==========================================
+ * FORMS & INPUTS - Increased specificity
+ * ========================================== */
+:host ::ng-deep .p-component .p-inputtext,
+:host ::ng-deep .p-inputtext.p-component,
+:host ::ng-deep .p-inputwrapper .p-inputtext {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+}
+
+:host ::ng-deep .p-component .p-inputtext:hover,
+:host ::ng-deep .p-inputtext.p-component:hover,
+:host ::ng-deep .p-inputwrapper .p-inputtext:hover {
+  border-color: var(--border-dark);
+}
+
+:host ::ng-deep .p-component .p-inputtext:focus,
+:host ::ng-deep .p-inputtext.p-component:focus,
+:host ::ng-deep .p-inputwrapper .p-inputtext:focus,
+:host ::ng-deep .p-inputtext.p-focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(91, 28, 181, 0.2);
+}
+
+/* ==========================================
+ * BUTTONS - Increased specificity
+ * ========================================== */
+:host ::ng-deep .p-button.p-button-primary,
+:host ::ng-deep .p-component .p-button.p-button-primary,
+body .p-button.p-button-primary {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+}
+
+:host ::ng-deep .p-button.p-button-primary:hover,
+:host ::ng-deep .p-component .p-button.p-button-primary:hover,
+body .p-button.p-button-primary:hover {
+  background: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+}
+
+:host ::ng-deep .p-button.p-button-secondary,
+:host ::ng-deep .p-component .p-button.p-button-secondary,
+body .p-button.p-button-secondary {
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--btn-secondary-border);
+  color: var(--btn-secondary-text);
+}
+
+:host ::ng-deep .p-button.p-button-secondary:hover,
+:host ::ng-deep .p-component .p-button.p-button-secondary:hover,
+body .p-button.p-button-secondary:hover {
+  background: var(--btn-secondary-hover);
+}
+
+/* ==========================================
+ * TABLES - Increased specificity
+ * ========================================== */
+:host ::ng-deep .p-datatable.p-component .p-datatable-header,
+:host ::ng-deep .p-component.p-datatable .p-datatable-header,
+body .p-datatable .p-datatable-header {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-default);
+}
+
+:host ::ng-deep .p-datatable.p-component .p-datatable-tbody > tr,
+:host ::ng-deep .p-component.p-datatable .p-datatable-tbody > tr,
+body .p-datatable .p-datatable-tbody > tr {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-light);
+}
+
+:host ::ng-deep .p-datatable.p-component .p-datatable-tbody > tr:hover,
+:host ::ng-deep .p-component.p-datatable .p-datatable-tbody > tr:hover,
+body .p-datatable .p-datatable-tbody > tr:hover {
+  background: var(--bg-hover);
+}
+
+/* ==========================================
+ * MESSAGES & ALERTS - Increased specificity
+ * ========================================== */
+:host ::ng-deep .p-message.p-message-error,
+:host ::ng-deep .p-component .p-message.p-message-error,
+body .p-message.p-message-error {
+  background: var(--status-error-bg);
+  border: 1px solid var(--status-error-border);
+  color: var(--status-error);
+}
+
+:host ::ng-deep .p-message.p-message-success,
+:host ::ng-deep .p-component .p-message.p-message-success,
+body .p-message.p-message-success {
+  background: var(--status-success-bg);
+  border: 1px solid var(--status-success-border);
+  color: var(--status-success);
+}
+
+:host ::ng-deep .p-message.p-message-warn,
+:host ::ng-deep .p-component .p-message.p-message-warn,
+body .p-message.p-message-warn {
+  background: var(--status-warning-bg);
+  border: 1px solid var(--status-warning-border);
+  color: var(--status-warning);
+}
+
+:host ::ng-deep .p-message.p-message-info,
+:host ::ng-deep .p-component .p-message.p-message-info,
+body .p-message.p-message-info {
+  background: var(--status-info-bg);
+  border: 1px solid var(--status-info-border);
+  color: var(--status-info);
+}

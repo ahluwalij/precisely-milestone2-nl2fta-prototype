@@ -1,0 +1,413 @@
+name: Tests & Evals
+
+on:
+  push:
+    branches: [ "**" ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment (e.g., prod)"
+        required: false
+        default: "prod"
+      confirm:
+        description: "Type 'deploy' to confirm manual deployment"
+        required: false
+        default: "deploy"
+      runner:
+        description: "Runner label to use (e.g., ubuntu-latest or self-hosted)"
+        required: false
+        default: ""
+
+# Prevent concurrent deployments
+concurrency:
+  group: deployment
+  cancel-in-progress: false
+
+jobs:
+  build-package:
+    # Run CI on every branch push (and allow manual workflow_dispatch)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+      - name: Setup Node (frontend needs it for coverage later)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Make scripts executable
+        run: |
+          chmod +x deployment/client-package/create-deployment-package.sh
+          chmod +x scripts/run-unit-tests.sh
+          chmod +x scripts/run-integration-tests.sh
+          chmod +x scripts/run-eval.sh
+      - name: Sanity check evaluator CSVs (row0 vs row1 field counts)
+        run: |
+          python3 - << 'PY'
+          import csv, glob, sys
+          bad = []
+          for path in glob.glob('evaluator/datasets/data/*_data.csv'):
+              with open(path, newline='') as f:
+                  r = csv.reader(f)
+                  try:
+                      row0 = next(r); row1 = next(r)
+                  except StopIteration:
+                      print(f"❌ {path}: file too short", flush=True)
+                      bad.append(path)
+                      continue
+                  if len(row0) != len(row1):
+                      print(f"❌ {path}: row0_fields={len(row0)} row1_fields={len(row1)}", flush=True)
+                      print(f"   row0_tail={row0[-6:]}\n   row1_tail={row1[-6:]}", flush=True)
+                      bad.append(path)
+                  else:
+                      print(f"✔ {path}: {len(row0)} fields", flush=True)
+          if bad:
+              print("\n❌ CSV sanity check failed. Fix field counts before packaging.")
+              sys.exit(1)
+          PY
+      - name: Create client package zip
+        run: |
+          deployment/client-package/create-deployment-package.sh
+      - name: Upload client package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nl2fta-milestone3.zip
+          path: nl2fta-milestone3.zip
+
+  integ-tests:
+    if: needs.build-package.result == 'success' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    needs: build-package
+    steps:
+      - name: Download client package
+        uses: actions/download-artifact@v4
+        with:
+          name: nl2fta-milestone3.zip
+          path: .
+      - name: Extract client package
+        run: |
+          rm -rf nl2fta-milestone3-extracted
+          mkdir nl2fta-milestone3-extracted
+          unzip -q nl2fta-milestone3.zip -d nl2fta-milestone3-extracted
+          ls -la nl2fta-milestone3-extracted
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Run E2E integration tests (non-interactive) from package
+        working-directory: nl2fta-milestone3-extracted
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          CI: 'true'
+        run: |
+          chmod +x scripts/run-integration-tests.sh
+          ./scripts/run-integration-tests.sh all --non-interactive --skip-aws-validation || true
+          echo "Listing test logs (if any):"
+          ls -la test_logs || true
+      - name: Upload integration test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integ-test-logs
+          path: |
+            nl2fta-milestone3-extracted/test_logs/**
+            nl2fta-milestone3-extracted/backend/build/reports/tests/**
+          if-no-files-found: ignore
+
+  unit-tests:
+    if: needs.build-package.result == 'success' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    needs: build-package
+    steps:
+      - name: Download client package
+        uses: actions/download-artifact@v4
+        with:
+          name: nl2fta-milestone3.zip
+          path: .
+      - name: Extract client package
+        run: |
+          rm -rf nl2fta-milestone3-extracted
+          mkdir nl2fta-milestone3-extracted
+          unzip -q nl2fta-milestone3.zip -d nl2fta-milestone3-extracted
+      - name: Run unit tests from package
+        working-directory: nl2fta-milestone3-extracted
+        run: |
+          chmod +x scripts/run-unit-tests.sh
+          ./scripts/run-unit-tests.sh || true
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            coverage/**
+            backend/build/reports/tests/test/**
+          if-no-files-found: ignore
+
+  evals:
+    if: needs.build-package.result == 'success' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    needs: build-package
+    steps:
+      - name: Download client package
+        uses: actions/download-artifact@v4
+        with:
+          name: nl2fta-milestone3.zip
+          path: .
+      - name: Extract client package
+        run: |
+          rm -rf nl2fta-milestone3-extracted
+          mkdir nl2fta-milestone3-extracted
+          unzip -q nl2fta-milestone3.zip -d nl2fta-milestone3-extracted
+      - name: Run evals from package (comparative)
+        working-directory: nl2fta-milestone3-extracted
+        run: |
+          chmod +x scripts/run-eval.sh
+          # No data-dir/files on purpose: the runner will enumerate all *_data.csv under evaluator/datasets/data/
+          ./scripts/run-eval.sh --descriptions "1 2 3 4 5 6" || true
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: |
+            nl2fta-milestone3-extracted/evaluator/results/**
+            nl2fta-milestone3-extracted/evaluator/logs/**
+          if-no-files-found: ignore
+
+  generate-and-test-type:
+    if: needs.build-package.result == 'success' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    needs: build-package
+    steps:
+      - name: Download client package
+        uses: actions/download-artifact@v4
+        with:
+          name: nl2fta-milestone3.zip
+          path: .
+
+      - name: Extract client package
+        run: |
+          rm -rf nl2fta-milestone3-extracted
+          mkdir nl2fta-milestone3-extracted
+          unzip -q nl2fta-milestone3.zip -d nl2fta-milestone3-extracted
+          ls -la nl2fta-milestone3-extracted
+
+      - name: Generate semantic types for telco_5GTraffic (descriptions 1, 5, and 6)
+        working-directory: nl2fta-milestone3-extracted
+        env:
+          CI: 'true'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+        run: |
+          chmod +x scripts/generate-semantic-types.sh || true
+          # Generation uses evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv
+          if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${AWS_SECRET_ACCESS_KEY}" ]; then
+            echo "❌ AWS credentials not configured; Bedrock generation requires credentials." >&2
+            exit 1
+          fi
+          if [ ! -f "evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv" ]; then
+            echo "❌ Missing evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv" >&2
+            exit 1
+          fi
+          ./scripts/generate-semantic-types.sh --dataset telco_5GTraffic --descriptions "1 5 6"
+
+      - name: Run evaluator on generated types (telco_5GTraffic)
+        working-directory: nl2fta-milestone3-extracted
+        env:
+          VECTOR_INDEX_ENABLED: 'false'
+          VECTOR_INDEX_REBUILD_ON_STARTUP: 'false'
+        run: |
+          chmod +x scripts/run-eval.sh
+          ./scripts/run-eval.sh --dataset telco_5GTraffic --descriptions "1 5 6" --no-cleanup || true
+          echo "Listing evaluator logs (if any):"
+          ls -la evaluator/logs || true
+          echo "Listing evaluator results (if any):"
+          ls -la evaluator/results || true
+
+      - name: Upload generation + eval artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: telco_5GTraffic-generation-and-eval
+          path: |
+            nl2fta-milestone3-extracted/evaluator/generated_semantic_types/telco_5GTraffic_description*_*.json
+            nl2fta-milestone3-extracted/evaluator/results/**
+            nl2fta-milestone3-extracted/evaluator/logs/**
+          if-no-files-found: ignore
+
+      - name: Shutdown Docker compose services
+        if: always()
+        working-directory: nl2fta-milestone3-extracted
+        run: |
+          COMPOSE_PROJECT_NAME=nl2fta_generator docker compose -f docker-compose.dev.yml down || true
+          COMPOSE_PROJECT_NAME=nl2fta_eval docker compose -f docker-compose.dev.yml down || true
+
+
+  deploy:
+    # Only on manual dispatch (kept manual); not executed for PRs; adjust later if auto-deploy on main desired
+    if: github.event_name == 'workflow_dispatch' && (github.event.inputs.confirm == '' || github.event.inputs.confirm == 'deploy')
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code  
+      uses: actions/checkout@v4
+    
+    # Build and deploy the frontend from THIS repository's 'frontend/' directory at the current commit
+    - name: Use repository frontend
+      run: |
+        echo "📦 Using frontend from current repository commit: $GITHUB_SHA"
+        test -d frontend || (echo "❌ Missing frontend directory" && exit 1)
+    
+    - name: Create deployment archive
+      run: |
+        echo "📦 Creating deployment archive with submodules..."
+        tar -czf deploy.tar.gz \
+          --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='dist' \
+          --exclude='build' \
+          --exclude='*.log' \
+          --exclude='.env' \
+          backend frontend scripts docker-compose.prod.yml README.md
+    
+    - name: Copy archive to server
+      uses: appleboy/scp-action@v0.1.5
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "deploy.tar.gz"
+        target: "/tmp"
+    
+    - name: Deploy on server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        command_timeout: 20m
+        script: |
+          set -e
+          
+          echo "📂 Extracting deployment package..."
+          cd /home/ubuntu
+          
+          # Backup current deployment if exists
+          if [ -d "nl2fta-app" ]; then
+            echo "📦 Backing up current deployment..."
+            sudo mv nl2fta-app nl2fta-app.backup.$(date +%s)
+          fi
+          
+          # Extract new deployment
+          mkdir nl2fta-app
+          cd nl2fta-app
+          tar -xzf /tmp/deploy.tar.gz
+          rm -f /tmp/deploy.tar.gz
+          
+          # Copy environment file
+          echo "🔐 Setting up environment..."
+          cp /home/ubuntu/.env .env
+          
+          # Deployment with proper configuration
+          echo "🚀 Starting deployment..."
+          
+          # Use lock file to prevent concurrent deployments on server
+          LOCK_FILE="/tmp/nl2fta-deploy.lock"
+          
+          # Try to acquire lock
+          if [ -f "$LOCK_FILE" ]; then
+            echo "🔒 Another deployment is in progress. Waiting..."
+            # Wait up to 5 minutes for lock to be released
+            timeout=300
+            elapsed=0
+            while [ -f "$LOCK_FILE" ] && [ $elapsed -lt $timeout ]; do
+              sleep 5
+              elapsed=$((elapsed + 5))
+            done
+            
+            if [ -f "$LOCK_FILE" ]; then
+              echo "❌ Deployment lock timeout. Removing stale lock."
+              rm -f "$LOCK_FILE"
+            fi
+          fi
+          
+          # Create lock file
+          echo $$ > "$LOCK_FILE"
+          
+          # Ensure lock is removed on exit
+          trap "rm -f $LOCK_FILE" EXIT
+          
+          # Export required environment variable for frontend port
+          export FRONTEND_PORT=4000
+          
+          echo "🐳 Stopping NL2FTA containers..."
+          docker-compose -f docker-compose.prod.yml down || true
+          
+          echo "🧹 Freeing disk space before build..."
+          # Stop and remove dangling containers/volumes/images to reclaim space
+          docker-compose -f docker-compose.prod.yml down -v || true
+          docker system prune -af --volumes || true
+          docker builder prune -af || true
+          docker image prune -af || true
+          docker volume prune -f || true
+          # Remove potential buildkit cache leftovers
+          sudo rm -rf /var/lib/docker/buildkit/* || true
+          # Trim old backups: keep the five most recent (robust)
+          echo "🗑 Pruning old backups (keep last 5)..."
+          echo "Existing backups (top 10 by mtime):"
+          ls -1dt /home/ubuntu/nl2fta-app.backup.* 2>/dev/null | head -n 10 || true
+          # Prefer GNU find with -printf for reliable mtime sort; fallback to ls if unavailable
+          (find /home/ubuntu -maxdepth 1 -type d -name 'nl2fta-app.backup.*' -printf '%T@ %p\n' 2>/dev/null \
+            | sort -nr \
+            | tail -n +6 \
+            | awk '{ $1=""; sub(/^ /,""); print }' \
+            | xargs -r sudo rm -rf) || (ls -1dt /home/ubuntu/nl2fta-app.backup.* 2>/dev/null | tail -n +6 | xargs -r sudo rm -rf || true)
+          echo "Backups after prune (should be ≤5):"
+          ls -1dt /home/ubuntu/nl2fta-app.backup.* 2>/dev/null | head -n 10 || true
+          # Show disk usage after cleanup
+          df -h || true
+          
+          echo "🔨 Building new images..."
+          docker-compose -f docker-compose.prod.yml build --pull --no-cache
+          
+          echo "🐳 Starting containers..."
+          docker-compose -f docker-compose.prod.yml up -d
+          
+          # Wait and perform health checks
+          echo "⏳ Waiting for services to start..."
+          sleep 20
+          
+          echo "🏥 Performing health checks..."
+          max_retries=10
+          retry_count=0
+          
+          while [ $retry_count -lt $max_retries ]; do
+            if curl -f -s https://precisely-prototype.universalagi.com/api/config > /dev/null; then
+              echo "✅ Deployment successful! Services are healthy."
+              exit 0
+            fi
+            
+            retry_count=$((retry_count + 1))
+            echo "⏳ Health check attempt $retry_count/$max_retries..."
+            sleep 5
+          done
+          
+          echo "❌ Health check failed after $max_retries attempts"
+          echo "📋 Container status:"
+          docker-compose -f docker-compose.prod.yml ps
+          echo "📋 Recent logs:"
+          docker-compose -f docker-compose.prod.yml logs --tail=50
+          exit 1

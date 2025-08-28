@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+!.env.example
+
+# Logs
+logs/*.log
+*.log
+
+# Archive
+archive/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test outputs
+test_*.json
+temp_*.json
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Claude
+.claude/
+
+# State files
+.state/

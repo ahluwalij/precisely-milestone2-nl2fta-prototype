@@ -1,0 +1,79 @@
+You are an expert in data classification and semantic type pattern refinement for the FTA library.
+
+Task: Improve the semantic type "{{SEMANTIC_TYPE_NAME}}" based on specific user changes.
+
+CURRENT STATE:
+================
+Plugin Type: {{PLUGIN_TYPE}}
+{{#CURRENT_REGEX_PATTERN}}Current Regex Pattern: {{CURRENT_REGEX_PATTERN}}{{/CURRENT_REGEX_PATTERN}}
+{{#CURRENT_LIST_VALUES}}Current List Values: {{CURRENT_LIST_VALUES}}{{/CURRENT_LIST_VALUES}}
+Description: {{DESCRIPTION}}
+
+Current Positive Content Examples:
+{{#CURRENT_POSITIVE_EXAMPLES}}{{CURRENT_POSITIVE_EXAMPLES}}{{/CURRENT_POSITIVE_EXAMPLES}}
+{{^CURRENT_POSITIVE_EXAMPLES}}No positive examples currently defined{{/CURRENT_POSITIVE_EXAMPLES}}
+
+Current Negative Content Examples:
+{{#CURRENT_NEGATIVE_EXAMPLES}}{{CURRENT_NEGATIVE_EXAMPLES}}{{/CURRENT_NEGATIVE_EXAMPLES}}
+{{^CURRENT_NEGATIVE_EXAMPLES}}No negative examples currently defined{{/CURRENT_NEGATIVE_EXAMPLES}}
+
+USER CHANGES:
+================
+{{#PLUGIN_VALUE_CHANGES}}
+Plugin Value Changes:
+{{#REGEX_CHANGE}}- Changed regex pattern from "{{OLD_REGEX_PATTERN}}" to "{{NEW_REGEX_PATTERN}}"{{/REGEX_CHANGE}}
+{{#ADDED_LIST_VALUES}}- Added list values: {{ADDED_LIST_VALUES}}{{/ADDED_LIST_VALUES}}
+{{#REMOVED_LIST_VALUES}}- Removed list values: {{REMOVED_LIST_VALUES}}{{/REMOVED_LIST_VALUES}}
+{{/PLUGIN_VALUE_CHANGES}}
+
+{{#EXAMPLE_CHANGES}}
+Example Changes:
+{{#CONTENT_TO_INCLUDE}}- User wants to INCLUDE these examples (should match): {{CONTENT_TO_INCLUDE}}{{/CONTENT_TO_INCLUDE}}
+{{#CONTENT_TO_EXCLUDE}}- User wants to EXCLUDE these examples (should NOT match): {{CONTENT_TO_EXCLUDE}}{{/CONTENT_TO_EXCLUDE}}
+{{#REMOVED_FROM_POSITIVE}}- Removed from positive examples: {{REMOVED_FROM_POSITIVE}}{{/REMOVED_FROM_POSITIVE}}
+{{#REMOVED_FROM_NEGATIVE}}- Removed from negative examples: {{REMOVED_FROM_NEGATIVE}}{{/REMOVED_FROM_NEGATIVE}}
+{{/EXAMPLE_CHANGES}}
+
+{{#NATURAL_LANGUAGE_FEEDBACK}}
+User Feedback: {{NATURAL_LANGUAGE_FEEDBACK}}
+{{/NATURAL_LANGUAGE_FEEDBACK}}
+
+PATTERN RULES:
+================
+- NO anchors (^ or $) - patterns should be flexible
+
+PLUGIN TYPE RULES:
+====================
+- Use "list" ONLY for small, finite sets (under 25 values)
+- Use "regex" for everything else
+- Example where "list" is appropriate: limited categories
+- Example where "regex" is required: unlimited potential values
+
+RESPONSE FORMAT (XML):
+<semanticTypeUpdate>
+  {{#PLUGIN_TYPE_REGEX}}<newRegexPattern>improved regex pattern here</newRegexPattern>{{/PLUGIN_TYPE_REGEX}}
+  {{#PLUGIN_TYPE_LIST}}<newListValues>
+    <value>value1</value>
+    <value>value2</value>
+    <!-- all values including user's changes -->
+  </newListValues>{{/PLUGIN_TYPE_LIST}}
+  <positiveExamples>
+    <!-- Generate 5-10 NEW examples that match the pattern -->
+    <example>example value</example>
+  </positiveExamples>
+  <negativeExamples>
+    <!-- Generate 5-10 NEW edge cases that don't match -->
+    <example>example value</example>
+  </negativeExamples>
+  <changeValidation>
+    <includeValidation>
+      <!-- For each example user wants to include -->
+      <validation example="user example" matches="true/false" explanation="why it matches/doesn't match"/>
+    </includeValidation>
+    <excludeValidation>
+      <!-- For each example user wants to exclude -->
+      <validation example="user example" matches="true/false" explanation="why it matches/doesn't match"/>
+    </excludeValidation>
+  </changeValidation>
+  <rationale>Explanation of what was improved and how it addresses user's changes</rationale>
+</semanticTypeUpdate>

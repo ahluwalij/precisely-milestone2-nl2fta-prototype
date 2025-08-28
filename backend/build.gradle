@@ -1,0 +1,300 @@
+/*
+ * NL2FTA Backend Build Configuration
+ * 
+ * This build.gradle has been configured to:
+ * - Handle Java version compatibility (11+ with automatic detection)
+ * - Suppress compilation and runtime warnings for cleaner output
+ * - Optimize test execution with proper JVM arguments
+ * - Support AWS Bedrock integration tests with appropriate timeouts
+ * - Configure Mockito properly for different Java versions
+ */
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '6.0.27'
+    id 'com.diffplug.spotless' version '6.25.0'
+    id 'jacoco'
+}
+
+group = 'com.nl2fta'
+version = '1.0.0'
+
+java {
+    // Use whatever Java version is available in the container
+    // But prefer Java 11+ for compatibility
+    def javaVersion = System.getProperty('java.version')
+    def majorVersion = javaVersion.split('\\.')[0] as Integer
+    
+    if (majorVersion >= 11) {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(majorVersion >= 17 ? majorVersion : 11)
+        }
+    }
+}
+
+// Compiler options to handle warnings
+tasks.withType(JavaCompile) {
+    options.compilerArgs += [
+        '-Xlint:unchecked',
+        '-Xlint:deprecation'
+    ]
+    options.deprecation = true
+    options.warnings = false  // Don't fail on warnings for regular builds
+}
+
+// Be stricter for main code compilation to catch issues early
+tasks.named('compileJava') {
+    options.compilerArgs += ['-Werror']  // Fail on warnings for main code only
+}
+
+// Allow warnings for test compilation since mocking often requires flexible typing
+tasks.named('compileTestJava') {
+    options.compilerArgs.removeAll(['-Werror'])
+    options.warnings = false  // Don't treat warnings as errors for test code
+}
+
+configurations {
+    compileOnly {
+        extendsFrom(annotationProcessor)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // FTA Library
+    implementation 'com.cobber.fta:fta-core:16.0.3'
+    implementation 'com.cobber.fta:fta:16.0.3'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+    
+    // API Documentation
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+    
+    // Jackson
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    
+    // Caching
+    implementation 'com.google.guava:guava:33.4.0-jre'
+    
+    // Configuration
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    
+    // Development
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    
+    // Testing - JUnit 5 (align with Spring Boot 3.4.x)
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // Ensure JUnit Platform launcher present on runtime classpath for Gradle 9+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
+    
+    // CSV & SQL Processing
+    implementation 'com.opencsv:opencsv:5.10'
+    implementation 'com.h2database:h2:2.2.224'
+    
+    // AWS SDK v2 - Bedrock
+    implementation platform('software.amazon.awssdk:bom:2.31.67')
+    implementation 'software.amazon.awssdk:bedrock'
+    implementation 'software.amazon.awssdk:bedrockruntime'
+    implementation 'software.amazon.awssdk:apache-client'
+    
+    // AWS SDK v2 - S3 for storage
+    implementation 'software.amazon.awssdk:s3:2.31.67'
+    
+    // AWS SDK v2 - STS for getting account ID
+    implementation 'software.amazon.awssdk:sts:2.31.67'
+    
+    // AWS SDK v2 - CloudWatch Logs for centralized logging
+    implementation 'software.amazon.awssdk:cloudwatchlogs:2.31.67'
+    
+    // AWS CloudWatch Logback Appender
+    implementation 'ca.pjer:logback-awslogs-appender:1.6.0'
+    
+    // Apache Commons Math for vector operations
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+}
+
+bootRun {
+    systemProperty 'spring.devtools.restart.enabled', 'true'
+    systemProperty 'spring.devtools.restart.poll-interval', '2s'
+    systemProperty 'spring.devtools.restart.quiet', 'true'
+}
+
+checkstyle {
+    toolVersion = '10.21.0'
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    showViolations = true
+    ignoreFailures = false
+}
+
+spotbugs {
+    toolVersion = '4.8.6'
+    ignoreFailures = true
+    effort = com.github.spotbugs.snom.Effort.valueOf('MAX')
+    reportLevel = com.github.spotbugs.snom.Confidence.valueOf('MEDIUM')
+    excludeFilter = file("${rootDir}/config/spotbugs-exclude.xml")
+}
+
+spotbugsMain {
+    reports {
+        html {
+            required = true
+            outputLocation = file("${buildDir}/reports/spotbugs/main.html")
+        }
+    }
+}
+
+jacoco {
+    toolVersion = '0.8.12'
+}
+
+jacocoTestReport {
+    // Remove hard dependency on test to allow report generation even when tests fail
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    dependsOn 'spotlessJavaCheck'
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.80
+            }
+        }
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.75
+            }
+        }
+    }
+}
+
+spotless {
+    java {
+        target 'src/main/java/**/*.java', 'src/test/java/**/*.java'
+        // Google Java Format enforces Google style automatically
+        googleJavaFormat('1.17.0')
+        // Cleanups to keep code tidy
+        removeUnusedImports()
+        importOrder('java', 'javax', 'org', 'com', '')
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+    
+    // Version-aware JVM arguments
+    def javaVersion = System.getProperty('java.version')
+    def majorVersion = javaVersion.split('\\.')[0] as Integer
+    
+    // Base JVM arguments that work for all versions
+    def baseJvmArgs = [
+        // Memory settings for integration tests
+        '-Xmx2g',
+        '-Xms512m',
+        
+        // Garbage collection settings
+        '-XX:+UseG1GC',
+        '-XX:G1HeapRegionSize=16m'
+    ]
+    
+    // Version-specific arguments
+    if (majorVersion >= 17) {
+        baseJvmArgs.addAll([
+            // Enable dynamic agent loading for Mockito (Java 17+)
+            '-XX:+EnableDynamicAgentLoading',
+            
+            // Suppress specific warnings
+            '-Djdk.instrument.traceUsage=false',
+            
+            // Add opens for Java modules (required for some AWS SDK operations)
+            '--add-opens=java.base/java.lang=ALL-UNNAMED',
+            '--add-opens=java.base/java.util=ALL-UNNAMED',
+            '--add-opens=java.base/java.time=ALL-UNNAMED'
+        ])
+    }
+    
+    // Mockito settings
+    baseJvmArgs.add('-Dnet.bytebuddy.experimental=true')
+    
+    jvmArgs = baseJvmArgs
+    
+    // System properties for tests
+    systemProperties = [
+        'spring.test.context.cache.maxSize': '1',
+        'java.awt.headless': 'true'
+    ]
+    
+    // Ensure tests run in parallel for better performance
+    maxParallelForks = Math.max(1, Runtime.runtime.availableProcessors().intdiv(2))
+    
+    // Test output configuration
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = false
+        showStackTraces = true
+        showCauses = true
+    }
+    
+    // Only for integration tests, increase timeout
+    if (gradle.startParameter.taskNames.any { it.contains('Integration') }) {
+        timeout = Duration.ofMinutes(10)
+        systemProperty 'junit.jupiter.execution.timeout.default', '5m'
+    }
+
+    // Centralized test logs in root-level test_logs directory
+    doFirst {
+        def timestamp = new Date().format("yyyyMMdd_HHmmss")
+        def logsRoot = new File(rootDir, "test_logs")
+        if (!logsRoot.exists()) {
+            logsRoot.mkdirs()
+        }
+
+        // Detect if this run is for integration tests by class/task name
+        def isIntegration = gradle.startParameter.taskNames.any { it.toLowerCase().contains('integration') }
+
+        // Configure per-fork stdout/stderr to files
+        beforeTest { descriptor ->
+            def suiteName = descriptor.className ?: "unknown"
+            def kind = (suiteName?.toLowerCase()?.contains('integration')) || isIntegration ? 'integration' : 'unit'
+            def safeSuite = suiteName?.replaceAll('[^a-zA-Z0-9_.-]', '_') ?: 'unknown'
+            def fileBase = "${kind}_tests_${timestamp}_${safeSuite}"
+            def outFile = new File(logsRoot, fileBase + ".out.log")
+            def errFile = new File(logsRoot, fileBase + ".err.log")
+            // Rebind System.out/err for this test class
+            System.setOut(new java.io.PrintStream(new java.io.FileOutputStream(outFile, true), true))
+            System.setErr(new java.io.PrintStream(new java.io.FileOutputStream(errFile, true), true))
+        }
+
+        afterTest { descriptor, result ->
+            // Gradle restores streams after task; nothing special here
+        }
+    }
+
+} 

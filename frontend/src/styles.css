@@ -1,0 +1,22 @@
+/* Global Theme System - NL2FTA Branded */
+@layer primeng;
+
+/* Import theme modules - NEW DESIGN SYSTEM */
+
+/* 1. Base design system colors */
+@import './app/styles/theme/design-system-colors.css';
+
+/* 2. Semantic color assignments */
+@import './app/styles/theme/color-assignments.css';
+
+/* 3. Colors - Including info colors for badges and tips */
+@import './app/styles/theme/colors.css';
+
+/* 4. Existing theme modules */
+@import './app/styles/theme/typography.css';
+@import './app/styles/theme/spacing.css';
+@import './app/styles/theme/base.css';
+@import './app/styles/theme/primeng-overrides.css';
+
+/* 4. Component overrides */
+@import './app/styles/theme/component-overrides.css';

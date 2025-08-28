@@ -1,0 +1,337 @@
+@import '../../../../styles/theme/buttons.css';
+
+.analysis-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-4);
+  transition: all 0.3s ease;
+}
+
+.analysis-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  gap: var(--space-4);
+  border-top-left-radius: var(--radius-xl);
+  border-top-right-radius: var(--radius-xl);
+}
+
+.file-info {
+  flex: 1;
+}
+
+.file-info h3 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.upload-time {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.file-stats {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.stat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.stat-badge i {
+  font-size: var(--font-size-sm);
+  color: var(--purple-primary);
+}
+
+:host ::ng-deep .remove-btn {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+:host ::ng-deep .remove-btn:hover {
+  background: var(--button-danger-hover-bg);
+}
+
+:host ::ng-deep .remove-btn .p-button-icon {
+  font-size: var(--font-size-sm);
+}
+
+.analysis-content {
+  padding: var(--space-6);
+  border-bottom-left-radius: var(--radius-xl);
+  border-bottom-right-radius: var(--radius-xl);
+}
+
+/* Data Analysis Table Styles */
+:host ::ng-deep .data-analysis-table {
+  border: 1px solid var(--grey-30);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+:host ::ng-deep .data-analysis-table .p-datatable-header {
+  background: transparent;
+  border: none;
+}
+
+:host ::ng-deep .data-analysis-table .p-datatable-thead > tr > th {
+  background-color: var(--grey-10);
+  border-right: 1px solid var(--grey-30);
+  border-bottom: 2px solid var(--grey-30);
+  vertical-align: top;
+  padding: 0;
+  font-weight: var(--font-weight-semibold);
+}
+
+:host ::ng-deep .data-analysis-table .p-datatable-thead > tr > th:last-child {
+  border-right: none;
+}
+
+.column-header {
+  min-width: var(--width-xs);
+}
+
+.column-info {
+  padding: var(--space-4);
+}
+
+.column-info .column-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.type-badges {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.semantic-type-badge {
+  background-color: var(--semantic-none-bg);
+  color: var(--semantic-none-text);
+  border: 1px solid var(--semantic-none-border);
+}
+
+.semantic-type-badge.badge-none {
+  background-color: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-primary);
+}
+
+.semantic-type-badge.badge-custom {
+  background-color: var(--purple-primary);
+  color: var(--text-inverted);
+  border: 1px solid var(--purple-primary);
+}
+
+.semantic-type-badge.badge-ootb {
+  background-color: var(--alert-success);
+  color: var(--text-inverted);
+  border: 1px solid var(--alert-success);
+}
+
+.base-type-badge {
+  background-color: var(--base-type-bg);
+  color: var(--base-type-text);
+  border: 1px solid var(--base-type-border);
+}
+
+:host ::ng-deep .data-analysis-table .p-datatable-tbody > tr {
+  border-bottom: 1px solid var(--grey-20);
+  transition: background-color 0.2s ease;
+}
+
+:host ::ng-deep .data-analysis-table .p-datatable-tbody > tr:nth-child(even) {
+  background-color: var(--grey-5);
+}
+
+:host ::ng-deep .data-analysis-table .p-datatable-tbody > tr:hover {
+  background-color: var(--grey-10);
+}
+
+:host ::ng-deep .data-analysis-table .p-datatable-tbody > tr > td {
+  border-right: 1px solid var(--grey-20);
+  padding: var(--space-4);
+  vertical-align: top;
+}
+
+:host ::ng-deep .data-analysis-table .p-datatable-tbody > tr > td:last-child {
+  border-right: none;
+}
+
+.data-cell {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+.empty-message {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: var(--space-8);
+}
+
+.analysis-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  border-top: 1px solid var(--surface-border);
+  background-color: var(--surface-50);
+}
+
+.last-analyzed {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.last-analyzed i {
+  font-size: var(--font-size-sm);
+}
+
+.type-legend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.legend-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.legend-badge.legend-custom {
+  background-color: var(--purple-primary);
+  color: var(--text-inverted);
+  border: 1px solid var(--purple-primary);
+}
+
+.legend-badge.legend-ootb {
+  background-color: var(--alert-success);
+  color: var(--text-inverted);
+  border: 1px solid var(--alert-success);
+}
+
+.legend-badge.legend-none {
+  background-color: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-primary);
+}
+
+.legend-badge.legend-base {
+  background-color: var(--base-type-bg);
+  color: var(--base-type-text);
+  border: 1px solid var(--base-type-border);
+}
+
+/* Override PrimeNG styles */
+:host ::ng-deep .p-datatable {
+  border-radius: var(--radius-lg);
+}
+
+:host ::ng-deep .p-paginator {
+  background: var(--bg-secondary);
+  border: none;
+  border-top: 1px solid var(--border-primary);
+  position: relative;
+}
+
+/* Ensure dropdown panels have proper z-index and positioning */
+:host ::ng-deep .p-dropdown-panel {
+  z-index: var(--z-index-dropdown);
+  position: absolute;
+}
+
+/* Specific fix for paginator dropdown */
+:where(:host) ::ng-deep .p-paginator .p-dropdown {
+  position: static;
+}
+
+:where(:host) ::ng-deep .p-paginator .p-dropdown .p-dropdown-panel {
+  position: fixed;
+  z-index: var(--z-index-dropdown);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .file-stats {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .stat-badge {
+    font-size: var(--font-size-xs);
+  }
+
+  :host ::ng-deep .remove-btn {
+    opacity: 1;
+  }
+
+  .column-header {
+    min-width: var(--width-xs);
+  }
+
+  .type-badges {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .badge {
+    font-size: var(--font-size-xs);
+    padding: var(--space-1) var(--space-2);
+  }
+}

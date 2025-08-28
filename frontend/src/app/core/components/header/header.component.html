@@ -1,0 +1,20 @@
+<header class="app-header">
+  <div class="header-content">
+    <div class="brand">
+      <img src="/precisely.svg" alt="NL2FTA Logo" class="brand-logo" />
+    </div>
+    <div class="header-actions">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-user"
+        class="p-button-rounded p-button-text p-button-lg profile-button"
+        (click)="profileMenu.toggle($event)"
+        [attr.aria-label]="'User profile menu'"
+      ></button>
+      <p-menu #profileMenu [model]="profileMenuItems" [popup]="true" appendTo="body"></p-menu>
+    </div>
+  </div>
+</header>
+
+<p-toast></p-toast>

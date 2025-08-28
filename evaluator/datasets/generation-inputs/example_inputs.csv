@@ -1,0 +1,4 @@
+Type,Generation Description 1,Positive Value Examples,Negative Value Examples
+IDENTITY.EMPLOYEE_ID,"An IP address identifying the source location or device originating network traffic or data transmission.",192.0.0.2; 144.195.34.97; 10.215.173.1,1.1.1; None; 12.-1.0.2
+NAME.FIRST,"First name",John; Jane, john@example.com; E12345F
+NAME.LAST,"Last name",Smith; Wong, john@example.com; E12345F

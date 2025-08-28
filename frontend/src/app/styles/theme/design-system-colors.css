@@ -1,0 +1,209 @@
+/*
+ * Design System Color Palette
+ * This file contains the new color system to be implemented across the application
+ * Based on the Chromatic Storyboard design tokens
+ */
+
+:root {
+  /* ==========================================
+   * Primary Color Scales
+   * ========================================== */
+
+  /* Purple Scale */
+  --purple-100: #3d2264; /* Darkest purple */
+  --purple-primary: #5b1cb5; /* Primary purple */
+  --purple-60: #9957f0; /* Medium purple */
+  --purple-secondary: #c8a1fc; /* Secondary purple */
+  --purple-tertiary: #e0cafe; /* Tertiary purple */
+
+  /* Pink Scale */
+  --pink-100: #4f2041; /* Darkest pink */
+  --pink-80: #942c74; /* Dark pink */
+  --pink-primary: #ee96d3; /* Primary pink */
+  --pink-secondary: #f4b8e2; /* Secondary pink */
+  --pink-tertiary: #f9dcf1; /* Tertiary pink */
+
+  /* Teal Scale */
+  --teal-100: #003f4f; /* Darkest teal */
+  --teal-80: #00607a; /* Dark teal */
+  --teal-primary: #30c2e7; /* Primary teal */
+  --teal-secondary: #83daf1; /* Secondary teal */
+  --teal-tertiary: #c1edf8; /* Tertiary teal */
+
+  /* Grey Scale */
+  --grey-100: #1d1d1d; /* Darkest grey */
+  --grey-90: #262626; /* Near black */
+  --grey-80: #2e2e2e; /* Very dark grey */
+  --grey-70: #3e3e3e; /* Dark grey */
+  --grey-60: #4d4d4d; /* Medium-dark grey */
+  --grey-50: #606060; /* Medium grey */
+  --grey-45: #7f7f7f; /* Neutral grey */
+  --grey-40: #a3a3a3; /* Medium-light grey */
+  --grey-30: #c4c4c4; /* Light grey */
+  --grey-20: #dedede; /* Very light grey */
+  --grey-10: #f2f2f2; /* Near white */
+  --grey-5: #f9f9f9; /* Very near white */
+  --grey-0: #fff; /* White */
+
+  /* ==========================================
+   * RAG - Alert Colors
+   * ========================================== */
+  --alert-error: #ab0545; /* Error/Critical - Red */
+  --alert-warning: #ffb800; /* Warning - Amber/Yellow */
+  --alert-success: #6ac400; /* Success/OK - Green */
+  --alert-info: #66dff3; /* Informational - Light Blue */
+
+  /* ==========================================
+   * Base UI Colors
+   * ========================================== */
+
+  /* TODO: Add hex values as you get them from Chromatic */
+
+  /* --bg-primary: #???; */
+
+  /* --bg-secondary: #???; */
+
+  /* --text-primary: #???; */
+
+  /* --form-bg-default: #???; */
+
+  /* --purple-primary: #???; */
+
+  /* --purple-secondary: #???; */
+
+  /* ==========================================
+   * Text Colors
+   * ========================================== */
+
+  /* --text-primary: #???; */
+
+  /* --text-secondary: #???; */
+
+  /* --text-nav-hover: #???; */
+
+  /* --text-placeholder: #???; */
+
+  /* --text-panel-subheading: #???; */
+
+  /* --text-inverted: #???; */
+
+  /* --text-link-inline: #???; */
+
+  /* --text-error: #???; */
+
+  /* ==========================================
+   * Button Colors
+   * ========================================== */
+
+  /* --btn-primary-bg-default: #???; */
+
+  /* --btn-primary-bg-hover: #???; */
+
+  /* --btn-cont-bg-default: #???; */
+
+  /* --btn-cont-bg-hover: #???; */
+
+  /* --btn-bg-disabled: #???; */
+
+  /* --text-btn-disabled: #???; */
+
+  /* --text-btn-primary: #???; */
+
+  /* --text-btn-prim-hover: #???; */
+
+  /* --text-btn-secondary: #???; */
+
+  /* --text-btn-sec-hover: #???; */
+
+  /* --text-btn-cont-primary: #???; */
+
+  /* --text-btn-cont-prim-hover: #???; */
+
+  /* --text-btn-cont-secondary: #???; */
+
+  /* --text-btn-cont-sec-hover: #???; */
+
+  /* ==========================================
+   * Form/Table Colors
+   * ========================================== */
+
+  /* --form-bg-default: #???; */
+
+  /* --form-bg-contrast: #???; */
+
+  /* --borders-lines: #???; */
+
+  /* --selection-highlight: #???; */
+
+  /* --activestate-highlight: #???; */
+
+  /* --hover-border: #???; */
+
+  /* --focus-border: #???; */
+
+  /* --icon-default: #???; */
+
+  /* ==========================================
+   * Status Palette
+   * ========================================== */
+
+  /* --status-critical: #???; */
+
+  /* Error/Critical */
+
+  /* --status-critical-tint: #???; */
+
+  /* 50% tint */
+
+  /* --status-danger: #???; */
+
+  /* Danger */
+
+  /* --status-warning: #???; */
+
+  /* Warning */
+
+  /* --status-good: #???; */
+
+  /* Success/OK */
+
+  /* --status-good-tint: #???; */
+
+  /* 50% tint */
+
+  /* --status-info: #???; */
+
+  /* Informational */
+
+  /* --status-push: #???; */
+
+  /* Push */
+
+  /* --status-pause: #???; */
+
+  /* Pause */
+
+  /* ==========================================
+   * Alert Backgrounds
+   * ========================================== */
+
+  /* --alert-critical-bg: #???; */
+
+  /* Error/Critical */
+
+  /* --alert-danger-bg: #???; */
+
+  /* Danger */
+
+  /* --alert-warning-bg: #???; */
+
+  /* Warning */
+
+  /* --alert-success-bg: #???; */
+
+  /* Success/OK */
+
+  /* --alert-information-bg: #???; */
+
+  /* Informational */
+}

@@ -1,0 +1,2 @@
+evaluator/data/**/*.csv filter=lfs diff=lfs merge=lfs -text
+evaluator/data/**/*.json filter=lfs diff=lfs merge=lfs -text

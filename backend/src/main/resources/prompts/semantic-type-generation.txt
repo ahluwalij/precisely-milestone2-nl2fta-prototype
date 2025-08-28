@@ -1,0 +1,203 @@
+You are an expert in data classification and semantic type definition for the FTA library.
+
+Task: Generate a semantic type configuration based on the following information.
+
+CURRENT STATE:
+================
+{{#TYPE_NAME}}Type Name: {{TYPE_NAME}}
+{{/TYPE_NAME}}Description: {{DESCRIPTION}}
+{{#COLUMN_HEADER}}Column Header/Name: {{COLUMN_HEADER}}{{/COLUMN_HEADER}}
+
+Content Examples (Data Values):
+Positive Examples (values that SHOULD match):
+{{POSITIVE_CONTENT_EXAMPLES}}
+
+Negative Examples (values that should NOT match):
+{{NEGATIVE_CONTENT_EXAMPLES}}
+
+Header Pattern Examples (Column Names):
+Positive Examples (column names that SHOULD match):
+{{POSITIVE_HEADER_EXAMPLES}}
+
+Negative Examples (column names that should NOT match):
+{{NEGATIVE_HEADER_EXAMPLES}}
+
+Existing semantic types for context:
+{{EXISTING_TYPES}}
+
+PATTERN RULES:
+================
+Name types as [CATEGORY].[NAME] using the category list below. 
+Only use a standalone name if it truly doesn't fit any category. 
+Always pick the closest category from this list:
+
+FTA categories: AIRLINE, AIRPORT_CODE, CHECKDIGIT, COLOR, CONTINENT, 
+COORDINATE, COORDINATE_PAIR, COUNTRY, CURRENCY, CURRENCY_CODE, DAY, 
+EPOCH, GENDER, HASH, IDENTITY, INDUSTRY_CODE, IPADDRESS, LANGUAGE, 
+MONTH, NAME, PERIOD, PERSON, POSTAL_CODE, SPATIAL, STATE_PROVINCE, 
+TIMEZONE, URI
+
+REQUIREMENTS:
+====================
+
+1. Plugin Type Rules:
+   - CRITICAL: pluginType MUST be EXACTLY "regex" or "list" - no other values are valid
+   - Use "regex" for any data type that can be classified using a pattern, or can be nearly infinite possibilities
+   - Use "list" ONLY for small, finite sets (under 25 known values)
+   - Include ALL positive and negative examples for both data values and header examples provided by the user
+   - Do NOT use anchors (^ or $). Avoid broad wildcards like .*
+
+2. For lists (when pluginType is "list"):
+    - Provide a finite list of representative values in <listValues> (UPPERCASE), at least 10 entries when available, up to 25
+    - Use this only when the domain is truly finite or code-based
+    - CRITICAL: You MUST include a backout pattern: a broader anchored regex representing the domain’s shape (no ".*")
+    - The backout must reflect length and allowed character classes derived from the values (e.g., ^[A-Z]{2}$, ^[A-Z]{3}$, ^[A-Z0-9-]{2,5}$)
+    - ALWAYS include the <backout> field with a meaningful pattern; never leave it empty
+
+3. CRITICAL: Pattern requirements for FTA compatibility:
+   - Do NOT use non-capturing groups (?:...) in regex patterns
+   - Keep regex patterns simple - avoid complex optional groups
+
+4. For header patterns (headerPatterns field) - TOP-DOWN APPROACH:
+   Generate 4-6 patterns following a MANDATORY top-down hierarchy from specific to primitive.
+   
+   REQUIRED PATTERN PROGRESSION:
+   1. Most specific: Full semantic type variants (e.g., "transaction_date", "customer_email", "invoice_number")
+   2. Category level: Type category variants (e.g., "transaction", "customer", "invoice")
+   3. Mid-level: Common abbreviations and variations (e.g., "txn", "cust", "inv", "dt", "num")
+   4. Primitive level: Core terms (e.g., "date", "email", "number")
+
+   The LAST pattern MUST ALWAYS match the most primitive form of the concept:
+   - For any name type → MUST end with pattern matching "name"
+   - For any date type → MUST end with pattern matching "date"
+   - For any code type → MUST end with pattern matching "code"
+   - For any number type → MUST end with pattern matching "number" or "num"
+   
+   Pattern Rules:
+   - Use (?i) and .* for case-insensitive and flexible matching (e.g., "(?i).*invoice.*date.*")
+   - NO anchors (^ or $)
+   - Each pattern needs 1 positive and 1 negative example
+   - Examples should be JUST the column name, nothing else
+   
+   CRITICAL: This is NOT optional - you MUST include the primitive term pattern
+
+5. Set confidenceThreshold as an INTEGER between 80 and 100 (percentage, NOT decimal):
+6. PRIORITY AND THRESHOLD POLICY (QUALITY CONTROL):
+   - Highly specific types (strict formats) → threshold 95–100, priority 1000–3000
+   - Moderately specific types → threshold 90–95, priority 3000–5000
+   - Broad/generic types (e.g., NAME, IDENTIFIER, COMPANY_NAME, FILENAME) → threshold ≥97 and priority ≥8000
+   - Checkdigit-only numeric types (UPC/EAN/etc.) must have LOWER priority (≥5000) than country/national IDENTITY types (<3000)
+
+7. GENERIC QUALITY SAFEGUARDS (MANDATORY):
+   - Avoid over-broad patterns and ambiguous classifications.
+   - Prefer explicit tokens, separators, and bounded character classes over wildcards.
+   - When generating catch-all or very broad types, set higher thresholds and lower priority to reduce conflicts with specific types.
+   - Do not hard-code domain-specific shortcuts; infer structure strictly from the provided description and examples.
+
+8. Pattern and Example Neutrality:
+   - Do not embed assumptions about any particular dataset, region, or code set beyond what the user provided.
+   - Keep examples realistic but generic; avoid referencing specific third-party code lists or brand names unless present in the user's prompt.
+
+6. {{#SIMILAR_TYPE_TO_AVOID}}IMPORTANT: The user is creating a NEW type that is distinct from the existing '{{SIMILAR_TYPE_TO_AVOID}}' type.
+   - In the description field, ADD 1-2 sentences at the end that clearly explain how this new type differs from '{{SIMILAR_TYPE_TO_AVOID}}'.
+   - These sentences should be on a new line, separated from the main description.
+   - Example: "Unlike {{SIMILAR_TYPE_TO_AVOID}}, this type specifically identifies... and does not include..."
+   - Make sure the distinction is clear and specific.{{/SIMILAR_TYPE_TO_AVOID}}
+
+9. Example Generation Requirements (CRITICAL):
+   - Generate appropriate examples based on the user's request
+   - Generate 6-8 examples per category to provide comprehensive coverage
+   - Content examples should be actual data values that match/don't match the pattern
+   - Header examples should be column names/headers that would/wouldn't identify this semantic type
+
+   CRITICAL EXAMPLE FORMAT RULES:
+   - Examples MUST not include anything other than the actual value
+   - NO empty strings, null values, or placeholder Text
+   - Each example must be a realistic, actual data value that could appear in a real dataset
+
+   NEGATIVE EXAMPLE REQUIREMENTS (CRITICAL FOR QUALITY):
+   - Negative examples MUST be EDGE CASES that are close to matching but fail due to SUBTLE differences
+   - They should represent confusing situations that might realistically appear in datasets
+   
+   EXAMPLE FORMAT VIOLATIONS TO AVOID:
+   ❌ "mary (starts with lowercase)" 
+   ❌ "JOHN (all uppercase)"
+   ❌ "Anne_Marie (uses underscore instead of hyphen/space)" 
+   ❌ "null"
+   ❌ "undefined"
+   ❌ "e.g. undefined"
+   ❌ ""
+   ❌ " "
+
+RESPONSE FORMAT (XML):
+Output ONLY the XML block below. Do not include any explanations or text outside the XML. Ensure that for list plugin types, <listValues> and <backout> are present; for regex plugin types, <regexPattern> is present.
+
+<semanticType>
+  <basicInfo>
+    <semanticType><CATEGORY>.<TYPE_NAME></semanticType>
+    <description><clear description>{{#SIMILAR_TYPE_TO_AVOID}}
+
+<1-2 sentences explaining how this differs from {{SIMILAR_TYPE_TO_AVOID}}>{{/SIMILAR_TYPE_TO_AVOID}}</description>
+    <pluginType>EXACTLY "regex" or "list" - no other values allowed</pluginType>
+    <regexPattern><regex pattern if pluginType is regex></regexPattern>
+    <listValues>
+      <value><value1 if pluginType is list></value>
+      <value><value2 if pluginType is list></value>
+    </listValues>
+    <backout><REQUIRED: broader fallback regex pattern if pluginType is list - NEVER leave empty></backout>
+    <confidenceThreshold><number between 80 and 100></confidenceThreshold>
+    <priority><number >= 2000></priority>
+  </basicInfo>
+  
+  <headerPatterns>
+    <!-- Generate up to 6 patterns from specific to general -->
+    <pattern>
+      <regExp><!-- Most specific pattern --></regExp>
+      <confidence>95</confidence>
+      <mandatory>true</mandatory>
+      <positiveExamples>
+        <example><!-- column name example --></example>
+      </positiveExamples>
+      <negativeExamples>
+        <example><!-- wrong column name --></example>
+      </negativeExamples>
+    </pattern>
+    <!-- More patterns... -->
+    <pattern>
+      <regExp><!-- LAST PATTERN: just the core term --></regExp>
+      <confidence>95</confidence>
+      <mandatory>true</mandatory>
+      <positiveExamples>
+        <example><!-- basic term --></example>
+      </positiveExamples>
+      <negativeExamples>
+        <example><!-- different term --></example>
+      </negativeExamples>
+    </pattern>
+  </headerPatterns>
+  
+  <examples>
+    <positiveContentExamples>
+      <!-- Generate 6-8 examples for comprehensive coverage -->
+      <example><content example that would match></example>
+      <!-- Add more <example> tags as needed -->
+    </positiveContentExamples>
+    <negativeContentExamples>
+      <!-- Generate 6-8 examples for comprehensive coverage -->
+      <example><content example that would NOT match></example>
+      <!-- Add more <example> tags as needed -->
+    </negativeContentExamples>
+    <positiveHeaderExamples>
+      <!-- Generate 6-8 examples for comprehensive coverage -->
+      <example><header example that would identify this type></example>
+      <!-- Add more <example> tags as needed -->
+    </positiveHeaderExamples>
+    <negativeHeaderExamples>
+      <!-- Generate 6-8 examples for comprehensive coverage -->
+      <example><header example that would NOT identify this type></example>
+      <!-- Add more <example> tags as needed -->
+    </negativeHeaderExamples>
+  </examples>
+  
+  <explanation><explanation of the semantic type and its use cases></explanation>
+</semanticType> 

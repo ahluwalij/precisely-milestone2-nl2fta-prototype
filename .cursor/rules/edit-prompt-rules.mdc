@@ -1,0 +1,4 @@
+---
+alwaysApply: true
+---
+Whenever you make any change to any prompt .txt file, you need to commit that change in git in order to track that as an iteration we made.

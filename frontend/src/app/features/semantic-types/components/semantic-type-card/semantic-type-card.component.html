@@ -1,0 +1,157 @@
+<!-- @angular-eslint/template/click-events-have-key-events -->
+<!-- @angular-eslint/template/interactive-supports-focus -->
+<div
+  class="type-card"
+  [class.expanded]="isExpanded"
+  (click)="toggleExpanded()"
+  (keyup.enter)="toggleExpanded()"
+  (keyup.space)="toggleExpanded()"
+  role="button"
+  tabindex="0"
+  [attr.aria-expanded]="isExpanded"
+  [attr.aria-label]="'Toggle details for ' + type.semanticType"
+>
+  <div class="type-header">
+    <div class="type-main-info">
+      <h3 class="type-name">{{ type.semanticType }}</h3>
+      <span class="source-badge" [class.source-custom]="isCustom">
+        {{ isCustom ? 'Custom' : 'Predefined' }}
+      </span>
+      <span class="type-badge" [class]="'type-' + type.pluginType">{{ type.pluginType }}</span>
+      <span class="base-type-badge">{{ type.baseType }}</span>
+    </div>
+    <div class="type-actions">
+      <button
+        *ngIf="isCustom"
+        pButton
+        type="button"
+        icon="pi pi-trash"
+        class="p-button-text p-button-danger p-button-sm delete-button p-button-icon-only"
+        (click)="deleteType($event)"
+        pTooltip="Delete custom type"
+        tooltipPosition="top"
+        aria-label="Delete custom type"
+      ></button>
+      <i class="pi expand-icon" [ngClass]="isExpanded ? 'pi-chevron-up' : 'pi-chevron-down'"></i>
+    </div>
+  </div>
+
+  <p class="type-description" *ngIf="!isExpanded">{{ type.description }}</p>
+
+  <div class="type-content" *ngIf="isExpanded">
+    <p class="type-description">{{ type.description }}</p>
+
+    <div class="type-details">
+    <div class="detail-section" *ngIf="type.threshold">
+      <h4>Data Threshold</h4>
+      <div class="threshold-info">
+        <p class="threshold-description">
+          Minimum percentage of data values that must match this pattern:
+        </p>
+        <div class="threshold-indicator-compact">
+          <div class="threshold-bar-compact">
+            <div class="threshold-fill" [style.width.%]="type.threshold"></div>
+          </div>
+          <span class="threshold-value">{{ type.threshold }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section" *ngIf="filteredValidLocales && filteredValidLocales.length > 0">
+      <h4>Pattern Matching Rules</h4>
+      <div *ngFor="let locale of filteredValidLocales">
+        <div class="locale-info" *ngIf="locale.headerRegExps && locale.headerRegExps.length > 0">
+          <h5>Header Name Hints:</h5>
+          <p class="hint-description">
+            Column names matching these patterns suggest this semantic type:
+          </p>
+          <ul class="pattern-list">
+            <li *ngFor="let header of locale.headerRegExps">
+              <code>{{ header.regExp }}</code>
+              <span
+                class="confidence-badge"
+                *ngIf="header.confidence"
+                [ngClass]="{
+                  'confidence-high': header.confidence >= 90,
+                  'confidence-medium': header.confidence >= 70 && header.confidence < 90,
+                  'confidence-low': header.confidence < 70,
+                }"
+                pTooltip="Header match provides {{ header.confidence }}% confidence"
+                tooltipPosition="top"
+                >{{ header.confidence }}% confidence</span
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="locale-info" *ngIf="locale.matchEntries && locale.matchEntries.length > 0">
+          <h5>Data Patterns:</h5>
+          <p class="hint-description">
+            Regular expressions that data values must match to be classified as this semantic type:
+          </p>
+          <ul class="pattern-list">
+            <li *ngFor="let match of locale.matchEntries">
+              <code>{{ match.regExpReturned }}</code>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Java Plugin Information -->
+    <div class="detail-section" *ngIf="type.pluginType === 'java' && type.clazz">
+      <h4>Implementation Details</h4>
+      <div class="java-info">
+        <h5>Java Class:</h5>
+        <div class="java-class-container">
+          <code class="java-class">{{ type.clazz }}</code>
+        </div>
+        <p class="implementation-note">
+          This semantic type is implemented using custom Java logic.
+        </p>
+      </div>
+    </div>
+
+    <!-- List Plugin Information -->
+    <div class="detail-section" *ngIf="type.pluginType === 'list' && type.content">
+      <h4>Value List Information</h4>
+      <div class="list-info">
+        <div *ngIf="type.content.type === 'resource' || type.content.type === 'file'">
+          <h5>Data Source:</h5>
+          <div class="list-source">
+            <i class="pi pi-file" style="margin-right: 0.5rem"></i>
+            <code>{{ type.content.reference }}</code>
+          </div>
+          <p class="list-note">This semantic type matches values from a predefined list.</p>
+        </div>
+        <div *ngIf="type.content.type === 'inline' && type.content.values">
+          <h5>Valid Values:</h5>
+          <div class="inline-values">
+            <span *ngFor="let value of type.content.values" class="value-chip">
+              {{ value }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section" *ngIf="type.documentation && type.documentation.length > 0">
+      <h4>Documentation</h4>
+      <ul class="doc-list">
+        <li *ngFor="let doc of type.documentation">
+          <span class="doc-source">{{ doc.source }}:</span>
+          <span class="doc-reference">{{ doc.reference }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="detail-section" *ngIf="type.minimum || type.maximum">
+      <h4>Value Range</h4>
+      <p>
+        <span *ngIf="type.minimum">Min: {{ type.minimum }}</span>
+        <span *ngIf="type.minimum && type.maximum"> - </span>
+        <span *ngIf="type.maximum">Max: {{ type.maximum }}</span>
+      </p>
+    </div>
+  </div>
+  </div>
+</div>

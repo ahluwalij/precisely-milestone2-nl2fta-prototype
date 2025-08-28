@@ -1,0 +1,115 @@
+# === Build Artifacts ===
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+gradle.properties
+
+# Compiled files
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# === IDE Files ===
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# === System Files ===
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Linux
+*~
+
+# === Application Files ===
+# Logs
+logs/
+*.log
+*.pid
+
+# Temporary files
+*.tmp
+*.swp
+temp/
+tmp/
+out/
+
+# === Configuration ===
+# Environment files
+.env.local
+.env.production.local
+!.env.example
+
+# AWS Integration Test Credentials
+.aws-credentials
+
+# Security
+*.key
+*.pem
+*.p12
+*.jks
+*.crt
+*.keystore
+*.truststore
+
+# === Docker ===
+docker-compose.override.yml
+.dockerignore.local
+
+# === Project Specific ===
+# Runtime generated files
+/target/
+/config/*.tmp
+
+# Spring Boot specific
+application-*.yml
+application-*.yaml
+application-*.properties
+!application.yml
+!application.yaml
+!application.properties
+
+# JaCoCo coverage
+jacoco.exec
+*.exec
+
+# Maven (if ever used)
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar 
+# Ignore environment files with credentials
+.env
+.env.local
+.env.*.local

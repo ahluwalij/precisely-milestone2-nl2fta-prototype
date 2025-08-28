@@ -1,0 +1,223 @@
+<div class="semantic-types-section">
+  <div class="types-header-container">
+    <div
+      class="types-header"
+      (click)="toggleTypesExpanded()"
+      (keyup.enter)="toggleTypesExpanded()"
+      (keyup.space)="toggleTypesExpanded()"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="typesExpanded()"
+      aria-label="Toggle semantic types section"
+    >
+      <div class="header-content">
+        <i class="pi" [ngClass]="typesExpanded() ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
+        <h2>Available Semantic Types</h2>
+        <span class="types-count" *ngIf="!isLoadingTypes()"
+          >({{ semanticTypeService.semanticTypes().length }} types)</span
+        >
+      </div>
+      <p class="types-description">Explore the semantic types that can be detected in your data</p>
+    </div>
+    <div class="header-actions">
+      <button
+        pButton
+        type="button"
+        label="Add Semantic Type"
+        icon="pi pi-plus"
+        class="p-button-primary p-button-sm add-type-button"
+        (click)="openAddTypeModal()"
+      ></button>
+    </div>
+  </div>
+
+  <div class="filters-container" *ngIf="typesExpanded() && !isLoadingTypes()">
+    <div class="filters-row">
+      <!-- Search -->
+      <div class="search-container">
+        <i class="pi pi-search search-icon"></i>
+        <input
+          type="text"
+          pInputText
+          [ngModel]="semanticTypeService.search()"
+          (ngModelChange)="semanticTypeService.setSearch($event)"
+          placeholder="Search semantic types..."
+          class="search-input"
+        />
+      </div>
+
+      <!-- Filter Dropdowns -->
+      <div class="filter-dropdowns">
+        <!-- Sort control separated visually from filters -->
+        <div class="sort-control">
+          <label class="sort-label"><i class="pi pi-sort-amount-down"></i> Sort</label>
+          <p-dropdown
+            [options]="sortOptions"
+            [(ngModel)]="selectedSort"
+            (onChange)="onSortChange($event)"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Sort by"
+            styleClass="filter-dropdown sort-dropdown"
+          ></p-dropdown>
+        </div>
+
+        <!-- Type Filter -->
+        <p-multiSelect
+          [options]="typeFilterOptions"
+          [(ngModel)]="selectedTypeFilters"
+          (onChange)="onTypeFilterChange($event)"
+          (onClear)="onClearTypeFilter()"
+          placeholder="Type"
+          [showHeader]="false"
+          [showClear]="true"
+          optionValue="value"
+          optionLabel="label"
+          styleClass="filter-dropdown"
+          [maxSelectedLabels]="3"
+          selectedItemsLabel="{0} types selected"
+        >
+          <ng-template let-option pTemplate="item">
+            <span class="dropdown-item">
+              {{ option.label }}
+              <span class="item-count" *ngIf="option.count !== undefined"
+                >({{ option.count }})</span
+              >
+            </span>
+          </ng-template>
+        </p-multiSelect>
+
+        <!-- Plugin Type Filter -->
+        <p-multiSelect
+          [options]="pluginTypeFilterOptions"
+          [(ngModel)]="selectedPluginTypeFilters"
+          (onChange)="onPluginTypeFilterChange($event)"
+          (onClear)="onClearPluginTypeFilter()"
+          placeholder="Plugin Type"
+          [showHeader]="false"
+          [showClear]="true"
+          optionValue="value"
+          optionLabel="label"
+          styleClass="filter-dropdown"
+          [maxSelectedLabels]="3"
+          selectedItemsLabel="{0} plugin types selected"
+        >
+          <ng-template let-option pTemplate="item">
+            <span class="dropdown-item">
+              {{ option.label }}
+              <span class="item-count" *ngIf="option.count !== undefined"
+                >({{ option.count }})</span
+              >
+            </span>
+          </ng-template>
+        </p-multiSelect>
+
+        <!-- Threshold Filter -->
+        <p-multiSelect
+          [options]="thresholdFilterOptions"
+          [(ngModel)]="selectedThresholdFilters"
+          (onChange)="onThresholdFilterChange($event)"
+          (onClear)="onClearThresholdFilter()"
+          placeholder="Confidence Levels"
+          [showHeader]="false"
+          [showClear]="true"
+          optionValue="value"
+          optionLabel="label"
+          styleClass="filter-dropdown"
+          [maxSelectedLabels]="3"
+          selectedItemsLabel="{0} levels selected"
+        >
+          <ng-template let-option pTemplate="item">
+            <span class="dropdown-item">
+              {{ option.label }}
+              <span class="item-count" *ngIf="option.count !== undefined"
+                >({{ option.count }})</span
+              >
+            </span>
+          </ng-template>
+        </p-multiSelect>
+      </div>
+    </div>
+
+    <!-- Active Filters -->
+    <div class="active-filters" *ngIf="hasActiveFilters()">
+      <span class="active-filters-label">Active filters:</span>
+      <div class="filter-chips">
+        <p-chip
+          *ngFor="let filterLabel of getTypeFilterLabels(); let i = index"
+          [label]="filterLabel"
+          [removable]="true"
+          (onRemove)="removeTypeFilter(getTypeFilterValues()[i])"
+          styleClass="filter-chip"
+        ></p-chip>
+        <p-chip
+          *ngFor="let filterLabel of getPluginTypeFilterLabels(); let i = index"
+          [label]="filterLabel"
+          [removable]="true"
+          (onRemove)="removePluginTypeFilter(getPluginTypeFilterValues()[i])"
+          styleClass="filter-chip"
+        ></p-chip>
+        <p-chip
+          *ngFor="let threshold of semanticTypeService.thresholds()"
+          [label]="threshold.label"
+          [removable]="true"
+          (onRemove)="removeThresholdFilter(threshold)"
+          styleClass="filter-chip"
+        ></p-chip>
+        <p-chip
+          *ngIf="semanticTypeService.search()"
+          [label]="'Search: ' + semanticTypeService.search()"
+          [removable]="true"
+          (onRemove)="semanticTypeService.setSearch('')"
+          styleClass="filter-chip"
+        ></p-chip>
+      </div>
+      <button class="clear-all-button" (click)="clearAllFilters()" title="Clear all filters">
+        Clear all
+      </button>
+    </div>
+
+    <!-- Results Summary -->
+    <div
+      class="results-summary"
+      *ngIf="
+        semanticTypeService.filteredTypes().length !== semanticTypeService.semanticTypes().length
+      "
+    >
+      <span>Showing {{ semanticTypeService.sortedTypes().length }} of {{ semanticTypeService.semanticTypes().length }} types</span>
+    </div>
+  </div>
+
+  <div class="types-container" [class.expanded]="typesExpanded()" *ngIf="!isLoadingTypes()">
+    <div class="types-grid" *ngIf="semanticTypeService.sortedTypes().length > 0">
+      <app-semantic-type-card
+        *ngFor="let type of semanticTypeService.sortedTypes()"
+        [type]="type"
+        (deleted)="onTypeDeleted($event)"
+      ></app-semantic-type-card>
+    </div>
+
+    <div class="no-results" *ngIf="semanticTypeService.sortedTypes().length === 0">
+      <i
+        class="pi pi-search"
+        style="font-size: 3rem; color: var(--text-tertiary); margin-bottom: 1rem"
+      ></i>
+      <p>No semantic types found matching your criteria</p>
+      <p class="no-results-hint">Try adjusting your filters or search term</p>
+    </div>
+  </div>
+
+  <div class="types-loading" *ngIf="isLoadingTypes()">
+    <i class="pi pi-spinner pi-spin" style="font-size: 2.5rem"></i>
+    <p>Loading semantic types...</p>
+  </div>
+</div>
+
+<!-- Add Semantic Type Modal -->
+<app-add-semantic-type-modal
+  *ngIf="showAddTypeModal()"
+  (modalClose)="closeAddTypeModal()"
+  (typeSaved)="onTypeSaved()"
+></app-add-semantic-type-modal>
+
+<p-toast></p-toast>

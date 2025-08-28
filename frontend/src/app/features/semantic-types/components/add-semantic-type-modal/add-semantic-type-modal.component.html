@@ -1,0 +1,83 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '90vw', 'max-width': '960px' }"
+  [draggable]="false"
+  [resizable]="false"
+  [header]="dialogTitle()"
+  (onHide)="closeModal()"
+>
+  <!-- Similar Type Alert -->
+  <div *ngIf="showSimilarTypeAlertValue()" class="similar-type-alert">
+    <div class="alert-content">
+      <h3>Similar Type Found</h3>
+      <div *ngIf="similarTypeResultValue()">
+        <p class="alert-message">
+          A similar
+          {{ similarTypeResultValue()!.existingTypeIsBuiltIn ? 'built-in' : 'custom' }} semantic
+          type already exists. You can close this dialog to use the existing type, or create a
+          different one.
+        </p>
+        <div class="existing-type-info">
+          <h4>{{ similarTypeResultValue()!.existingTypeMatch }}</h4>
+          <p>{{ similarTypeResultValue()!.existingTypeDescription }}</p>
+          <div *ngIf="similarTypeResultValue()!.existingTypePattern" class="type-pattern">
+            <strong>Pattern:</strong>
+            <code>{{ similarTypeResultValue()!.existingTypePattern }}</code>
+          </div>
+        </div>
+        <p class="explanation">{{ similarTypeResultValue()!.explanation }}</p>
+
+        <div class="alert-actions">
+          <button
+            pButton
+            type="button"
+            class="p-button-secondary"
+            (click)="dismissSimilarTypeAlert()"
+          >
+            <i class="pi pi-times"></i>
+            <span class="p-button-label">Cancel</span>
+          </button>
+          <button
+            pButton
+            type="button"
+            class="p-button-primary"
+            [disabled]="isGenerating()"
+            (click)="createDifferentType()"
+          >
+            <i [class]="isGenerating() ? 'pi pi-spinner pi-spin' : 'pi pi-plus'"></i>
+            <span class="p-button-label">{{
+              isGenerating() ? 'Generating...' : 'Create New Type'
+            }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step Navigation -->
+  <p-steps
+    [model]="stepItems"
+    [activeIndex]="activeStepIndex()"
+    [readonly]="false"
+    (activeIndexChange)="onStepChange($event)"
+    [styleClass]="'steps-nav' + (isConfigureStepDisabled() ? ' configure-disabled' : '')"
+  >
+  </p-steps>
+
+  <!-- Step Content -->
+  <div class="step-content">
+    <app-natural-language-step
+      *ngIf="activeStepIndex() === 0"
+      [awsConfigured]="awsConfigured"
+      (generateRequested)="onGenerateRequested()"
+      (openAwsConfig)="openAwsConfigModal()"
+    ></app-natural-language-step>
+    <app-configure-type-step
+      *ngIf="activeStepIndex() === 1"
+      (typeSaved)="onTypeSaved()"
+      (showSimilarityAlert)="handleSimilarityAlert($event)"
+      (goBack)="onGoBack()"
+    ></app-configure-type-step>
+  </div>
+</p-dialog>

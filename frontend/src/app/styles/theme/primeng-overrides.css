@@ -1,0 +1,19 @@
+/* PrimeNG Theme Overrides - NL2FTA Brand */
+
+/* Dropdown Overrides */
+.p-menu-item-link:focus,
+.p-menu-item-link:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* MultiSelect Items */
+.p-multiselect-option {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+/* Dialog Overrides */
+.p-dialog.p-component {
+  overflow: hidden;
+}
