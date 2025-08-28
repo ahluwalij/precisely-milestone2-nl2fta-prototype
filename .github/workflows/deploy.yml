@@ -175,7 +175,7 @@ jobs:
         run: |
           chmod +x scripts/run-eval.sh
           # No data-dir/files on purpose: the runner will enumerate all *_data.csv under evaluator/datasets/data/
-          ./scripts/run-eval.sh --descriptions "1 2 3 4 5 6" || true
+          ./scripts/run-eval.sh --descriptions "1 2 3 4 5 6" --default || true
       - name: Upload eval results
         if: always()
         uses: actions/upload-artifact@v4
@@ -222,7 +222,7 @@ jobs:
             echo "❌ Missing evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv" >&2
             exit 1
           fi
-          ./scripts/generate-semantic-types.sh --dataset telco_5GTraffic --descriptions "1 5 6"
+          ./scripts/generate-semantic-types.sh --dataset telco_5GTraffic --descriptions "1 5 6" --default
 
       - name: Run evaluator on generated types (telco_5GTraffic)
         working-directory: nl2fta-milestone3-extracted
@@ -231,7 +231,7 @@ jobs:
           VECTOR_INDEX_REBUILD_ON_STARTUP: 'false'
         run: |
           chmod +x scripts/run-eval.sh
-          ./scripts/run-eval.sh --dataset telco_5GTraffic --descriptions "1 5 6" --no-cleanup || true
+          ./scripts/run-eval.sh --dataset telco_5GTraffic --descriptions "1 5 6" --no-cleanup --default || true
           echo "Listing evaluator logs (if any):"
           ls -la evaluator/logs || true
           echo "Listing evaluator results (if any):"

@@ -453,6 +453,32 @@ install_chainctl() {
 setup_chainguard() {
     local use_default="${1:-false}"
     echo -e "${BLUE}Setting up Chainguard authentication...${NC}"
+
+    # Check if we're in CI environment
+    if [[ "${CI:-false}" == "true" ]] || [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+        echo -e "${YELLOW}CI environment detected. Skipping Chainguard authentication setup.${NC}"
+        echo -e "${YELLOW}Docker images will be pulled without Chainguard authentication.${NC}"
+
+        # In CI, just ensure chainctl is available but don't try to authenticate
+        if ! command -v chainctl &> /dev/null; then
+            install_chainctl
+        fi
+
+        # Try to create a basic Docker config for Chainguard images
+        mkdir -p ~/.docker
+        if [ ! -f ~/.docker/config.json ]; then
+            cat > ~/.docker/config.json << 'EOF'
+{
+  "auths": {},
+  "credHelpers": {}
+}
+EOF
+        fi
+
+        echo -e "${GREEN}✅ Chainguard setup skipped for CI environment${NC}"
+        return 0
+    fi
+
     # Enforce headless mode universally
     export CHAINCTL_HEADLESS=1
     export NO_BROWSER=1

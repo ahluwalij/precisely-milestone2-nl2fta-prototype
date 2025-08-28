@@ -278,8 +278,12 @@ check_docker
 # Stop any existing services
 cleanup
 
-# Setup Chainguard
-setup_chainguard "$DEFAULT_MODE"
+# Setup Chainguard (interactive); allow CI to bypass and rely on preconfigured server creds
+if [ "$CI" = "true" ]; then
+  echo "CI environment detected; skipping chainctl interactive setup. Ensure server has Docker creds for cgr.dev."
+else
+  setup_chainguard "$DEFAULT_MODE"
+fi
 
 # Start services
 echo ""

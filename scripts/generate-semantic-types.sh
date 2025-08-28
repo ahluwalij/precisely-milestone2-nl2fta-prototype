@@ -82,6 +82,32 @@ install_chainctl() {
 setup_chainguard() {
     local use_default="${1:-false}"
     echo -e "${BLUE}Setting up Chainguard authentication...${NC}"
+
+    # Check if we're in CI environment
+    if [[ "${CI:-false}" == "true" ]] || [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+        echo -e "${YELLOW}CI environment detected. Skipping Chainguard authentication setup.${NC}"
+        echo -e "${YELLOW}Docker images will be pulled without Chainguard authentication.${NC}"
+
+        # In CI, just ensure chainctl is available but don't try to authenticate
+        if ! command -v chainctl &> /dev/null; then
+            install_chainctl
+        fi
+
+        # Try to create a basic Docker config for Chainguard images
+        mkdir -p ~/.docker
+        if [ ! -f ~/.docker/config.json ]; then
+            cat > ~/.docker/config.json << 'EOF'
+{
+  "auths": {},
+  "credHelpers": {}
+}
+EOF
+        fi
+
+        echo -e "${GREEN}✅ Chainguard setup skipped for CI environment${NC}"
+        return 0
+    fi
+
     # Enforce headless mode universally
     export CHAINCTL_HEADLESS=1
     export NO_BROWSER=1
@@ -344,6 +370,42 @@ EOF
 }
 
 prompt_for_credentials() {
+  # Check if we're in CI environment
+  if [[ "${CI:-false}" == "true" ]] || [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+    echo -e "${BLUE}AWS Credentials Setup (CI mode)${NC}"
+
+    # In CI, only use environment variables or saved credentials
+    if [[ -n "${AWS_ACCESS_KEY_ID}" && -n "${AWS_SECRET_ACCESS_KEY}" ]]; then
+      ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
+      SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
+      if [[ -n "${AWS_REGION}" ]]; then
+        AWS_REGION="${AWS_REGION}"
+      else
+        AWS_REGION="us-east-1"
+      fi
+      echo -e "${GREEN}Using AWS credentials from environment (non-interactive)${NC}"
+      export AWS_ACCESS_KEY_ID="$ACCESS_KEY_ID"
+      export AWS_SECRET_ACCESS_KEY="$SECRET_ACCESS_KEY"
+      export AWS_REGION="$AWS_REGION"
+      return 0
+    elif [[ "$USE_SAVED_CREDENTIALS" == true ]] && load_credentials; then
+      echo -e "${GREEN}Using saved credentials (non-interactive)${NC}"
+      echo -e "  Access Key ID: ${ACCESS_KEY_ID:0:4}****${ACCESS_KEY_ID: -4}"
+      echo -e "  Region: ${AWS_REGION:-us-east-1}"
+      export AWS_ACCESS_KEY_ID="$ACCESS_KEY_ID"
+      export AWS_SECRET_ACCESS_KEY="$SECRET_ACCESS_KEY"
+      export AWS_REGION="$AWS_REGION"
+      return 0
+    else
+      echo -e "${YELLOW}⚠️  No AWS credentials provided in CI environment${NC}"
+      echo -e "${YELLOW}   Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables${NC}"
+      echo -e "${YELLOW}   Or use --use-saved-credentials if credentials are saved${NC}"
+      echo -e "${YELLOW}   Skipping AWS credential validation for evaluation mode${NC}"
+      return 0
+    fi
+  fi
+
+  # Interactive mode for local development
   echo -e "${BLUE}AWS Credentials Setup (interactive)${NC}"
   # Non-interactive fast-path: if env vars are provided, use them and skip prompts
   if [[ -n "${AWS_ACCESS_KEY_ID}" && -n "${AWS_SECRET_ACCESS_KEY}" ]]; then
