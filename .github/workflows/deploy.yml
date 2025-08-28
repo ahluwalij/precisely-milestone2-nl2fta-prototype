@@ -1,8 +1,6 @@
 name: Tests & Evals
 
 on:
-  push:
-    branches: [ "**" ]
   workflow_dispatch:
     inputs:
       environment:
@@ -199,84 +197,7 @@ jobs:
             nl2fta-milestone3-extracted/evaluator/logs/**
           if-no-files-found: ignore
 
-  generate-and-test-type:
-    if: needs.build-package.result == 'success' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-latest
-    needs: build-package
-    steps:
-      - name: Download client package
-        uses: actions/download-artifact@v4
-        with:
-          name: nl2fta-milestone3.zip
-          path: .
 
-      - name: Extract client package
-        run: |
-          rm -rf nl2fta-milestone3-extracted
-          mkdir nl2fta-milestone3-extracted
-          unzip -q nl2fta-milestone3.zip -d nl2fta-milestone3-extracted
-          ls -la nl2fta-milestone3-extracted
-
-      - name: Generate semantic types for telco_5GTraffic (descriptions 1, 5, and 6)
-        working-directory: nl2fta-milestone3-extracted
-        env:
-          CI: 'true'
-          # LLM Configuration - defaults to OpenAI
-          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER || 'openai' }}
-          # OpenAI Configuration
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o' }}
-          OPENAI_MAX_TOKENS: ${{ secrets.OPENAI_MAX_TOKENS || '4096' }}
-          OPENAI_TEMPERATURE: ${{ secrets.OPENAI_TEMPERATURE || '0.7' }}
-          OPENAI_RETRY_MAX_ATTEMPTS: ${{ secrets.OPENAI_RETRY_MAX_ATTEMPTS || '3' }}
-          # AWS Configuration (optional, for Bedrock fallback)
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
-        run: |
-          chmod +x scripts/generate-semantic-types.sh || true
-          # Generation uses evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv
-          if [ ! -f "evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv" ]; then
-            echo "❌ Missing evaluator/datasets/generation-inputs/telco_5GTraffic_inputs.csv" >&2
-            exit 1
-          fi
-          ./scripts/generate-semantic-types.sh --dataset telco_5GTraffic --descriptions "1 5 6" --default
-
-      - name: Run evaluator on generated types (telco_5GTraffic)
-        working-directory: nl2fta-milestone3-extracted
-        env:
-          VECTOR_INDEX_ENABLED: 'false'
-          VECTOR_INDEX_REBUILD_ON_STARTUP: 'false'
-          # LLM Configuration - defaults to OpenAI
-          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER || 'openai' }}
-          # OpenAI Configuration
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o' }}
-          OPENAI_MAX_TOKENS: ${{ secrets.OPENAI_MAX_TOKENS || '4096' }}
-          OPENAI_TEMPERATURE: ${{ secrets.OPENAI_TEMPERATURE || '0.7' }}
-          OPENAI_RETRY_MAX_ATTEMPTS: ${{ secrets.OPENAI_RETRY_MAX_ATTEMPTS || '3' }}
-          # AWS Configuration (optional, for Bedrock fallback)
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
-        run: |
-          chmod +x scripts/run-eval.sh
-          ./scripts/run-eval.sh --dataset telco_5GTraffic --descriptions "1 5 6" --no-cleanup --default || true
-          echo "Listing evaluator logs (if any):"
-          ls -la evaluator/logs || true
-          echo "Listing evaluator results (if any):"
-          ls -la evaluator/results || true
-
-      - name: Upload generation + eval artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: telco_5GTraffic-generation-and-eval
-          path: |
-            nl2fta-milestone3-extracted/evaluator/generated_semantic_types/telco_5GTraffic_description*_*.json
-            nl2fta-milestone3-extracted/evaluator/results/**
-            nl2fta-milestone3-extracted/evaluator/logs/**
-          if-no-files-found: ignore
 
       - name: Shutdown Docker compose services
         if: always()

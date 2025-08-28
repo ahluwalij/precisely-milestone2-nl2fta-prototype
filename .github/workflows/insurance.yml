@@ -1,0 +1,153 @@
+name: Insurance Dataset - Generate & Evaluate
+
+on:
+  workflow_dispatch:
+    inputs:
+      descriptions:
+        description: "Space-separated description numbers to generate (default: '1 2 3 4 5 6')"
+        required: false
+        default: "1 2 3 4 5 6"
+
+jobs:
+  build-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - name: Setup Node (frontend needs it for coverage later)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/run-unit-tests.sh
+          chmod +x scripts/run-integration-tests.sh
+          chmod +x scripts/run-eval.sh
+          chmod +x scripts/generate-semantic-types.sh
+
+      - name: Sanity check evaluator CSVs (row0 vs row1 field counts)
+        run: |
+          python3 - << 'PY'
+          import csv, glob, sys
+          bad = []
+          for path in glob.glob('evaluator/datasets/data/*_data.csv'):
+              with open(path, newline='') as f:
+                  r = csv.reader(f)
+                  try:
+                      row0 = next(r); row1 = next(r)
+                  except StopIteration:
+                      print(f"❌ {path}: file too short", flush=True)
+                      bad.append(path)
+                      continue
+                  if len(row0) != len(row1):
+                      print(f"❌ {path}: row0_fields={len(row0)} row1_fields={len(row1)}", flush=True)
+                      print(f"   row0_tail={row0[-6:]}\n   row1_tail={row1[-6:]}", flush=True)
+                      bad.append(path)
+                  else:
+                      print(f"✔ {path}: {len(row0)} fields", flush=True)
+          if bad:
+              print("\n❌ CSV sanity check failed. Fix field counts before packaging.")
+              sys.exit(1)
+          PY
+
+      - name: Create client package zip
+        run: |
+          deployment/client-package/create-deployment-package.sh
+
+      - name: Upload client package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nl2fta-milestone3.zip
+          path: nl2fta-milestone3.zip
+
+  generate-and-evaluate-insurance:
+    if: needs.build-package.result == 'success'
+    runs-on: ubuntu-latest
+    needs: build-package
+    steps:
+      - name: Download client package
+        uses: actions/download-artifact@v4
+        with:
+          name: nl2fta-milestone3.zip
+          path: .
+
+      - name: Extract client package
+        run: |
+          rm -rf nl2fta-milestone3-extracted
+          mkdir nl2fta-milestone3-extracted
+          unzip -q nl2fta-milestone3.zip -d nl2fta-milestone3-extracted
+          ls -la nl2fta-milestone3-extracted
+
+      - name: Generate semantic types for insurance (all descriptions)
+        working-directory: nl2fta-milestone3-extracted
+        env:
+          CI: 'true'
+          # LLM Configuration - defaults to OpenAI
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER || 'openai' }}
+          # OpenAI Configuration
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o' }}
+          OPENAI_MAX_TOKENS: ${{ secrets.OPENAI_MAX_TOKENS || '4096' }}
+          OPENAI_TEMPERATURE: ${{ secrets.OPENAI_TEMPERATURE || '0.7' }}
+          OPENAI_RETRY_MAX_ATTEMPTS: ${{ secrets.OPENAI_RETRY_MAX_ATTEMPTS || '3' }}
+          # AWS Configuration (optional, for Bedrock fallback)
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+        run: |
+          chmod +x scripts/generate-semantic-types.sh || true
+          # Generation uses evaluator/datasets/generation-inputs/insurance_inputs.csv
+          if [ ! -f "evaluator/datasets/generation-inputs/insurance_inputs.csv" ]; then
+            echo "❌ Missing evaluator/datasets/generation-inputs/insurance_inputs.csv" >&2
+            exit 1
+          fi
+          DESCRIPTIONS="${{ github.event.inputs.descriptions || '1 2 3 4 5 6' }}"
+          ./scripts/generate-semantic-types.sh --dataset insurance --descriptions "$DESCRIPTIONS" --default
+
+      - name: Run evaluator on generated types (insurance)
+        working-directory: nl2fta-milestone3-extracted
+        env:
+          VECTOR_INDEX_ENABLED: 'false'
+          VECTOR_INDEX_REBUILD_ON_STARTUP: 'false'
+          # LLM Configuration - defaults to OpenAI
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER || 'openai' }}
+          # OpenAI Configuration
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o' }}
+          OPENAI_MAX_TOKENS: ${{ secrets.OPENAI_MAX_TOKENS || '4096' }}
+          OPENAI_TEMPERATURE: ${{ secrets.OPENAI_TEMPERATURE || '0.7' }}
+          OPENAI_RETRY_MAX_ATTEMPTS: ${{ secrets.OPENAI_RETRY_MAX_ATTEMPTS || '3' }}
+          # AWS Configuration (optional, for Bedrock fallback)
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+        run: |
+          chmod +x scripts/run-eval.sh
+          DESCRIPTIONS="${{ github.event.inputs.descriptions || '1 2 3 4 5 6' }}"
+          ./scripts/run-eval.sh --dataset insurance --descriptions "$DESCRIPTIONS" --no-cleanup --default || true
+          echo "Listing evaluator logs (if any):"
+          ls -la evaluator/logs || true
+          echo "Listing evaluator results (if any):"
+          ls -la evaluator/results || true
+
+      - name: Upload insurance generation + eval artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: insurance-generation-and-eval
+          path: |
+            nl2fta-milestone3-extracted/evaluator/generated_semantic_types/insurance_description*_*.json
+            nl2fta-milestone3-extracted/evaluator/results/**
+            nl2fta-milestone3-extracted/evaluator/logs/**
+          if-no-files-found: ignore
