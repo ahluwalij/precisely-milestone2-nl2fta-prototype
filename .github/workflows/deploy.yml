@@ -172,6 +172,19 @@ jobs:
           unzip -q nl2fta-milestone3.zip -d nl2fta-milestone3-extracted
       - name: Run evals from package (comparative)
         working-directory: nl2fta-milestone3-extracted
+        env:
+          # LLM Configuration - defaults to OpenAI
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER || 'openai' }}
+          # OpenAI Configuration
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL || 'gpt-4o' }}
+          OPENAI_MAX_TOKENS: ${{ secrets.OPENAI_MAX_TOKENS || '4096' }}
+          OPENAI_TEMPERATURE: ${{ secrets.OPENAI_TEMPERATURE || '0.7' }}
+          OPENAI_RETRY_MAX_ATTEMPTS: ${{ secrets.OPENAI_RETRY_MAX_ATTEMPTS || '3' }}
+          # AWS Configuration (optional, for Bedrock fallback)
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
         run: |
           chmod +x scripts/run-eval.sh
           # No data-dir/files on purpose: the runner will enumerate all *_data.csv under evaluator/datasets/data/
