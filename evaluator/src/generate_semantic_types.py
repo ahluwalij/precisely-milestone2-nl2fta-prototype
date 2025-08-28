@@ -26,6 +26,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 import csv
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 
@@ -179,6 +180,68 @@ def _generate_type(api_base: str, payload: Dict[str, Any]) -> Optional[Dict[str,
         raise RuntimeError(f"JSON parse error: {e}") from e
 
 
+def _generate_type_with_retry(api_base: str, payload: Dict[str, Any], max_retries: int = 3) -> Optional[Dict[str, Any]]:
+    """Generate type with retry logic for parallel processing."""
+    for attempt in range(max_retries):
+        try:
+            return _generate_type(api_base, payload)
+        except Exception as e:
+            if attempt == max_retries - 1:  # Last attempt
+                print(f"Failed to generate type after {max_retries} attempts: {e}")
+                return {"resultType": "error", "explanation": str(e)}
+            # Wait before retry (exponential backoff)
+            import time
+            time.sleep(2 ** attempt)
+    return None
+
+
+def _process_row_parallel(api_base: str, row: Dict[str, str], desc_idx: int, basename: str) -> Tuple[int, Dict[str, Any]]:
+    """Process a single row for a specific description index. Returns (desc_idx, result)."""
+    label_type = (row.get("Type", "") or "").strip()
+    column_name = (row.get("Column_Name", "") or "").strip()
+
+    desc_col_dynamic = f"Generation Description {desc_idx}"
+    description_text = row.get(desc_col_dynamic, "") or ""
+    description_text = description_text.strip() if isinstance(description_text, str) else ""
+    if not description_text:
+        return desc_idx, None
+
+    pos_vals: List[str] = []
+    neg_vals: List[str] = []
+    if desc_idx in (3, 4, 6):
+        pos_vals = _split_examples(row.get("Positive Value Examples"))
+        neg_vals = _split_examples(row.get("Negative Value Examples"))
+
+    pos_headers = _split_examples(row.get("Positive Header Examples"))
+    neg_headers = _split_examples(row.get("Negative Header Examples"))
+
+    payload = {
+        "typeName": label_type if label_type else None,
+        "description": description_text,
+        "positiveContentExamples": pos_vals,
+        "negativeContentExamples": neg_vals,
+        "positiveHeaderExamples": pos_headers or ([column_name] if column_name else []),
+        "negativeHeaderExamples": neg_headers,
+        "checkExistingTypes": True,
+        "proceedDespiteSimilarity": False,
+        "generateExamplesForExistingType": None,
+        "columnHeader": column_name,
+    }
+
+    result = _generate_type_with_retry(api_base, payload)
+    if result is not None:
+        if label_type:
+            result["semanticType"] = label_type
+        try:
+            name = label_type or result.get("semanticType") or result.get("existingTypeMatch") or "unknown"
+            rtype = result.get("resultType", "unknown")
+            print(f"[{rtype}] Generated type {name} for {basename} (desc {desc_idx})")
+        except Exception as e:
+            print(f"Failed to process generated result: {e}")
+
+    return desc_idx, result
+
+
 def _derive_output_basename(
     data_dir: Optional[str], files_csv: Optional[str], dataset_tag: Optional[str] = None
 ) -> str:
@@ -330,51 +393,35 @@ def _generate_for_dataset(
             print(f"Using provided descriptions: {' '.join(str(d) for d in to_run)}")
         elif descs_from_header:
             print(f"Auto-detected descriptions from inputs: {' '.join(str(d) for d in to_run)}")
+
+        # Use parallel processing with ThreadPoolExecutor
+        # Process ALL description-row combinations in parallel for maximum speed
+        max_workers = min(40, len(to_run) * len(rows))  # Cap at 40 workers as requested
+
+        # Group results by description
+        results_by_desc: Dict[int, List[Dict[str, Any]]] = {desc_idx: [] for desc_idx in to_run}
+
+        # Submit ALL tasks (all descriptions × all rows) to thread pool at once
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit tasks for ALL description-row combinations
+            future_to_task = {}
+            for desc_idx in to_run:
+                for row in rows:
+                    future = executor.submit(_process_row_parallel, api_base, row, desc_idx, basename)
+                    future_to_task[future] = desc_idx
+
+            # Collect results as they complete
+            for future in as_completed(future_to_task):
+                try:
+                    desc_idx_result, result = future.result()
+                    if result is not None:
+                        results_by_desc[desc_idx_result].append(result)
+                except Exception as e:
+                    print(f"Error processing row: {e}")
+
+        # Write results for each description
         for desc_idx in to_run:
-            results: List[Dict[str, Any]] = []
-            for row in rows:
-                label_type = (row.get("Type", "") or "").strip()
-                column_name = (row.get("Column_Name", "") or "").strip()
-
-                desc_col_dynamic = f"Generation Description {desc_idx}"
-                description_text = row.get(desc_col_dynamic, "") or ""
-                description_text = description_text.strip() if isinstance(description_text, str) else ""
-                if not description_text:
-                    continue
-
-                pos_vals: List[str] = []
-                neg_vals: List[str] = []
-                if desc_idx in (3, 4, 6):
-                    pos_vals = _split_examples(row.get("Positive Value Examples"))
-                    neg_vals = _split_examples(row.get("Negative Value Examples"))
-
-                pos_headers = _split_examples(row.get("Positive Header Examples"))
-                neg_headers = _split_examples(row.get("Negative Header Examples"))
-
-                payload = {
-                    "typeName": label_type if label_type else None,
-                    "description": description_text,
-                    "positiveContentExamples": pos_vals,
-                    "negativeContentExamples": neg_vals,
-                    "positiveHeaderExamples": pos_headers or ([column_name] if column_name else []),
-                    "negativeHeaderExamples": neg_headers,
-                    "checkExistingTypes": True,
-                    "proceedDespiteSimilarity": False,
-                    "generateExamplesForExistingType": None,
-                    "columnHeader": column_name,
-                }
-
-                result = _generate_type(api_base, payload)
-                if result is not None:
-                    if label_type:
-                        result["semanticType"] = label_type
-                    results.append(result)
-                    try:
-                        name = label_type or result.get("semanticType") or result.get("existingTypeMatch") or "unknown"
-                        rtype = result.get("resultType", "unknown")
-                        print(f"[{rtype}] Generated type {name} for {basename} (desc {desc_idx})")
-                    except Exception as e:
-                        raise RuntimeError(f"Failed to process generated result for {name}: {e}")
+            results = results_by_desc[desc_idx]
             if results:
                 out_path = _write_output(basename, desc_idx, run_ts, results)
                 print(f"✔ Wrote {out_path}")
@@ -401,25 +448,45 @@ def _generate_for_dataset(
             f"Could not extract candidate columns from provided CSVs for '{dataset_name}'. Aborting."
         )
 
+    # Use parallel processing for fallback flow as well
+    max_workers = min(40, len(descriptions) * len(candidates))  # Cap at 40 workers
+
+    # Group results by description for fallback flow
+    results_by_desc: Dict[int, List[Dict[str, Any]]] = {desc_idx: [] for desc_idx in descriptions}
+
+    # Submit ALL tasks (all descriptions × all candidates) to thread pool at once
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_task = {}
+        for desc_idx in descriptions:
+            for (header, value_samples) in candidates:
+                description_text = _p_description(desc_idx, header, value_samples)
+                payload = _build_generation_request(description_text, header, value_samples, desc_idx)
+                future = executor.submit(_generate_type_with_retry, api_base, payload)
+                future_to_task[future] = (desc_idx, header, value_samples)
+
+        # Collect results as they complete
+        for future in as_completed(future_to_task):
+            try:
+                desc_idx, header, value_samples = future_to_task[future]
+                result = future.result()
+                if result is not None:
+                    results_by_desc[desc_idx].append(result)
+                    try:
+                        name = (
+                            (result.get("semanticType") if isinstance(result, dict) else None)
+                            or (result.get("existingTypeMatch") if isinstance(result, dict) else None)
+                            or "unknown"
+                        )
+                        rtype = result.get("resultType", "unknown") if isinstance(result, dict) else "unknown"
+                        print(f"[{rtype}] Generated type {name} for {basename} (desc {desc_idx})")
+                    except Exception as e:
+                        print(f"Failed to process generated result: {e}")
+            except Exception as e:
+                print(f"Error processing candidate: {e}")
+
+    # Write results for each description
     for desc_idx in descriptions:
-        results: List[Dict[str, Any]] = []
-        for (header, value_samples) in candidates:
-            description_text = _p_description(desc_idx, header, value_samples)
-            payload = _build_generation_request(description_text, header, value_samples, desc_idx)
-            result = _generate_type(api_base, payload)
-            if result is not None:
-                results.append(result)
-                try:
-                    name = (
-                        (result.get("semanticType") if isinstance(result, dict) else None)
-                        or (result.get("existingTypeMatch") if isinstance(result, dict) else None)
-                        or "unknown"
-                    )
-                    rtype = result.get("resultType", "unknown") if isinstance(result, dict) else "unknown"
-                    print(f"[{rtype}] Generated type {name} for {basename} (desc {desc_idx})")
-                except Exception as e:
-                    raise RuntimeError(f"Failed to process generated result for {name}: {e}")
-                _write_output(basename, desc_idx, run_ts, results)
+        results = results_by_desc[desc_idx]
         if results:
             out_path = _write_output(basename, desc_idx, run_ts, results)
             print(f"✔ Wrote {out_path}")
