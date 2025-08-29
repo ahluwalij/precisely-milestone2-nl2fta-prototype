@@ -302,6 +302,7 @@ public class GenerationKnowledgeService {
     // Customer attributes
     snippets.add("CustomerID: unique identifier; headers customerid, customer_id, id");
     snippets.add("CustomerID header regex must use word boundaries: ^(?i)(customer\\s*id|customerid|cust\\s*id|cust_id|id)$");
+    snippets.add("CustomerID value pattern: ^\\d{4}-[A-Z]{5}$ (examples: 2969-WGHQO, 0013-SMEOE, 6439-LAJXL)");
     snippets.add("Do NOT match 'city', 'state', or other geo headers for CustomerID; negative headers: city, state, zip, zipcode, latitude, longitude");
     snippets.add("Gender: finite list MALE, FEMALE (or M/F)");
     snippets.add("SeniorCitizen: boolean/flag 0/1 or YES/NO");
@@ -321,40 +322,38 @@ public class GenerationKnowledgeService {
     snippets.add("Population: integer count; header 'Population'; treat as integer, not revenue");
 
     // Services subscribed
-    snippets.add("PhoneService: YES/NO; MultipleLines: YES/NO/NO PHONE SERVICE");
-    snippets.add("InternetService: DSL/Fiber optic/No");
-    snippets.add("OnlineSecurity/OnlineBackup/DeviceProtection/TechSupport: YES/NO/NO INTERNET SERVICE");
-    snippets.add("StreamingTV/StreamingMovies: YES/NO/NO INTERNET SERVICE");
-    snippets.add("StreamingMusic: YES/NO/NO INTERNET SERVICE; header synonyms streaming_music, streaming music");
-    snippets.add("Unlimited Data: YES/NO; header 'Unlimited Data' or unlimited_data; boolean categorical");
-    snippets.add("Internet Type: categorical: CABLE/DSL/Fiber optic/Satellite/Wireless; header 'Internet Type'");
+    snippets.add("Phone Service: boolean 0/1; header 'Phone Service'");
+    snippets.add("Multiple Lines: boolean 0/1; header 'Multiple Lines' or multiple_lines");
+    snippets.add("Internet Service: boolean 0/1; header 'Internet Service'");
+    snippets.add("Internet Type: finite list: DSL,Fiber Optic,Cable; header 'Internet Type'");
+    snippets.add("Online Security/Online Backup/Device Protection/Premium Tech Support: boolean 0/1; header contains exact feature name");
+    snippets.add("Streaming TV/Streaming Movies/Streaming Music: boolean 0/1; header contains 'Streaming'");
+    snippets.add("Unlimited Data: boolean 0/1; header 'Unlimited Data' or unlimited_data");
 
     // Contracts & billing
-    snippets.add("Contract: Month-to-month/One year/Two year");
-    snippets.add("PaperlessBilling: YES/NO");
-    snippets.add("PaymentMethod: Electronic check/Mailed check/Bank transfer (automatic)/Credit card (automatic)");
-    snippets.add("Customer Status: finite set e.g., STAYED, CHURNED, JOINED; header 'Customer Status'");
-    snippets.add("Satisfaction Score: integer 1..5 (or 0..10 depending dataset); header 'Satisfaction Score'");
+    snippets.add("Contract: finite list Month-to-Month,One Year,Two Year; header 'Contract'");
+    snippets.add("Paperless Billing: boolean 0/1; header 'Paperless Billing'");
+    snippets.add("Payment Method: finite list Bank Withdrawal,Credit Card,Mailed Check; header 'Payment Method'");
+    snippets.add("Customer Status: finite set Stayed,Churned,Joined; header 'Customer Status'");
+    snippets.add("Satisfaction Score: integer 0..5; header 'Satisfaction Score' (examples: 3,4,5)");
 
     // Charges
-    snippets.add("MonthlyCharges: decimal currency; headers monthlycharges");
-    snippets.add("TotalCharges: decimal currency; headers totalcharges");
+    snippets.add("Monthly Charge: decimal currency (e.g., 69.45, 107.4); header 'Monthly Charge'");
+    snippets.add("Total Charges: decimal currency (e.g., 477.05, 8349.45); header 'Total Charges'");
     snippets.add("TotalLongDistanceCharges: decimal currency; header contains 'Total Long Distance Charges'");
     snippets.add("TotalExtraDataCharges: decimal currency; header 'Total Extra Data Charges'");
     snippets.add("TotalRefunds: decimal currency; header 'Total Refunds'");
     snippets.add("TotalRevenue: decimal currency; header 'Total Revenue'");
     snippets.add("AvgMonthlyLongDistanceCharges: decimal; header 'Avg Monthly Long Distance Charges'");
     snippets.add("AvgMonthlyGBDownload: decimal; header 'Avg Monthly GB Download'");
-    snippets.add("CLTV: Customer Lifetime Value; currency-like decimal; header 'CLTV', 'Customer Lifetime Value'");
-    snippets.add("Monthly Charge: alias of MonthlyCharges when header is 'Monthly Charge'");
-    snippets.add("Total Charges: alias of TotalCharges when header is 'Total Charges'");
-    snippets.add("Total Revenue: cumulative currency; not a yes/no or service field");
+    snippets.add("CLTV: Customer Lifetime Value; integer (e.g., 3334, 6165, 2455); header 'CLTV'");
+    snippets.add("Total Revenue: cumulative currency; not a boolean service field");
 
     // Target
     snippets.add("Churn: YES/NO target flag; headers churn; header regex ^(?i)churn$");
-    snippets.add("ChurnScore: numeric 0-100; header 'Churn Score'; should NOT match 'Churn' alone");
+    snippets.add("ChurnScore: integer 0..100 (e.g., 54, 93, 26); header 'Churn Score'; should NOT match 'Churn' alone");
     snippets.add("ChurnCategory: finite; examples 'Competitor', 'Dissatisfaction', 'Attitude', 'Other'");
-    snippets.add("ChurnReason: free-text short categorical; header 'Churn Reason'");
+    snippets.add("ChurnReason: short text; examples: 'Competitor offered higher download speeds','Competitor made better offer','Product dissatisfaction','Network reliability','Price too high','Don't know'");
     snippets.add("Churn Reason header regex: ^(?i)(churn\s*reason|reason\s*for\s*churn)$; avoid mapping to 'Churn' or 'Churn Score'");
     snippets.add("Multiple Lines: YES/NO/No phone service; header 'Multiple Lines' or multiple_lines");
     snippets.add("Paperless Billing: YES/NO; header 'Paperless Billing' or paperless_billing");
