@@ -44,6 +44,11 @@ public class SemanticTypeResponseParserService {
   public GeneratedSemanticType parseGenerationResponse(
       String claudeResponse, SemanticTypeGenerationRequest request) {
     log.debug("Raw Claude response for parsing: {}", claudeResponse);
+    log.debug(
+        "parseGenerationResponse: descriptionPreview='{}'",
+        request != null && request.getDescription() != null
+            ? truncateForLog(request.getDescription(), 160)
+            : "null");
     try {
       // Try XML format first
       return parseXmlResponse(claudeResponse, request);
@@ -64,6 +69,10 @@ public class SemanticTypeResponseParserService {
       String claudeResponse, SemanticTypeGenerationRequest request) {
     try {
       String cleanXml = extractXmlFromResponse(claudeResponse);
+      if (cleanXml == null || cleanXml.trim().isEmpty()) {
+        log.warn("extractXmlFromResponse returned null/empty for response. Falling through.");
+        throw new RuntimeException("No XML root element found in response");
+      }
 
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = factory.newDocumentBuilder();
@@ -125,6 +134,7 @@ public class SemanticTypeResponseParserService {
           .explanation(explanation)
           .build();
     } catch (Exception e) {
+      log.warn("Failed to parse XML response: {}", e.getMessage());
       throw new RuntimeException("Failed to parse XML response", e);
     }
   }
@@ -183,6 +193,12 @@ public class SemanticTypeResponseParserService {
     } catch (Exception e) {
       throw new RuntimeException("Failed to parse JSON response", e);
     }
+  }
+
+  private String truncateForLog(String s, int max) {
+    if (s == null) return null;
+    if (s.length() <= max) return s;
+    return s.substring(0, Math.max(0, max)) + "…";
   }
 
   /** Extracts XML content from Claude response, handling any markdown formatting. */

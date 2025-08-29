@@ -24,6 +24,8 @@ import com.nl2fta.classifier.dto.semantic_type.GeneratedValidatedExamplesRespons
 import com.nl2fta.classifier.dto.semantic_type.HeaderPattern;
 import com.nl2fta.classifier.dto.semantic_type.SemanticTypeGenerationRequest;
 import com.nl2fta.classifier.service.aws.AwsBedrockService;
+import com.nl2fta.classifier.service.aws.LLMService;
+import com.nl2fta.classifier.service.aws.LLMServiceSelector;
 import com.nl2fta.classifier.service.aws.AwsCredentialsService;
 import com.nl2fta.classifier.service.semantic_type.generation.SemanticTypeGenerationService;
 import com.nl2fta.classifier.service.semantic_type.management.CustomSemanticTypeService;
@@ -46,6 +48,7 @@ public class SemanticTypeGenerationController {
 
   private final SemanticTypeGenerationService generationService;
   private final AwsBedrockService awsBedrockService;
+  private final LLMServiceSelector llmServiceSelector;
   private final AwsCredentialsService awsCredentialsService;
   private final CustomSemanticTypeService customSemanticTypeService;
   private final HybridCustomSemanticTypeRepository hybridRepository;
@@ -105,13 +108,15 @@ public class SemanticTypeGenerationController {
         request.getNegativeHeaderExamples() != null ? request.getNegativeHeaderExamples() : "[]");
 
     try {
-      // Check if AWS Bedrock is initialized
-      if (!awsBedrockService.isInitialized()) {
+      // Check if an LLM provider is configured (OpenAI or Bedrock)
+      LLMService llm = llmServiceSelector.getLLMService();
+      if (llm == null || !llm.isConfigured()) {
         return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
             .body(
                 Map.of(
                     "error", "No LLM provider configured",
-                    "message", "Configure AWS Bedrock to use semantic type generation"));
+                    "message",
+                        "Configure an LLM provider (OpenAI via OPENAI_API_KEY or AWS Bedrock credentials)."));
       }
 
       // Add FTA pre-analysis to enrich the request
