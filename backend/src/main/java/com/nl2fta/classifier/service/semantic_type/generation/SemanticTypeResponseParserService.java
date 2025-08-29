@@ -49,8 +49,14 @@ public class SemanticTypeResponseParserService {
       return parseXmlResponse(claudeResponse, request);
     } catch (Exception xmlException) {
       log.debug("XML parsing failed, trying JSON fallback", xmlException);
-      // Fallback to JSON if XML parsing fails
-      return parseJsonResponse(claudeResponse, request);
+      try {
+        // Fallback to JSON if XML parsing fails
+        return parseJsonResponse(claudeResponse, request);
+      } catch (Exception jsonException) {
+        log.error("Both XML and JSON parsing failed for Claude response", jsonException);
+        log.error("Raw Claude response that failed parsing: {}", claudeResponse);
+        return buildErrorResponse("Failed to parse Claude response - no valid JSON or XML found");
+      }
     }
   }
 
@@ -131,8 +137,14 @@ public class SemanticTypeResponseParserService {
         return buildErrorResponse("Failed to parse Claude response - no valid JSON or XML found");
       }
 
-      Map<String, Object> parsed =
-          objectMapper.readValue(jsonStr, new TypeReference<Map<String, Object>>() {});
+      Map<String, Object> parsed;
+      try {
+        parsed = objectMapper.readValue(jsonStr, new TypeReference<Map<String, Object>>() {});
+      } catch (Exception e) {
+        log.error("Failed to parse JSON response", e);
+        log.error("Raw Claude response that failed JSON parsing: {}", claudeResponse);
+        return buildErrorResponse("Failed to parse Claude JSON response: " + e.getMessage());
+      }
 
       String pluginType = (String) parsed.get("pluginType");
       List<String> listValues = castToStringList(parsed.get("listValues"));
