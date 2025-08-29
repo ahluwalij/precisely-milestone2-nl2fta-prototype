@@ -10,12 +10,14 @@
     </appender>
     
     <!-- Root logger -->
-    <root level="INFO">
+    <root level="${ROOT_LOG_LEVEL:INFO}">
         <appender-ref ref="CONSOLE"/>
     </root>
     
     <!-- Application loggers -->
-    <logger name="com.nl2fta.classifier" level="INFO"/>
+    <logger name="com.nl2fta.classifier" level="${APP_LOG_LEVEL:INFO}"/>
+    <logger name="com.nl2fta.classifier.service.semantic_type.generation" level="${GEN_LOG_LEVEL:DEBUG}"/>
+    <logger name="com.nl2fta.classifier.service.aws.OpenAIService" level="${OPENAI_LOG_LEVEL:DEBUG}"/>
     <logger name="com.nl2fta.classifier.service.TableClassificationService" level="INFO"/>
     
     <!-- Reduce startup noise -->

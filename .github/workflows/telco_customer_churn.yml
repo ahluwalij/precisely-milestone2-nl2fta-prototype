@@ -135,6 +135,10 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
         run: |
           chmod +x scripts/run-eval.sh
+          export ROOT_LOG_LEVEL=INFO
+          export APP_LOG_LEVEL=DEBUG
+          export GEN_LOG_LEVEL=DEBUG
+          export OPENAI_LOG_LEVEL=DEBUG
           DESCRIPTIONS="${{ github.event.inputs.descriptions || '1' }}"
           ./scripts/run-eval.sh --dataset telco_customer_churn --descriptions "$DESCRIPTIONS" --no-cleanup --default || true
           echo "Listing evaluator logs (if any):"
