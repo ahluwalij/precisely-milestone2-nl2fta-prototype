@@ -235,10 +235,13 @@ def _process_row_parallel(api_base: str, row: Dict[str, str], desc_idx: int, bas
         try:
             name = label_type or result.get("semanticType") or result.get("existingTypeMatch") or "unknown"
             rtype = result.get("resultType", "unknown")
-            # Format output to avoid GitHub Actions masking
-            status = "generated" if rtype == "generated" else rtype
-            safe_name = name.replace("*", "STAR").replace("-", "DASH")  # Avoid masking patterns
-            print(f"[{status}] Generated type {safe_name} for {basename} (desc {desc_idx})")
+            # Format output to avoid GitHub Actions masking only for successful generations
+            if rtype == "generated":
+                safe_name = name.replace("*", "STAR").replace("-", "DASH")  # Avoid masking patterns
+                print(f"[{rtype}] Generated type {safe_name} for {basename} (desc {desc_idx})")
+            else:
+                # For errors or other statuses, show the original format
+                print(f"[{rtype}] Generated type {name} for {basename} (desc {desc_idx})")
         except Exception as e:
             print(f"Failed to process generated result: {e}")
 
@@ -481,10 +484,13 @@ def _generate_for_dataset(
                             or "unknown"
                         )
                         rtype = result.get("resultType", "unknown") if isinstance(result, dict) else "unknown"
-                        # Format output to avoid GitHub Actions masking
-                        status = "generated" if rtype == "generated" else rtype
-                        safe_name = name.replace("*", "STAR").replace("-", "DASH")  # Avoid masking patterns
-                        print(f"[{status}] Generated type {safe_name} for {basename} (desc {desc_idx})")
+                        # Format output to avoid GitHub Actions masking only for successful generations
+                        if rtype == "generated":
+                            safe_name = name.replace("*", "STAR").replace("-", "DASH")  # Avoid masking patterns
+                            print(f"[{rtype}] Generated type {safe_name} for {basename} (desc {desc_idx})")
+                        else:
+                            # For errors or other statuses, show the original format
+                            print(f"[{rtype}] Generated type {name} for {basename} (desc {desc_idx})")
                     except Exception as e:
                         print(f"Failed to process generated result: {e}")
             except Exception as e:
