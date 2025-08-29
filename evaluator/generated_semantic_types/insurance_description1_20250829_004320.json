@@ -1,0 +1,3323 @@
+{
+  "dataset": "insurance",
+  "description_number": 1,
+  "timestamp": "20250829_004320",
+  "generated_types": [
+    {
+      "resultType": "generated",
+      "semanticType": "Year_matriculation",
+      "description": "The calendar year when the insured vehicle was first registered or received its initial license plates from authorities.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b(19|20)\\d{2}\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "1999",
+        "2005",
+        "2010",
+        "2021",
+        "1987",
+        "2015"
+      ],
+      "negativeContentExamples": [
+        "99",
+        "05",
+        "21",
+        "198",
+        "20215",
+        "abcd"
+      ],
+      "positiveHeaderExamples": [
+        "registration_year",
+        "vehicle_year"
+      ],
+      "negativeHeaderExamples": [
+        "model_year",
+        "registration_number"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*registration.*year.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "registration_year"
+          ],
+          "negativeExamples": [
+            "model_year"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*vehicle.*year.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vehicle_year"
+          ],
+          "negativeExamples": [
+            "registration_number"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*year.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "year"
+          ],
+          "negativeExamples": [
+            "number"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20320,
+      "explanation": "This semantic type identifies the year when a vehicle was first registered or received its initial license plates. It is useful for categorizing and analyzing vehicle registration data, particularly in insurance and automotive industries.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "ee6fbd75-f32c-4e0c-ae36-f9ad920b6b2c"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Premium",
+      "description": "The monetary amount charged for insurance coverage over a specified period, typically annually.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^\\d+(\\.\\d{1,2})?$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "1000",
+        "250.50",
+        "199.99",
+        "5000",
+        "1234.56",
+        "750"
+      ],
+      "negativeContentExamples": [
+        "premium_rate",
+        "gross_premium",
+        "abc123",
+        "12.345",
+        "amount",
+        "rate"
+      ],
+      "positiveHeaderExamples": [
+        "net_premium_amount",
+        "premium_yearly"
+      ],
+      "negativeHeaderExamples": [
+        "gross_premium",
+        "premium_rate"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*net_premium_amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "net_premium_amount"
+          ],
+          "negativeExamples": [
+            "gross_premium"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*premium_yearly.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "premium_yearly"
+          ],
+          "negativeExamples": [
+            "premium_rate"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*premium.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "net_premium_amount"
+          ],
+          "negativeExamples": [
+            "premium_rate"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "net_premium_amount"
+          ],
+          "negativeExamples": [
+            "premium_rate"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "net_premium_amount"
+          ],
+          "negativeExamples": [
+            "premium_rate"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20330,
+      "explanation": "This semantic type represents the monetary amount charged for insurance coverage over a specified period, typically annually. It is identified by specific column headers and numeric patterns that match typical currency formats.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "8cf871e8-d907-4eca-9c40-c47f2abcbadc"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "R_Claims_history",
+      "description": "A ratio measuring the frequency of claims relative to the length of time a customer has held policies.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^[0-9]+(\\.[0-9]+)?$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "0.75",
+        "1.2",
+        "0.0",
+        "3.5",
+        "2.0",
+        "0.33"
+      ],
+      "negativeContentExamples": [
+        "claims_count",
+        "policy_duration",
+        "abc",
+        "123abc",
+        "-1.5",
+        "1,000"
+      ],
+      "positiveHeaderExamples": [
+        "claims_per_year_ratio",
+        "claims_frequency_ratio"
+      ],
+      "negativeHeaderExamples": [
+        "claims_count",
+        "policy_duration",
+        "total_claims",
+        "policy_years"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*claims_per_year_ratio.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_per_year_ratio"
+          ],
+          "negativeExamples": [
+            "claims_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims_frequency_ratio.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_frequency_ratio"
+          ],
+          "negativeExamples": [
+            "policy_duration"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims.*ratio.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_per_year_ratio"
+          ],
+          "negativeExamples": [
+            "claims_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*ratio.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_frequency_ratio"
+          ],
+          "negativeExamples": [
+            "policy_duration"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20340,
+      "explanation": "This semantic type is used to identify columns that represent a ratio of claims frequency relative to the duration of policy holding. It is useful in insurance datasets to analyze customer behavior and risk assessment.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "1672dbab-5aba-49e0-8a3a-97e854b0b78c"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Max_policies",
+      "description": "The highest number of insurance policies that a customer has ever held simultaneously throughout their relationship history.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "\\b\\d{1,3}\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "5",
+        "12",
+        "25",
+        "100",
+        "3",
+        "50"
+      ],
+      "negativeContentExamples": [
+        "-1",
+        "abc",
+        "1.5",
+        "ten",
+        "1000"
+      ],
+      "positiveHeaderExamples": [
+        "max_policies_inforce",
+        "peak_policy_count"
+      ],
+      "negativeHeaderExamples": [
+        "min_policies",
+        "average_policies",
+        "total_policies",
+        "policy_limit"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*max_policies_inforce.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "max_policies_inforce"
+          ],
+          "negativeExamples": [
+            "min_policies"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*peak_policy_count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "peak_policy_count"
+          ],
+          "negativeExamples": [
+            "average_policies"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*max.*policies.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "max_policies_inforce"
+          ],
+          "negativeExamples": [
+            "min_policies"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*peak.*policy.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "peak_policy_count"
+          ],
+          "negativeExamples": [
+            "average_policies"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*policy.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "max_policies_inforce"
+          ],
+          "negativeExamples": [
+            "average_policies"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "peak_policy_count"
+          ],
+          "negativeExamples": [
+            "min_policies"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20350,
+      "explanation": "This semantic type is used to identify the maximum number of insurance policies a customer has held at any point in time. It is useful for analyzing customer insurance behavior and risk assessment.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "b7422f0a-86fa-49a2-a6dd-e18c7ec0646a"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Date_last_renewal",
+      "description": "The most recent date when an existing insurance policy was renewed or extended for another coverage period.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d{4}-\\d{2}-\\d{2}\\b|\\b\\d{2}/\\d{2}/\\d{4}\\b|\\b\\d{2}-\\d{2}-\\d{4}\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "2023-09-15",
+        "15/09/2023",
+        "09-15-2023",
+        "2022-12-01",
+        "01/12/2022",
+        "12-01-2022"
+      ],
+      "negativeContentExamples": [
+        "2023/09/15",
+        "15-09-23",
+        "2023.09.15",
+        "15.09.2023"
+      ],
+      "positiveHeaderExamples": [
+        "last_renewal_date",
+        "renewal_effective_date",
+        "policy_renewal_date",
+        "renewal_date",
+        "renewal_last_date",
+        "date_of_last_renewal"
+      ],
+      "negativeHeaderExamples": [
+        "next_renewal_date",
+        "claim_date",
+        "expiration_date",
+        "policy_number",
+        "issue_date",
+        "start_date"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*last.*renewal.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "last_renewal_date"
+          ],
+          "negativeExamples": [
+            "next_renewal_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*renewal.*effective.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "renewal_effective_date"
+          ],
+          "negativeExamples": [
+            "claim_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*renewal.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "renewal_date"
+          ],
+          "negativeExamples": [
+            "expiration_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policy_date"
+          ],
+          "negativeExamples": [
+            "policy_number"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20360,
+      "explanation": "This semantic type identifies dates that represent the last renewal of an insurance policy. It is used to track when a policy was last extended or renewed, which is crucial for managing policy lifecycles and ensuring continuous coverage.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "b6eb6406-2f59-43e9-92cd-f7aa4f3c0157"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "N_doors",
+      "description": "The count of passenger doors on the insured vehicle, excluding the trunk or hatchback opening.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^[2-5]$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "negativeContentExamples": [
+        "1",
+        "6",
+        "0",
+        "two",
+        "three",
+        "4.5"
+      ],
+      "positiveHeaderExamples": [
+        "number_of_doors",
+        "doors_count"
+      ],
+      "negativeHeaderExamples": [
+        "seat_count",
+        "door_type",
+        "window_count",
+        "trunk_size"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*number_of_doors.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "number_of_doors"
+          ],
+          "negativeExamples": [
+            "seat_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*doors_count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "doors_count"
+          ],
+          "negativeExamples": [
+            "door_type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*doors.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "doors"
+          ],
+          "negativeExamples": [
+            "seats"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "count"
+          ],
+          "negativeExamples": [
+            "type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "number"
+          ],
+          "negativeExamples": [
+            "type"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20370,
+      "explanation": "This semantic type is used to identify the number of passenger doors on a vehicle, which is typically a small integer value between 2 and 5. It is important for insurance and vehicle registration purposes to distinguish the number of doors from other vehicle attributes like seat count or door type.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "9caa9deb-6a1c-4131-956f-a001b76a949d"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Date_lapse",
+      "description": "The specific date when an insurance policy was terminated or cancelled before its scheduled expiration.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b(?:lapse|termination|cancelled|cancellation)_date\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [],
+      "negativeContentExamples": [
+        "2023-05-15T10:00:00",
+        "15/05/2023",
+        "May 15, 2023",
+        "2023/05/15",
+        "2023.05.15",
+        "2023-05-15 10:00"
+      ],
+      "positiveHeaderExamples": [
+        "lapse_date",
+        "termination_date",
+        "cancel_date",
+        "cancellation_date",
+        "end_date",
+        "policy_end_date"
+      ],
+      "negativeHeaderExamples": [
+        "renewal_date",
+        "effective_date",
+        "start_date",
+        "begin_date",
+        "issue_date",
+        "creation_date"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*lapse_date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "lapse_date"
+          ],
+          "negativeExamples": [
+            "renewal_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*termination_date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "termination_date"
+          ],
+          "negativeExamples": [
+            "effective_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*cancel.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "cancel_date"
+          ],
+          "negativeExamples": [
+            "start_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*end.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "end_date"
+          ],
+          "negativeExamples": [
+            "begin_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "date"
+          ],
+          "negativeExamples": [
+            "code"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20380,
+      "explanation": "This semantic type identifies dates related to the termination or cancellation of insurance policies. It is used to track when a policy ends before its scheduled expiration, which is critical for insurance management and compliance.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "5377d699-a309-4e97-82fe-5ce495b5173c"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "ID",
+      "description": "A unique identifier assigned to each insurance contract or policy for tracking and reference purposes within the system.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^[a-z0-9-]{8,20}$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "abc12345",
+        "policy-6789",
+        "contract-001",
+        "id-987654",
+        "policy123456",
+        "contract-abc123"
+      ],
+      "negativeContentExamples": [
+        "123",
+        "contract_date",
+        "agent_id",
+        "policy date",
+        "contract number",
+        "policy number"
+      ],
+      "positiveHeaderExamples": [
+        "contract_id",
+        "policy_contract_number",
+        "insurance_id",
+        "policy_id",
+        "contract_number",
+        "policy_identifier"
+      ],
+      "negativeHeaderExamples": [
+        "contract_date",
+        "agent_id",
+        "policy_date",
+        "contract_amount",
+        "policy_holder",
+        "agent_name"
+      ],
+      "confidenceThreshold": 97.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*contract_id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "contract_id"
+          ],
+          "negativeExamples": [
+            "contract_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*policy_contract_number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policy_contract_number"
+          ],
+          "negativeExamples": [
+            "agent_id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*contract.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "contract_id"
+          ],
+          "negativeExamples": [
+            "contract_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*policy.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policy_contract_number"
+          ],
+          "negativeExamples": [
+            "agent_id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "contract_id"
+          ],
+          "negativeExamples": [
+            "contract_date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20390,
+      "explanation": "This semantic type is used to identify unique identifiers for insurance contracts or policies. These identifiers are crucial for tracking and referencing specific contracts or policies within an insurance system. The regex pattern is designed to match typical identifier formats, which often include alphanumeric characters and hyphens, and are of a specific length to ensure uniqueness and consistency.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "f867d5df-7c8e-4a99-8ecf-5df5876247b0"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Policies_in_force",
+      "description": "The current number of active insurance policies held by a customer at a given point in time.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "\\b\\d+\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "5",
+        "12",
+        "100",
+        "250",
+        "1",
+        "999"
+      ],
+      "negativeContentExamples": [
+        "five",
+        "12.5",
+        "one hundred",
+        "250 policies",
+        "zero",
+        "none"
+      ],
+      "positiveHeaderExamples": [
+        "policies_count",
+        "total_policies_held",
+        "current_policies",
+        "active_policies",
+        "policy_number",
+        "policy_count"
+      ],
+      "negativeHeaderExamples": [
+        "max_policies",
+        "active_customers",
+        "customer_count",
+        "policy_limit",
+        "expired_policies",
+        "policy_type"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*policies_count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policies_count"
+          ],
+          "negativeExamples": [
+            "max_policies"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*total_policies_held.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "total_policies_held"
+          ],
+          "negativeExamples": [
+            "active_customers"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*policies.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policies_count"
+          ],
+          "negativeExamples": [
+            "max_policies"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policies_count"
+          ],
+          "negativeExamples": [
+            "active_customers"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policies_count"
+          ],
+          "negativeExamples": [
+            "active_customers"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20400,
+      "explanation": "This semantic type identifies the number of active insurance policies a customer holds at a specific time. It is useful for analyzing customer engagement and policy management in insurance datasets.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "aba49d1d-b76e-4987-b054-78aa3c74a300"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Distribution_channel",
+      "description": "A coded identifier representing the sales channel or method through which the insurance policy was acquired.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^(online|agent|broker|direct|affiliate|partner|callcenter|retail|mobile|email|web)$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "online",
+        "agent",
+        "broker",
+        "direct",
+        "affiliate",
+        "partner",
+        "callcenter",
+        "retail"
+      ],
+      "negativeContentExamples": [
+        "channel_name",
+        "payment_channel",
+        "customer_service",
+        "support",
+        "billing",
+        "marketing"
+      ],
+      "positiveHeaderExamples": [
+        "distribution_channel",
+        "sales_channel_code"
+      ],
+      "negativeHeaderExamples": [
+        "channel_name",
+        "payment_channel",
+        "customer_channel",
+        "service_channel"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*distribution_channel.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "distribution_channel"
+          ],
+          "negativeExamples": [
+            "channel_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*sales_channel_code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "sales_channel_code"
+          ],
+          "negativeExamples": [
+            "payment_channel"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*channel.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "distribution_channel"
+          ],
+          "negativeExamples": [
+            "channel_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "sales_channel_code"
+          ],
+          "negativeExamples": [
+            "channel_name"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20410,
+      "explanation": "This semantic type is used to identify the sales channel or method through which an insurance policy was acquired. It helps in categorizing and analyzing sales data based on the channel of distribution.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "537f9d19-85e0-4557-86f3-26907f9b95c5"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Lapse",
+      "description": "The total count of insurance policies that have been terminated or cancelled by a customer throughout their history.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "\\b\\d+\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "5",
+        "12",
+        "0",
+        "100",
+        "23",
+        "7"
+      ],
+      "negativeContentExamples": [
+        "lapsed",
+        "cancelled",
+        "2023-01-01",
+        "reason",
+        "active",
+        "pending"
+      ],
+      "positiveHeaderExamples": [
+        "lapse_count",
+        "policies_lapsed",
+        "total_lapsed",
+        "lapse_total",
+        "policy_count"
+      ],
+      "negativeHeaderExamples": [
+        "lapse_date",
+        "cancellation_reason",
+        "policy_date",
+        "active_policies",
+        "pending_cancellations"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*lapse_count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "lapse_count"
+          ],
+          "negativeExamples": [
+            "lapse_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*policies_lapsed.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policies_lapsed"
+          ],
+          "negativeExamples": [
+            "cancellation_reason"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*lapsed.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "total_lapsed"
+          ],
+          "negativeExamples": [
+            "lapse_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*lapse.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "lapse_total"
+          ],
+          "negativeExamples": [
+            "cancellation_reason"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policy_count"
+          ],
+          "negativeExamples": [
+            "policy_date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20420,
+      "explanation": "This semantic type is used to identify columns that represent the count of insurance policies that have been terminated or cancelled by a customer. It is useful for analyzing customer behavior and policy retention rates.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "46312629-7ab9-490c-992a-188c678243af"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Second_driver",
+      "description": "A binary flag indicating whether additional drivers beyond the primary policyholder are covered under the insurance policy.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^(yes|no|true|false|1|0)$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "yes",
+        "no",
+        "true",
+        "false",
+        "1",
+        "0"
+      ],
+      "negativeContentExamples": [
+        "maybe",
+        "2",
+        "none",
+        "unknown",
+        "n/a",
+        "yes/no"
+      ],
+      "positiveHeaderExamples": [
+        "multiple_driver_flag",
+        "has_additional_driver",
+        "driver_flag",
+        "additional_driver"
+      ],
+      "negativeHeaderExamples": [
+        "driver_count",
+        "driver_age",
+        "primary_driver",
+        "driver_license"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*multiple_driver_flag.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "multiple_driver_flag"
+          ],
+          "negativeExamples": [
+            "driver_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*has_additional_driver.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "has_additional_driver"
+          ],
+          "negativeExamples": [
+            "driver_age"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*driver.*flag.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "driver_flag"
+          ],
+          "negativeExamples": [
+            "driver_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*additional.*driver.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "additional_driver"
+          ],
+          "negativeExamples": [
+            "driver_age"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*driver.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "driver"
+          ],
+          "negativeExamples": [
+            "age"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20430,
+      "explanation": "This semantic type is used to identify columns in datasets that indicate whether additional drivers are covered under an insurance policy. It is typically represented as a binary flag with values such as \"yes\", \"no\", \"true\", \"false\", \"1\", or \"0\". This type is crucial for insurance data analysis to determine policy coverage details.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "d4210a1e-e226-45f2-95f0-3712034663a0"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Weight",
+      "description": "The total mass of the insured vehicle including its basic equipment measured in standard weight units.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d+(\\.\\d+)?\\s*(kg|kilograms|lbs|pounds)\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "1500 kg",
+        "2000 kilograms",
+        "3000 lbs",
+        "4500 pounds",
+        "1200 kg",
+        "2500 kilograms"
+      ],
+      "negativeContentExamples": [
+        "payload 1500 kg",
+        "empty 2000 kg",
+        "1500",
+        "weightless",
+        "1500kg payload",
+        "2000kg empty"
+      ],
+      "positiveHeaderExamples": [
+        "vehicle_weight_kg",
+        "weight_kg",
+        "vehicle_weight",
+        "weight"
+      ],
+      "negativeHeaderExamples": [
+        "payload_weight",
+        "empty_weight",
+        "cargo_weight",
+        "net_weight"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*vehicle.*weight.*kg.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vehicle_weight_kg"
+          ],
+          "negativeExamples": [
+            "payload_weight"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*weight.*kg.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "weight_kg"
+          ],
+          "negativeExamples": [
+            "empty_weight"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*vehicle.*weight.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vehicle_weight"
+          ],
+          "negativeExamples": [
+            "payload_weight"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*weight.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "weight"
+          ],
+          "negativeExamples": [
+            "empty_weight"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20440,
+      "explanation": "This semantic type is used to identify and classify data related to the weight of a vehicle, including its basic equipment. It is measured in standard weight units such as kilograms or pounds. This type is useful in contexts where vehicle specifications are required, such as insurance, logistics, and automotive industries.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "fcae3ae9-7120-46c4-b754-95eadc0b5b94"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Value_vehicle",
+      "description": "The current market value or replacement cost of the insured vehicle used for coverage limits and premium calculations.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "15,000.00",
+        "3,500.50",
+        "100,000",
+        "45,000.00"
+      ],
+      "negativeContentExamples": [
+        "purchase_price",
+        "current_market_value",
+        "VIN123456789",
+        "john.doe@example.com",
+        "123-45-6789",
+        "http://example.com"
+      ],
+      "positiveHeaderExamples": [
+        "market_value_2019",
+        "vehicle_value"
+      ],
+      "negativeHeaderExamples": [
+        "purchase_price",
+        "current_market_value"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*market_value_2019.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "market_value_2019"
+          ],
+          "negativeExamples": [
+            "purchase_price"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*vehicle_value.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vehicle_value"
+          ],
+          "negativeExamples": [
+            "current_market_value"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*value.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vehicle_value"
+          ],
+          "negativeExamples": [
+            "purchase_price"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*cost.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "replacement_cost"
+          ],
+          "negativeExamples": [
+            "purchase_price"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*price.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "market_price"
+          ],
+          "negativeExamples": [
+            "purchase_price"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20450,
+      "explanation": "This semantic type is used to identify data fields that represent the monetary value of a vehicle, which is crucial for insurance coverage and premium calculations. The regex pattern captures typical numeric formats for currency values, including commas and decimal points.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "2ca38c14-3db7-46b7-9352-3f05f1bfb5cf"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "N_claims_history",
+      "description": "The total number of insurance claims filed by a customer across their entire relationship history with the company.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^\\d+$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "5",
+        "12",
+        "0",
+        "100",
+        "23",
+        "7"
+      ],
+      "negativeContentExamples": [
+        "five",
+        "12.5",
+        "-1",
+        "twenty",
+        "3.14",
+        "ten"
+      ],
+      "positiveHeaderExamples": [
+        "total_claims_count",
+        "claims_history_count",
+        "claims_count",
+        "number_of_claims",
+        "claims_total",
+        "claims_number"
+      ],
+      "negativeHeaderExamples": [
+        "claims_frequency",
+        "claims_ratio",
+        "average_claims",
+        "claims_percentage",
+        "claims_rate",
+        "claims_index"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*total_claims_count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "total_claims_count"
+          ],
+          "negativeExamples": [
+            "claims_frequency"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims_history_count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_history_count"
+          ],
+          "negativeExamples": [
+            "claims_ratio"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims.*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "total_claims_count"
+          ],
+          "negativeExamples": [
+            "claims_frequency"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_history_count"
+          ],
+          "negativeExamples": [
+            "frequency"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "total_claims_count"
+          ],
+          "negativeExamples": [
+            "ratio"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_number"
+          ],
+          "negativeExamples": [
+            "claims_ratio"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20460,
+      "explanation": "This semantic type is used to identify columns that represent the total number of insurance claims filed by a customer. It is useful for analyzing customer behavior and risk assessment in the insurance industry.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "de355c6b-52a1-49d1-9203-07de42f7810c"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Payment",
+      "description": "A binary indicator showing whether premium payments are current and up-to-date for the insurance policy.",
+      "baseType": "STRING",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "CURRENT",
+        "UP-TO-DATE",
+        "PAID",
+        "ON-TIME",
+        "IN-GOOD-STANDING",
+        "ACTIVE",
+        "VALID",
+        "IN-FORCE",
+        "PAID-IN-FULL",
+        "SETTLED"
+      ],
+      "backout": "^[A-Z-]{2,15}$",
+      "positiveContentExamples": [
+        "CURRENT",
+        "UP-TO-DATE",
+        "PAID",
+        "ON-TIME",
+        "IN-GOOD-STANDING",
+        "ACTIVE",
+        "VALID",
+        "IN-FORCE"
+      ],
+      "negativeContentExamples": [
+        "OVERDUE",
+        "LATE",
+        "EXPIRED",
+        "DELINQUENT",
+        "UNPAID",
+        "PENDING",
+        "INACTIVE",
+        "CANCELLED"
+      ],
+      "positiveHeaderExamples": [
+        "payment_status",
+        "premium_status",
+        "policy_payment_status",
+        "insurance_status",
+        "current_payment_status",
+        "status_of_payment"
+      ],
+      "negativeHeaderExamples": [
+        "amount_paid",
+        "payment_date",
+        "payment_method_code",
+        "due_date",
+        "policy_number",
+        "coverage_amount"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*payment.*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "payment_status"
+          ],
+          "negativeExamples": [
+            "amount_paid"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*premium.*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "premium_status"
+          ],
+          "negativeExamples": [
+            "payment_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "status"
+          ],
+          "negativeExamples": [
+            "method_code"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20470,
+      "explanation": "This semantic type is used to identify columns or data values that indicate the current status of premium payments for an insurance policy. It helps in determining whether payments are up-to-date, which is crucial for maintaining active coverage.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "a23c9edf-d546-4be5-8dbe-4562d370b0b7"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Cost_claims_year",
+      "description": "The total monetary value of insurance claims paid out for a specific policy during the current year.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b(claims?_cost|total_claims?_amount|claims?_value|claims?_payout|claims?_paid)\\b.*\\b(current|this|year|annual)\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [],
+      "negativeContentExamples": [
+        "claims_count",
+        "year_to_date",
+        "policy_number",
+        "customer_id",
+        "2023",
+        "Q1"
+      ],
+      "positiveHeaderExamples": [
+        "claims_cost_current_year",
+        "total_claims_amount",
+        "claims_value_this_year",
+        "claims_payout_annual",
+        "claims_paid_this_year",
+        "amount_paid"
+      ],
+      "negativeHeaderExamples": [
+        "claims_count",
+        "year_to_date",
+        "policy_number",
+        "customer_id",
+        "policy_start_date",
+        "policy_end_date"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*claims?_cost.*current.*year.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_cost_current_year"
+          ],
+          "negativeExamples": [
+            "claims_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*total_claims?_amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "total_claims_amount"
+          ],
+          "negativeExamples": [
+            "year_to_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims?_value.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_value_this_year"
+          ],
+          "negativeExamples": [
+            "claims_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims?_payout.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_payout_annual"
+          ],
+          "negativeExamples": [
+            "year_to_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims?_paid.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_paid_this_year"
+          ],
+          "negativeExamples": [
+            "claims_count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "amount_paid"
+          ],
+          "negativeExamples": [
+            "claims_count"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20480,
+      "explanation": "This semantic type identifies columns that represent the total monetary value of insurance claims paid out for a specific policy during the current year. It is useful for financial analysis and reporting in the insurance industry.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "809f4f38-02a8-4071-9198-f92f6339bde5"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Date_birth",
+      "description": "The birth date of the primary policyholder or insured individual associated with the insurance contract.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b(?:\\d{1,2}[-/]\\d{1,2}[-/]\\d{2,4}|\\d{4}[-/]\\d{1,2}[-/]\\d{1,2})\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "01/15/1980",
+        "1980-01-15",
+        "15-01-1980",
+        "1980/01/15",
+        "01-15-80",
+        "15/01/80"
+      ],
+      "negativeContentExamples": [],
+      "positiveHeaderExamples": [
+        "date_of_birth",
+        "dob",
+        "birth_date",
+        "birth",
+        "date"
+      ],
+      "negativeHeaderExamples": [
+        "policy_start_date",
+        "license_issue_date",
+        "start_date",
+        "issue",
+        "code"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*date_of_birth.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "date_of_birth"
+          ],
+          "negativeExamples": [
+            "policy_start_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*dob.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "dob"
+          ],
+          "negativeExamples": [
+            "license_issue_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*birth.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "birth_date"
+          ],
+          "negativeExamples": [
+            "start_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*birth.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "birth"
+          ],
+          "negativeExamples": [
+            "issue"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "date"
+          ],
+          "negativeExamples": [
+            "code"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20490,
+      "explanation": "This semantic type is used to identify and classify data fields that represent the birth date of an individual, specifically the primary policyholder or insured person in an insurance context. It is crucial for age verification and policy eligibility assessments.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "ce129fe9-0c43-49bc-ab3c-57aafb9a4bb2"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Type_fuel",
+      "description": "A coded identifier specifying the primary fuel type used by the insured vehicle's engine system.",
+      "baseType": "STRING",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "GASOLINE",
+        "DIESEL",
+        "ELECTRIC",
+        "HYBRID",
+        "ETHANOL",
+        "BIODIESEL",
+        "NATURAL GAS",
+        "PROPANE",
+        "HYDROGEN",
+        "FLEX FUEL"
+      ],
+      "backout": "^[A-Z ]{3,15}$",
+      "positiveContentExamples": [
+        "GASOLINE",
+        "DIESEL",
+        "ELECTRIC",
+        "HYBRID",
+        "ETHANOL",
+        "BIODIESEL",
+        "NATURAL GAS",
+        "PROPANE"
+      ],
+      "negativeContentExamples": [
+        "GASOLINE CONSUMPTION",
+        "FUEL EFFICIENCY",
+        "ENGINE TYPE",
+        "VEHICLE MODEL",
+        "OIL TYPE",
+        "BATTERY CAPACITY"
+      ],
+      "positiveHeaderExamples": [
+        "fuel_type",
+        "energy_type",
+        "primary_fuel",
+        "vehicle_fuel"
+      ],
+      "negativeHeaderExamples": [
+        "fuel_consumption",
+        "fuel_efficiency",
+        "engine_capacity",
+        "vehicle_model"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*fuel_type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "fuel_type"
+          ],
+          "negativeExamples": [
+            "fuel_consumption"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*energy_type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "energy_type"
+          ],
+          "negativeExamples": [
+            "fuel_efficiency"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*fuel.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "fuel"
+          ],
+          "negativeExamples": [
+            "consumption"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*energy.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "energy"
+          ],
+          "negativeExamples": [
+            "efficiency"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "type"
+          ],
+          "negativeExamples": [
+            "consumption"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20500,
+      "explanation": "This semantic type is used to identify the primary fuel type of a vehicle, which is crucial for understanding the vehicle's energy source and environmental impact. It is typically used in datasets related to automotive insurance, vehicle registration, and environmental studies.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "6bbbabfe-b9d4-4e08-9ac3-e2e10b418410"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "N_claims_year",
+      "description": "The count of insurance claims filed or processed for a specific policy during the current year.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^(claims_count_current_year|n_claims_year)$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [],
+      "negativeContentExamples": [
+        "claims_amount",
+        "total_claims",
+        "policy_number",
+        "premium_amount",
+        "claim_date",
+        "insured_value"
+      ],
+      "positiveHeaderExamples": [
+        "claims_count_current_year",
+        "n_claims_year",
+        "current_year_claims",
+        "yearly_claims_count",
+        "claims_this_year",
+        "annual_claims_count"
+      ],
+      "negativeHeaderExamples": [
+        "claims_amount",
+        "total_claims",
+        "policy_number",
+        "premium_amount",
+        "claim_date",
+        "insured_value"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*claims_count_current_year.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_count_current_year"
+          ],
+          "negativeExamples": [
+            "claims_amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*n_claims_year.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "n_claims_year"
+          ],
+          "negativeExamples": [
+            "total_claims"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims.*year.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_count_current_year"
+          ],
+          "negativeExamples": [
+            "claims_amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*claims.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "n_claims_year"
+          ],
+          "negativeExamples": [
+            "total_claims"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "claims_count_current_year"
+          ],
+          "negativeExamples": [
+            "claims_amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "n_claims_year"
+          ],
+          "negativeExamples": [
+            "total_claims"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20510,
+      "explanation": "This semantic type is used to identify columns that represent the count of insurance claims filed or processed for a specific policy during the current year. It helps in categorizing and analyzing insurance data related to claims activity within the current year.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "5817571c-6e29-4cb8-af4c-c6887dbaefa9"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Type_risk",
+      "description": "A coded classification system that categorizes the insurance risk level associated with a particular policy or customer.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^(low|medium|high|very high|extreme|minimal|moderate|severe|critical|negligible)$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "low",
+        "medium",
+        "high",
+        "very high",
+        "extreme",
+        "minimal",
+        "moderate",
+        "severe"
+      ],
+      "negativeContentExamples": [
+        "low risk",
+        "medium risk",
+        "high risk",
+        "extremely high",
+        "minimal risk",
+        "moderate risk",
+        "severely high",
+        "critical risk"
+      ],
+      "positiveHeaderExamples": [
+        "risk_type_code",
+        "vehicle_risk_category",
+        "policy_risk_level",
+        "customer_risk_type",
+        "insurance_risk_category",
+        "risk_classification_code"
+      ],
+      "negativeHeaderExamples": [
+        "risk_score",
+        "insurance_type",
+        "policy_score",
+        "customer_type",
+        "insurance_level",
+        "classification_score"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*risk_type_code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "risk_type_code"
+          ],
+          "negativeExamples": [
+            "risk_score"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*vehicle_risk_category.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vehicle_risk_category"
+          ],
+          "negativeExamples": [
+            "insurance_type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*risk.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "risk_level"
+          ],
+          "negativeExamples": [
+            "insurance_score"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*category.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "category_code"
+          ],
+          "negativeExamples": [
+            "type_score"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "code_type"
+          ],
+          "negativeExamples": [
+            "score_type"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20520,
+      "explanation": "This semantic type is used to classify the risk level associated with insurance policies or customers. It helps in categorizing the potential risk into predefined levels such as low, medium, high, etc., which can be used for risk assessment and management in insurance processes.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "f0d2dfd0-79a2-4185-9b60-c53fff79e8d6"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Length",
+      "description": "The overall length dimension of the insured vehicle measured from front to rear in standard units.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d+(\\.\\d+)?\\s?(m|meters|metres|ft|feet|in|inches)\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "4.5 meters",
+        "15 ft",
+        "200 inches",
+        "3.2 m",
+        "10 feet",
+        "120 in"
+      ],
+      "negativeContentExamples": [
+        "4.5 kg",
+        "15 cm",
+        "200 lbs",
+        "3.2 liters",
+        "10 gallons",
+        "120 mm"
+      ],
+      "positiveHeaderExamples": [
+        "vehicle_length_m",
+        "length_meters",
+        "car_length_ft",
+        "auto_length_inches",
+        "vehicle_size_length",
+        "length_of_vehicle"
+      ],
+      "negativeHeaderExamples": [
+        "width_meters",
+        "height_meters",
+        "vehicle_width_ft",
+        "auto_height_inches",
+        "vehicle_size_width",
+        "width_of_vehicle"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*vehicle.*length.*m.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "vehicle_length_m"
+          ],
+          "negativeExamples": [
+            "vehicle_width_m"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*length.*meters.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "length_meters"
+          ],
+          "negativeExamples": [
+            "height_meters"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*length.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "length"
+          ],
+          "negativeExamples": [
+            "width"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*dim.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "dim_length"
+          ],
+          "negativeExamples": [
+            "dim_width"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*size.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "size_length"
+          ],
+          "negativeExamples": [
+            "size_width"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*length.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "length"
+          ],
+          "negativeExamples": [
+            "height"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20530,
+      "explanation": "This semantic type is used to identify and classify data related to the length dimension of vehicles, typically measured in meters, feet, or inches. It is crucial for applications involving vehicle specifications, insurance, and transportation logistics.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "8c124b04-c94e-462c-951d-3019360f0a6a"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Seniority",
+      "description": "The number of years a customer has maintained an active relationship with the insurance company.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "\\b\\d{1,2}\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "5",
+        "12",
+        "3",
+        "8",
+        "15",
+        "20"
+      ],
+      "negativeContentExamples": [
+        "25.5",
+        "ten",
+        "1.5",
+        "twenty",
+        "-3"
+      ],
+      "positiveHeaderExamples": [
+        "customer_tenure_years",
+        "policyholder_seniority",
+        "tenure_years",
+        "seniority_level",
+        "years_with_company",
+        "year_count"
+      ],
+      "negativeHeaderExamples": [
+        "vehicle_age",
+        "policy_length",
+        "age_years",
+        "policy_duration",
+        "months_active",
+        "month_count"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*customer.*tenure.*years.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "customer_tenure_years"
+          ],
+          "negativeExamples": [
+            "vehicle_age"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*policyholder.*seniority.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policyholder_seniority"
+          ],
+          "negativeExamples": [
+            "policy_length"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*tenure.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "tenure_years"
+          ],
+          "negativeExamples": [
+            "age_years"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*seniority.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "seniority_level"
+          ],
+          "negativeExamples": [
+            "policy_duration"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*years.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "years_with_company"
+          ],
+          "negativeExamples": [
+            "months_active"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*year.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "year_count"
+          ],
+          "negativeExamples": [
+            "month_count"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20540,
+      "explanation": "This semantic type represents the number of years a customer has been with an insurance company, indicating their seniority or tenure. It is useful for analyzing customer loyalty and retention.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "aebe4e0d-8984-48c7-aaf8-b37487f329df"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Area",
+      "description": "A geographic classification code indicating the type of area where the insured vehicle is primarily located or garaged.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b(urban|suburban|rural|metropolitan|industrial|residential|commercial|agricultural|recreational|mixed-use)\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "urban",
+        "suburban",
+        "rural",
+        "metropolitan",
+        "industrial",
+        "residential",
+        "commercial",
+        "agricultural"
+      ],
+      "negativeContentExamples": [
+        "12345",
+        "NYC",
+        "California",
+        "123-456",
+        "Region 1",
+        "Area 51",
+        "Zone A",
+        "Sector 9"
+      ],
+      "positiveHeaderExamples": [
+        "area_type",
+        "location_classification",
+        "area_category",
+        "geographic_type",
+        "zone_type"
+      ],
+      "negativeHeaderExamples": [
+        "area_code",
+        "region_name",
+        "postal_code",
+        "state_name",
+        "country_code"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*area_type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "area_type"
+          ],
+          "negativeExamples": [
+            "area_code"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*location_classification.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "location_classification"
+          ],
+          "negativeExamples": [
+            "region_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*location.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "location_type"
+          ],
+          "negativeExamples": [
+            "location_code"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "type_of_area"
+          ],
+          "negativeExamples": [
+            "type_code"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20550,
+      "explanation": "This semantic type is used to classify the type of area where an insured vehicle is primarily located or garaged. It helps in determining insurance rates and risk assessments based on geographic area types such as urban, suburban, rural, etc.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "333849b8-f774-429c-ba57-1303f6bf9f8c"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Date_next_renewal",
+      "description": "The scheduled future date when the current insurance policy is set to expire and requires renewal.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b(?:\\d{4}[-/]\\d{2}[-/]\\d{2}|\\d{2}[-/]\\d{2}[-/]\\d{4})\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "2024-05-15",
+        "2023/12/01",
+        "2025-11-30",
+        "2024/07/20",
+        "2023-09-10",
+        "2025/01/01"
+      ],
+      "negativeContentExamples": [],
+      "positiveHeaderExamples": [
+        "next_renewal_date",
+        "scheduled_renewal_date"
+      ],
+      "negativeHeaderExamples": [
+        "last_renewal_date",
+        "policy_issue_date"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*next.*renewal.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "next_renewal_date"
+          ],
+          "negativeExamples": [
+            "last_renewal_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*scheduled.*renewal.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "scheduled_renewal_date"
+          ],
+          "negativeExamples": [
+            "policy_issue_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*renewal.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "next_renewal_date"
+          ],
+          "negativeExamples": [
+            "policy_issue_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "next_renewal_date"
+          ],
+          "negativeExamples": [
+            "policy_issue_date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20560,
+      "explanation": "This semantic type identifies dates that represent the next scheduled renewal date for an insurance policy. It is used to track when policies are due for renewal, ensuring timely updates and continuity of coverage.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "8441fa01-6fd8-4b31-ac9c-3051c280cced"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Max_products",
+      "description": "The maximum number of different insurance product types that a customer has held concurrently during their relationship.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "\\b\\d{1,3}\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "5",
+        "12",
+        "25",
+        "100",
+        "3",
+        "50"
+      ],
+      "negativeContentExamples": [
+        "product123",
+        "abc",
+        "12.5",
+        "one hundred",
+        "0x10",
+        "twenty"
+      ],
+      "positiveHeaderExamples": [
+        "max_products_held",
+        "peak_product_count",
+        "maximum_products",
+        "product_maximum",
+        "max_product_number",
+        "highest_product_count"
+      ],
+      "negativeHeaderExamples": [
+        "product_id",
+        "total_products_sold",
+        "customer_id",
+        "total_revenue",
+        "product_name",
+        "sales_count"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*max.*products.*held.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "max_products_held"
+          ],
+          "negativeExamples": [
+            "product_id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*peak.*product.*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "peak_product_count"
+          ],
+          "negativeExamples": [
+            "total_products_sold"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*product.*max.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "product_maximum"
+          ],
+          "negativeExamples": [
+            "product_minimum"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*product.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "product_count"
+          ],
+          "negativeExamples": [
+            "customer_id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "count_of_products"
+          ],
+          "negativeExamples": [
+            "total_sales"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "number_of_products"
+          ],
+          "negativeExamples": [
+            "total_revenue"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20570,
+      "explanation": "This semantic type represents the maximum number of different insurance product types a customer has held concurrently. It is useful for analyzing customer engagement and product diversity in insurance portfolios.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "e67053f6-491c-481c-b8a9-5f9fe2833d2b"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Power",
+      "description": "The engine power output of the insured vehicle measured in horsepower or equivalent power units.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d+(\\.\\d+)?\\s*(hp|horsepower|kw|kilowatt|ps|bhp)\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "150 hp",
+        "200 horsepower",
+        "100 kw",
+        "75 kilowatt",
+        "120 ps",
+        "180 bhp"
+      ],
+      "negativeContentExamples": [
+        "engine size 2.0L",
+        "fuel efficiency 30 mpg",
+        "weight 1500 kg",
+        "torque 300 Nm",
+        "top speed 220 km/h",
+        "price $20,000"
+      ],
+      "positiveHeaderExamples": [
+        "engine_power_hp",
+        "power_output",
+        "vehicle_power",
+        "engine_power",
+        "output_power",
+        "power_rating"
+      ],
+      "negativeHeaderExamples": [
+        "engine_size",
+        "kilowatts",
+        "fuel_efficiency",
+        "vehicle_weight",
+        "torque_output",
+        "top_speed"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*engine.*power.*hp.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "engine_power_hp"
+          ],
+          "negativeExamples": [
+            "engine_size"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*power.*output.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "power_output"
+          ],
+          "negativeExamples": [
+            "kilowatts"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*power.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "engine_power"
+          ],
+          "negativeExamples": [
+            "engine_size"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*output.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "output_power"
+          ],
+          "negativeExamples": [
+            "engine_size"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*power.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "power"
+          ],
+          "negativeExamples": [
+            "size"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20580,
+      "explanation": "This semantic type is used to identify and classify data related to the power output of a vehicle's engine, typically measured in units such as horsepower, kilowatts, or similar. It is crucial for datasets involving vehicle specifications, insurance, and performance metrics.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "e3ea6b6b-44e4-4dd7-a772-f801d14d9e9d"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Date_driving_licence",
+      "description": "The date when the policyholder's driving license was first issued or obtained from the licensing authority.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b(?:\\d{4}[-/]\\d{2}[-/]\\d{2}|\\d{2}[-/]\\d{2}[-/]\\d{4})\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "2023-01-15",
+        "15/01/2023",
+        "1999-12-31",
+        "31/12/1999",
+        "2000-06-01",
+        "01/06/2000"
+      ],
+      "negativeContentExamples": [
+        "123456789",
+        "AB123456",
+        "01-01-01",
+        "license123"
+      ],
+      "positiveHeaderExamples": [
+        "license_issue_date",
+        "driver_license_date",
+        "driving_license_issue_date",
+        "license_obtained_date",
+        "dl_issue_date",
+        "license_start_date"
+      ],
+      "negativeHeaderExamples": [
+        "license_number",
+        "birth_date",
+        "expiration_date",
+        "policy_number",
+        "issue_number",
+        "registration_date"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*license.*issue.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "license_issue_date"
+          ],
+          "negativeExamples": [
+            "license_number"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*driver.*license.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "driver_license_date"
+          ],
+          "negativeExamples": [
+            "birth_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*license.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "license_issue_date"
+          ],
+          "negativeExamples": [
+            "license_number"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "driver_license_date"
+          ],
+          "negativeExamples": [
+            "license_number"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20590,
+      "explanation": "This semantic type is used to identify dates related to the issuance of driving licenses. It helps in categorizing and validating data fields that store the date when a driving license was first issued to a policyholder. This type is crucial for insurance and regulatory compliance purposes.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "d9df6ec1-b007-4803-bb01-607cd9db9e67"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Date_start_contract",
+      "description": "The official date when an insurance policy becomes active and coverage begins for the insured party.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d{4}-\\d{2}-\\d{2}\\b|\\b\\d{2}/\\d{2}/\\d{4}\\b|\\b\\d{2}-\\d{2}-\\d{4}\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "2023-01-01",
+        "01/01/2023",
+        "01-01-2023",
+        "2022-12-31",
+        "12/31/2022",
+        "31-12-2022"
+      ],
+      "negativeContentExamples": [
+        "2023/01/01",
+        "01-01-23",
+        "2023.01.01",
+        "01.01.2023",
+        "31/12/22"
+      ],
+      "positiveHeaderExamples": [
+        "policy_start_date",
+        "contract_effective_date",
+        "start_date",
+        "effective_date"
+      ],
+      "negativeHeaderExamples": [
+        "transaction_date",
+        "birth_date",
+        "expiration_date",
+        "renewal_date"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*policy_start_date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "policy_start_date"
+          ],
+          "negativeExamples": [
+            "transaction_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*contract_effective_date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "contract_effective_date"
+          ],
+          "negativeExamples": [
+            "birth_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*start.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "start_date"
+          ],
+          "negativeExamples": [
+            "end_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*effective.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "effective_date"
+          ],
+          "negativeExamples": [
+            "expiration_date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "date"
+          ],
+          "negativeExamples": [
+            "time"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20600,
+      "explanation": "This semantic type identifies dates that mark the beginning of an insurance contract, indicating when the policy becomes active. It is crucial for determining coverage periods and is typically formatted in standard date formats such as YYYY-MM-DD, MM/DD/YYYY, or DD-MM-YYYY.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "a630db16-14be-4526-aad5-bdec8f3e3104"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Cylinder_capacity",
+      "description": "The total displacement volume of the vehicle's engine cylinders measured in cubic centimeters or equivalent units.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d{1,4}(\\.\\d{1,2})?\\s?(cc|cm3|cubic centimeters|liters|L)\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "1500 cc",
+        "2.0 L",
+        "1998 cm3",
+        "1.6 liters",
+        "2500 cc",
+        "3.5 L"
+      ],
+      "negativeContentExamples": [
+        "1500 hp",
+        "2.0 kW",
+        "1998 kg",
+        "1.6 mph",
+        "2500 rpm",
+        "3.5 psi"
+      ],
+      "positiveHeaderExamples": [
+        "cylinder_capacity_cc",
+        "engine_displacement",
+        "displacement_volume",
+        "engine_capacity",
+        "cylinder_volume",
+        "engine_size"
+      ],
+      "negativeHeaderExamples": [
+        "power_output",
+        "fuel_efficiency",
+        "torque",
+        "horsepower",
+        "weight",
+        "top_speed"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*cylinder_capacity_cc.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "cylinder_capacity_cc"
+          ],
+          "negativeExamples": [
+            "power_output"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*engine_displacement.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "engine_displacement"
+          ],
+          "negativeExamples": [
+            "capacity"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*displacement.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "displacement"
+          ],
+          "negativeExamples": [
+            "output"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*engine.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "engine"
+          ],
+          "negativeExamples": [
+            "power"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*capacity.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "capacity"
+          ],
+          "negativeExamples": [
+            "output"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20610,
+      "explanation": "This semantic type identifies data related to the engine's cylinder capacity, typically measured in cubic centimeters (cc) or liters (L). It is used in automotive datasets to specify the engine size, which is a critical factor in vehicle performance and classification.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "d67b10a9-7f2b-4942-9c35-f9e18e4430aa"
+    }
+  ]
+}

@@ -1,0 +1,2855 @@
+{
+  "dataset": "telco_customer_churn",
+  "description_number": 1,
+  "timestamp": "20250829_005605",
+  "generated_types": [
+    {
+      "resultType": "generated",
+      "semanticType": "Internet Service",
+      "description": "A binary indicator showing whether a customer has subscribed to internet connectivity services.",
+      "baseType": "STRING",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "YES",
+        "NO",
+        "TRUE",
+        "FALSE",
+        "1",
+        "0",
+        "SUBSCRIBED",
+        "NOT SUBSCRIBED",
+        "ACTIVE",
+        "INACTIVE"
+      ],
+      "backout": "^(YES|NO|TRUE|FALSE|1|0|SUBSCRIBED|NOT SUBSCRIBED|ACTIVE|INACTIVE)$",
+      "positiveContentExamples": [
+        "YES",
+        "NO",
+        "TRUE",
+        "FALSE",
+        "1",
+        "0",
+        "SUBSCRIBED",
+        "NOT SUBSCRIBED"
+      ],
+      "negativeContentExamples": [
+        "TV",
+        "PHONE",
+        "EMAIL",
+        "ADDRESS",
+        "ZIP CODE",
+        "COUNTRY"
+      ],
+      "positiveHeaderExamples": [
+        "Has Internet",
+        "Internet Service",
+        "Internet Subscription",
+        "Internet Connectivity"
+      ],
+      "negativeHeaderExamples": [
+        "TV Service",
+        "Phone Service",
+        "Email Address",
+        "Postal Code"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*internet.*service.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Internet Service"
+          ],
+          "negativeExamples": [
+            "TV Service"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*has.*internet.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Has Internet"
+          ],
+          "negativeExamples": [
+            "Phone Service"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*internet.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Internet"
+          ],
+          "negativeExamples": [
+            "Service"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*service.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Service"
+          ],
+          "negativeExamples": [
+            "Internet"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20960,
+      "explanation": "This semantic type is used to identify columns that indicate whether a customer has subscribed to internet services. It is typically represented as a binary indicator with values such as \"YES\", \"NO\", \"TRUE\", \"FALSE\", \"1\", \"0\", \"SUBSCRIBED\", \"NOT SUBSCRIBED\", \"ACTIVE\", or \"INACTIVE\". This type is useful for data analysis in customer service and subscription management contexts.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "e70e5c90-5142-400d-b1f9-e33601ac49f5"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Total Refunds",
+      "description": "The cumulative amount of refunds or credits issued to a customer for telecommunications service adjustments.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d{1,3}(?:,\\d{3})*(?:\\.\\d{2})?\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "1,234.56",
+        "100.00",
+        "5,678.90",
+        "12,345.67",
+        "987.65",
+        "10,000.00"
+      ],
+      "negativeContentExamples": [
+        "Refunded",
+        "Pending",
+        "Completed",
+        "1234",
+        "Amount",
+        "Refund"
+      ],
+      "positiveHeaderExamples": [
+        "Total_Refunds",
+        "Refund_Amount"
+      ],
+      "negativeHeaderExamples": [
+        "Refund_Status",
+        "Refund_Count",
+        "Transaction_ID",
+        "Customer_Name"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*total.*refunds.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Total_Refunds"
+          ],
+          "negativeExamples": [
+            "Refund_Status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*refund.*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Refund_Amount"
+          ],
+          "negativeExamples": [
+            "Refund_Count"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*refund.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Refund_Amount"
+          ],
+          "negativeExamples": [
+            "Refund_Status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Refund_Amount"
+          ],
+          "negativeExamples": [
+            "Refund_Status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Refund_Amount"
+          ],
+          "negativeExamples": [
+            "Refund_Status"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20970,
+      "explanation": "This semantic type is used to identify columns or data values that represent the total monetary amount of refunds or credits issued to customers, typically in the context of telecommunications service adjustments. The regex pattern is designed to match typical currency formats, including commas for thousands and two decimal places for cents.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "3a0295b4-b334-430f-90c2-ae765ee78e6b"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Married",
+      "description": "A binary indicator showing whether a customer is married or in a committed partnership.",
+      "baseType": "STRING",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "MARRIED",
+        "SINGLE",
+        "YES",
+        "NO",
+        "TRUE",
+        "FALSE",
+        "Y",
+        "N",
+        "T",
+        "F"
+      ],
+      "backout": "^[A-Z]{1,7}$",
+      "positiveContentExamples": [
+        "MARRIED",
+        "SINGLE",
+        "YES",
+        "NO",
+        "TRUE",
+        "FALSE",
+        "Y",
+        "N"
+      ],
+      "negativeContentExamples": [
+        "UNKNOWN",
+        "UNSPECIFIED",
+        "DIVORCED",
+        "WIDOWED",
+        "PARTNERED",
+        "SEPARATED"
+      ],
+      "positiveHeaderExamples": [
+        "Marital Status",
+        "Is Married",
+        "Married Status",
+        "Marriage Indicator"
+      ],
+      "negativeHeaderExamples": [
+        "Spouse Name",
+        "Family Size",
+        "Partner Name",
+        "Household Members"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*marital.*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Marital Status"
+          ],
+          "negativeExamples": [
+            "Spouse Name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*is.*married.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Is Married"
+          ],
+          "negativeExamples": [
+            "Family Size"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*married.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Married"
+          ],
+          "negativeExamples": [
+            "Spouse Name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Status"
+          ],
+          "negativeExamples": [
+            "Family Size"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20980,
+      "explanation": "This semantic type is used to identify columns that indicate whether a person is married or in a committed partnership. It is typically represented as a binary indicator with values such as \"MARRIED\", \"SINGLE\", \"YES\", \"NO\", \"TRUE\", \"FALSE\", \"Y\", \"N\", \"T\", or \"F\". This type is useful in datasets where marital status is a relevant attribute for analysis or reporting.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "c19c5b9c-60c5-4561-a3b5-85a092e29540"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Device Protection Plan",
+      "description": "A binary indicator showing whether a customer has subscribed to device insurance or protection coverage.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^(yes|no|true|false|1|0|subscribed|not\\s+subscribed|opted\\s+in|opted\\s+out)$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "Yes",
+        "No",
+        "True",
+        "False",
+        "1",
+        "0",
+        "Subscribed",
+        "Not Subscribed"
+      ],
+      "negativeContentExamples": [
+        "Maybe",
+        "Unknown",
+        "Pending",
+        "Active",
+        "Inactive",
+        "Covered",
+        "Uncovered",
+        "Warranty"
+      ],
+      "positiveHeaderExamples": [
+        "Protection Plan",
+        "Device Insurance Opt‑In"
+      ],
+      "negativeHeaderExamples": [
+        "Warranty Plan",
+        "Service Coverage",
+        "Extended Warranty",
+        "Repair Coverage"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*device.*protection.*plan.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Device Protection Plan"
+          ],
+          "negativeExamples": [
+            "Warranty Plan"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*device.*insurance.*opt.*in.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Device Insurance Opt‑In"
+          ],
+          "negativeExamples": [
+            "Service Coverage"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*protection.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Protection Plan"
+          ],
+          "negativeExamples": [
+            "Warranty Plan"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*insurance.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Device Insurance Opt‑In"
+          ],
+          "negativeExamples": [
+            "Service Coverage"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*plan.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Protection Plan"
+          ],
+          "negativeExamples": [
+            "Service Coverage"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 20990,
+      "explanation": "This semantic type identifies columns that indicate whether a customer has subscribed to a device protection plan or insurance. It uses a binary indicator with values such as \"Yes\", \"No\", \"True\", \"False\", \"1\", \"0\", \"Subscribed\", and \"Not Subscribed\". This type is useful for datasets that track customer subscriptions to device protection services.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "feb0a833-e200-48b7-8653-6fb6604d95b5"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Satisfaction Score",
+      "description": "A numerical rating indicating a customer's satisfaction level with telecommunications services and support.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "\\b\\d{1,2}(\\.\\d{1,2})?\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "8.5",
+        "10",
+        "7.2",
+        "9",
+        "6.8",
+        "5"
+      ],
+      "negativeContentExamples": [
+        "Excellent",
+        "Very Satisfied",
+        "High",
+        "Low",
+        "Good",
+        "Bad"
+      ],
+      "positiveHeaderExamples": [
+        "Customer_Satisfaction_Score",
+        "Sat_Score",
+        "Satisfaction_Score",
+        "Service_Satisfaction_Score",
+        "Support_Satisfaction_Score",
+        "Telecom_Satisfaction_Score"
+      ],
+      "negativeHeaderExamples": [
+        "SatisfactionLevel",
+        "Survey_Response",
+        "Customer_Feedback",
+        "Service_Quality",
+        "Support_Level",
+        "Telecom_Review"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*customer.*satisfaction.*score.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Customer_Satisfaction_Score"
+          ],
+          "negativeExamples": [
+            "SatisfactionLevel"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*sat.*score.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Sat_Score"
+          ],
+          "negativeExamples": [
+            "Survey_Response"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*satisfaction.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Satisfaction_Score"
+          ],
+          "negativeExamples": [
+            "Response_Score"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*score.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Score"
+          ],
+          "negativeExamples": [
+            "Level"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21000,
+      "explanation": "This semantic type represents a numerical score that reflects customer satisfaction with telecommunications services and support. It is typically a number between 0 and 10, possibly with one or two decimal places, and is used to gauge customer sentiment and service quality.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "3228dea7-2d5a-4ce4-9d70-32472ff6eb1b"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Customer ID",
+      "description": "A unique alphanumeric identifier assigned to each customer for account tracking and identification purposes.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^[a-z0-9]{5,20}$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "cust12345",
+        "abcde12345",
+        "12345abcde",
+        "customer001",
+        "sub1234567",
+        "xyz7890"
+      ],
+      "negativeContentExamples": [
+        "123",
+        "123456789012345678901",
+        "!@#cust123"
+      ],
+      "positiveHeaderExamples": [
+        "Subscriber ID",
+        "CustID",
+        "Customer ID",
+        "Client ID",
+        "Account ID",
+        "Member ID"
+      ],
+      "negativeHeaderExamples": [
+        "Order ID",
+        "Product ID",
+        "Transaction ID",
+        "Invoice Number",
+        "Serial Number",
+        "Tracking Number"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*customer.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Customer ID"
+          ],
+          "negativeExamples": [
+            "Order ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*subscriber.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Subscriber ID"
+          ],
+          "negativeExamples": [
+            "Product ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*cust.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "CustID"
+          ],
+          "negativeExamples": [
+            "Order Number"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "ID"
+          ],
+          "negativeExamples": [
+            "Number"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21010,
+      "explanation": "This semantic type is used to identify unique alphanumeric identifiers assigned to customers. These identifiers are crucial for tracking customer accounts and ensuring accurate identification across systems. The regex pattern allows for a flexible range of alphanumeric combinations, typically between 5 to 20 characters, to accommodate various customer ID formats used by different organizations.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "9d14384e-4a60-49c2-b03a-89e999253727"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Churn",
+      "description": "A binary indicator showing whether a customer has discontinued their service subscription.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^(yes|no|true|false|1|0)$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "yes",
+        "no",
+        "true",
+        "false",
+        "1",
+        "0"
+      ],
+      "negativeContentExamples": [
+        "maybe",
+        "unknown",
+        "cancelled",
+        "active",
+        "pending",
+        "completed"
+      ],
+      "positiveHeaderExamples": [
+        "Churn Flag",
+        "Customer Churned",
+        "Churn Indicator",
+        "Churn Status",
+        "Churn",
+        "Churn Flag"
+      ],
+      "negativeHeaderExamples": [
+        "Cancellation Reason",
+        "Join Date",
+        "Subscription Status",
+        "Account Status",
+        "Service Level",
+        "Membership Type"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*customer.*churn.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Customer Churned"
+          ],
+          "negativeExamples": [
+            "Cancellation Reason"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*churn.*flag.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Churn Flag"
+          ],
+          "negativeExamples": [
+            "Join Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*churn.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Churn Indicator"
+          ],
+          "negativeExamples": [
+            "Subscription Status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*flag.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Flag"
+          ],
+          "negativeExamples": [
+            "Status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*indicator.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Indicator"
+          ],
+          "negativeExamples": [
+            "Reason"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21020,
+      "explanation": "This semantic type is used to identify columns that indicate whether a customer has discontinued their service subscription. It is typically represented as a binary value (e.g., yes/no, true/false, 1/0) and is crucial for analyzing customer retention and churn rates.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "f8555f2a-4484-491f-b1b6-acb8bac59ae8"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Quarter",
+      "description": "A fiscal or calendar quarter designation used for business reporting and analysis periods.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)Q[1-4]|Quarter\\s[1-4]|Qtr\\s[1-4]",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Quarter 1",
+        "Quarter 2",
+        "Quarter 3",
+        "Quarter 4"
+      ],
+      "negativeContentExamples": [
+        "January",
+        "H1",
+        "Year 2023",
+        "Month 5",
+        "Half 2",
+        "Week 12"
+      ],
+      "positiveHeaderExamples": [
+        "Fiscal Quarter",
+        "Reporting Quarter",
+        "Quarter",
+        "Qtr"
+      ],
+      "negativeHeaderExamples": [
+        "Month",
+        "Half-Year",
+        "Year",
+        "Week"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*fiscal.*quarter.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Fiscal Quarter"
+          ],
+          "negativeExamples": [
+            "Month"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*reporting.*quarter.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Reporting Quarter"
+          ],
+          "negativeExamples": [
+            "Half-Year"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*quarter.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Quarter"
+          ],
+          "negativeExamples": [
+            "Month"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*qtr.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Qtr"
+          ],
+          "negativeExamples": [
+            "Year"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*q.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Q"
+          ],
+          "negativeExamples": [
+            "H"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21030,
+      "explanation": "This semantic type identifies fiscal or calendar quarter designations, which are used in business reporting and analysis to segment the year into four parts. Common representations include \"Q1\", \"Quarter 1\", and similar variations.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "7f440d40-c633-456f-97df-8b2845275dd3"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Avg Monthly Long Distance Charges",
+      "description": "The average monthly billing amount for long-distance telecommunications charges incurred by a customer.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b(avg|average)\\b.*\\b(monthly|month)\\b.*\\b(long[-\\s]?distance|ld)\\b.*\\b(charges|cost|amount)\\b.*\\$\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [],
+      "negativeContentExamples": [
+        "total 200",
+        "international 50",
+        "local 30",
+        "roaming 15",
+        "data 100",
+        "sms 5"
+      ],
+      "positiveHeaderExamples": [
+        "Avg. Monthly LD Charges",
+        "Monthly Long‑Distance Cost",
+        "Average Monthly Long-Distance Charges",
+        "Monthly LD Charges",
+        "Avg Monthly Long Distance Cost",
+        "LD Monthly Charges"
+      ],
+      "negativeHeaderExamples": [
+        "Total Call Charges",
+        "International Call Fees",
+        "Local Call Charges",
+        "Data Usage Charges",
+        "Roaming Charges",
+        "SMS Charges"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*avg.*monthly.*long[-\\s]?distance.*charges.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Avg. Monthly LD Charges"
+          ],
+          "negativeExamples": [
+            "Total Call Charges"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*monthly.*long[-\\s]?distance.*cost.*\\$\\b",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Monthly Long‑Distance Cost ($)"
+          ],
+          "negativeExamples": [
+            "International Call Fees"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*long[-\\s]?distance.*charges.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Avg. Monthly LD Charges"
+          ],
+          "negativeExamples": [
+            "Total Call Charges"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*charges.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Avg. Monthly LD Charges"
+          ],
+          "negativeExamples": [
+            "International Call Fees"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21040,
+      "explanation": "This semantic type identifies columns that represent the average monthly billing amount for long-distance telecommunications charges incurred by a customer. It is useful for categorizing and analyzing telecommunications billing data, particularly in datasets where long-distance charges are itemized separately from other types of charges.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "8a460c49-4725-4572-a99f-fe08528eae6b"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Churn Score",
+      "description": "A numerical score predicting the likelihood of a customer discontinuing their service subscription.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "\\b\\d+(\\.\\d+)?\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "0.85",
+        "1.0",
+        "0.45",
+        "0.99",
+        "0.00",
+        "0.75"
+      ],
+      "negativeContentExamples": [
+        "85%",
+        "High",
+        "Low",
+        "Yes",
+        "No",
+        "Unknown"
+      ],
+      "positiveHeaderExamples": [
+        "Churn Risk Score",
+        "Predicted Churn Score"
+      ],
+      "negativeHeaderExamples": [
+        "Customer Score",
+        "Retention Probability",
+        "Customer ID",
+        "Account Number"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*churn.*risk.*score.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Churn Risk Score"
+          ],
+          "negativeExamples": [
+            "Customer Score"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*predicted.*churn.*score.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Predicted Churn Score"
+          ],
+          "negativeExamples": [
+            "Retention Probability"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*churn.*score.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Churn Score"
+          ],
+          "negativeExamples": [
+            "Customer Score"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*churn.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Churn"
+          ],
+          "negativeExamples": [
+            "Score"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*score.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Score"
+          ],
+          "negativeExamples": [
+            "Probability"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21050,
+      "explanation": "This semantic type is used to identify numerical scores that predict the likelihood of a customer discontinuing their service subscription. It is typically used in customer retention and risk assessment contexts.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "003ef5c8-00d3-4ecf-9394-43eb96b2ec6f"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Online Backup",
+      "description": "A binary indicator showing whether a customer has subscribed to cloud-based data backup services.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^(yes|no|true|false|1|0)$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "yes",
+        "no",
+        "true",
+        "false",
+        "1",
+        "0"
+      ],
+      "negativeContentExamples": [
+        "maybe",
+        "unknown",
+        "n/a",
+        "backup",
+        "subscribed",
+        "active"
+      ],
+      "positiveHeaderExamples": [
+        "Backup Subscription",
+        "Has Online Backup"
+      ],
+      "negativeHeaderExamples": [
+        "Online Backup Date",
+        "Backup Size",
+        "Backup Date",
+        "Subscription Type",
+        "Data Backup",
+        "Cloud Service"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*backup.*subscription.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Backup Subscription"
+          ],
+          "negativeExamples": [
+            "Online Backup Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*has.*online.*backup.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Has Online Backup"
+          ],
+          "negativeExamples": [
+            "Backup Size"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*backup.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Backup Subscription"
+          ],
+          "negativeExamples": [
+            "Online Backup Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*subscription.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Backup Subscription"
+          ],
+          "negativeExamples": [
+            "Backup Size"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*online.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Has Online Backup"
+          ],
+          "negativeExamples": [
+            "Backup Size"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*backup.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Backup Subscription"
+          ],
+          "negativeExamples": [
+            "Online Backup Date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21060,
+      "explanation": "This semantic type identifies binary indicators for customer subscriptions to cloud-based data backup services. It is useful for categorizing data fields that track whether a customer has opted into such services, typically represented by simple binary values like \"yes/no\" or \"true/false\".",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "86cf75fb-f55c-45de-bc4c-27810187188e"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Contract",
+      "description": "The type of service agreement defining the duration and terms of the customer's subscription commitment.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i).*(contract|term|agreement|duration).*",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "12-month contract",
+        "Annual service agreement",
+        "Two-year term",
+        "Monthly subscription contract",
+        "Quarterly service term",
+        "Bi-annual agreement"
+      ],
+      "negativeContentExamples": [
+        "Monthly billing cycle",
+        "Weekly payment schedule",
+        "Customer support contact",
+        "Invoice number",
+        "Account balance",
+        "Payment method"
+      ],
+      "positiveHeaderExamples": [
+        "Contract Term",
+        "Service Contract",
+        "Agreement Duration",
+        "Subscription Term",
+        "Contract Length",
+        "Service Agreement"
+      ],
+      "negativeHeaderExamples": [
+        "Billing Period",
+        "Subscription Type",
+        "Payment Method",
+        "Invoice Date",
+        "Customer ID",
+        "Account Number"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*contract.*term.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Contract Term"
+          ],
+          "negativeExamples": [
+            "Billing Period"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*service.*contract.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Service Contract"
+          ],
+          "negativeExamples": [
+            "Subscription Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*contract.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Contract Duration"
+          ],
+          "negativeExamples": [
+            "Payment Method"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*term.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Term Length"
+          ],
+          "negativeExamples": [
+            "Invoice Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*agreement.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Service Agreement"
+          ],
+          "negativeExamples": [
+            "Account Number"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*duration.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Subscription Duration"
+          ],
+          "negativeExamples": [
+            "Customer ID"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21070,
+      "explanation": "This semantic type is used to identify columns or data values that describe the terms and duration of a service agreement or contract. It is useful for categorizing and analyzing data related to customer subscriptions and service commitments.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "b64bbc01-317a-4e9e-b594-b6103c6cbcea"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Under 30",
+      "description": "A binary indicator showing whether a customer is under 30 years of age for demographic segmentation.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^(yes|no|true|false|1|0)$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "yes",
+        "no",
+        "true",
+        "false",
+        "1",
+        "0"
+      ],
+      "negativeContentExamples": [
+        "30",
+        "29",
+        "31",
+        "young",
+        "old",
+        "adult"
+      ],
+      "positiveHeaderExamples": [
+        "Under_30",
+        "Is_Under_30"
+      ],
+      "negativeHeaderExamples": [
+        "Age_Group",
+        "Is_Adult"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*under.*30.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Under_30"
+          ],
+          "negativeExamples": [
+            "Age_Group"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*is.*under.*30.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Is_Under_30"
+          ],
+          "negativeExamples": [
+            "Is_Adult"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*under.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Under_30"
+          ],
+          "negativeExamples": [
+            "Age_Group"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*age.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Under_30"
+          ],
+          "negativeExamples": [
+            "Is_Adult"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*demographic.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Under_30"
+          ],
+          "negativeExamples": [
+            "Age_Group"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21080,
+      "explanation": "This semantic type is used to identify columns that indicate whether a customer is under 30 years of age. It is useful for demographic segmentation in marketing and analysis.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "7a8e40ce-c4f1-4fb4-ba49-c9e8dc22e03b"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Monthly Charge",
+      "description": "The recurring monthly billing amount charged to a customer for their telecommunications services.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d+(\\.\\d{1,2})?\\s*(USD|EUR|GBP|CAD|AUD)?\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "49.99 USD",
+        "75.50",
+        "100",
+        "29.95 EUR",
+        "150.00 GBP",
+        "200 CAD"
+      ],
+      "negativeContentExamples": [
+        "2023-10-01",
+        "John Doe",
+        "123-456-7890",
+        "Invoice #12345",
+        "01/01/2023",
+        "abc123"
+      ],
+      "positiveHeaderExamples": [
+        "Monthly Billing Amount",
+        "Monthly Charge",
+        "Monthly Charge",
+        "Recurring Monthly Charge",
+        "Monthly Service Fee",
+        "Monthly Subscription Cost"
+      ],
+      "negativeHeaderExamples": [
+        "Total Charge",
+        "Charge Date",
+        "Annual Charge",
+        "Payment Date",
+        "Invoice Number",
+        "Customer Name"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*monthly.*billing.*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Monthly Billing Amount"
+          ],
+          "negativeExamples": [
+            "Total Charge"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*monthly.*charge.*\\(\\$.*\\)",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Monthly Charge ($)"
+          ],
+          "negativeExamples": [
+            "Charge Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*monthly.*charge.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Monthly Charge"
+          ],
+          "negativeExamples": [
+            "Annual Charge"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*charge.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Charge"
+          ],
+          "negativeExamples": [
+            "Payment Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Amount"
+          ],
+          "negativeExamples": [
+            "Date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21090,
+      "explanation": "This semantic type represents the recurring monthly billing amount charged to a customer for their telecommunications services. It is typically expressed as a numeric value, optionally followed by a currency code. The type is identified by specific column headers related to monthly charges or billing amounts.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "6b7e37c2-708a-457c-a597-a00c016964f5"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Unlimited Data",
+      "description": "A binary indicator showing whether a customer has subscribed to unlimited data usage plans.",
+      "baseType": "STRING",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "YES",
+        "NO",
+        "TRUE",
+        "FALSE",
+        "1",
+        "0",
+        "Y",
+        "N",
+        "T",
+        "F"
+      ],
+      "backout": "^(YES|NO|TRUE|FALSE|1|0|Y|N|T|F)$",
+      "positiveContentExamples": [
+        "YES",
+        "NO",
+        "TRUE",
+        "FALSE",
+        "1",
+        "0",
+        "Y",
+        "N"
+      ],
+      "negativeContentExamples": [
+        "UNLIMITED",
+        "LIMITED",
+        "2",
+        "10",
+        "UNKNOWN",
+        "DATA",
+        "PLAN"
+      ],
+      "positiveHeaderExamples": [
+        "Unlimited_Data",
+        "Has_Unlimited_Data"
+      ],
+      "negativeHeaderExamples": [
+        "Data_Plan_Type",
+        "Data_Limit",
+        "Plan_Type",
+        "Usage_Limit"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*unlimited.*data.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Unlimited_Data"
+          ],
+          "negativeExamples": [
+            "Data_Plan_Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*has.*unlimited.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Has_Unlimited_Data"
+          ],
+          "negativeExamples": [
+            "Data_Limit"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*unlimited.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Unlimited_Data"
+          ],
+          "negativeExamples": [
+            "Data_Plan_Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*data.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Unlimited_Data"
+          ],
+          "negativeExamples": [
+            "Data_Limit"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21100,
+      "explanation": "This semantic type is used to identify columns that indicate whether a customer has subscribed to unlimited data usage plans. It is a binary indicator, typically represented by values such as \"YES\", \"NO\", \"TRUE\", \"FALSE\", \"1\", \"0\", and their common abbreviations. This type is useful in datasets where understanding customer subscription types is necessary for analysis or reporting.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "4212fcd1-5abf-424c-85aa-f99149e4d56b"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Total Revenue",
+      "description": "The cumulative revenue amount generated by a customer through their telecommunications service subscriptions.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^\\d+(\\.\\d{1,2})?$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "12345.67",
+        "987654321.00",
+        "1000",
+        "250.5",
+        "0.99",
+        "50000"
+      ],
+      "negativeContentExamples": [
+        "12345,67",
+        "12.345,67",
+        "Revenue: 1000",
+        "One Thousand",
+        "1000 USD",
+        "1,000.00"
+      ],
+      "positiveHeaderExamples": [
+        "Total_Revenue",
+        "Revenue_Total",
+        "Customer_Total_Revenue",
+        "Annual_Revenue_Total",
+        "Monthly_Total_Revenue",
+        "Revenue_Amount_Total"
+      ],
+      "negativeHeaderExamples": [
+        "Revenue_Category",
+        "Rev_Source",
+        "Category_Total",
+        "Revenue_Type",
+        "Source_Revenue",
+        "Revenue_Description"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*total.*revenue.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Total_Revenue"
+          ],
+          "negativeExamples": [
+            "Revenue_Category"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*revenue.*total.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Revenue_Total"
+          ],
+          "negativeExamples": [
+            "Rev_Source"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*revenue.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Revenue_Total"
+          ],
+          "negativeExamples": [
+            "Category_Total"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*total.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Total_Revenue"
+          ],
+          "negativeExamples": [
+            "Category_Total"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Revenue_Amount"
+          ],
+          "negativeExamples": [
+            "Category_Amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Revenue_Number"
+          ],
+          "negativeExamples": [
+            "Category_Number"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21110,
+      "explanation": "This semantic type represents the total revenue generated by a customer through their telecommunications service subscriptions. It is identified by numeric values that may include decimal points, and is typically found in columns with names indicating total revenue or similar terms.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "49ad897a-7d93-4251-8b73-e40a767d6220"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Dependents",
+      "description": "The number of family members or individuals financially dependent on the primary account holder.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^\\d+$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "3",
+        "0",
+        "5",
+        "12",
+        "1",
+        "8"
+      ],
+      "negativeContentExamples": [
+        "three",
+        "none",
+        "five",
+        "twelve",
+        "one",
+        "eight"
+      ],
+      "positiveHeaderExamples": [
+        "Dependent Count",
+        "Number of Dependents",
+        "Dependents"
+      ],
+      "negativeHeaderExamples": [
+        "Dependents Names",
+        "Family Members",
+        "Dependent Details"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*dependent.*count.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Dependent Count"
+          ],
+          "negativeExamples": [
+            "Dependents Names"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*dependents.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Number of Dependents"
+          ],
+          "negativeExamples": [
+            "Family Members"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*dependents.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Dependents"
+          ],
+          "negativeExamples": [
+            "Family Members"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Number"
+          ],
+          "negativeExamples": [
+            "Name"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21120,
+      "explanation": "This semantic type identifies numeric values representing the count of individuals financially dependent on a primary account holder. It is useful in financial and demographic datasets where understanding the number of dependents is crucial for analysis.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "9e133c86-bbbe-431c-81cf-6ec889d81a3d"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Internet Type",
+      "description": "The technology type used to deliver internet connectivity services to the customer's location.",
+      "baseType": "STRING",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "DSL",
+        "CABLE",
+        "FIBER",
+        "SATELLITE",
+        "WIRELESS",
+        "DIAL-UP",
+        "LTE",
+        "5G",
+        "4G",
+        "3G"
+      ],
+      "backout": "^[A-Z0-9-]{3,10}$",
+      "positiveContentExamples": [
+        "DSL",
+        "CABLE",
+        "FIBER",
+        "SATELLITE",
+        "WIRELESS",
+        "DIAL-UP",
+        "LTE",
+        "5G"
+      ],
+      "negativeContentExamples": [
+        "PREMIUM",
+        "BASIC",
+        "UNLIMITED",
+        "STANDARD",
+        "GOLD",
+        "SILVER",
+        "BRONZE",
+        "FAMILY"
+      ],
+      "positiveHeaderExamples": [
+        "Connection Type",
+        "Internet Plan",
+        "Internet Type",
+        "Broadband Type",
+        "ISP Type",
+        "Network Type"
+      ],
+      "negativeHeaderExamples": [
+        "Subscription Tier",
+        "Service Type",
+        "Plan Name",
+        "Package Type",
+        "Account Type",
+        "Billing Type"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*internet.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Internet Type"
+          ],
+          "negativeExamples": [
+            "Service Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*connection.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Connection Type"
+          ],
+          "negativeExamples": [
+            "Subscription Tier"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*internet.*plan.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Internet Plan"
+          ],
+          "negativeExamples": [
+            "Service Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*internet.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Internet"
+          ],
+          "negativeExamples": [
+            "Service"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Type"
+          ],
+          "negativeExamples": [
+            "Plan"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21130,
+      "explanation": "This semantic type identifies the technology used to provide internet connectivity, such as DSL, cable, fiber, etc. It is useful for categorizing and analyzing internet service data based on the delivery method.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "5b57e553-b4ca-4aca-899a-4e0ff7bfaf73"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Customer Status",
+      "description": "A categorical label indicating the current state of a customer's relationship with the telecommunications service provider.",
+      "baseType": "STRING",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "ACTIVE",
+        "INACTIVE",
+        "CHURNED",
+        "PENDING",
+        "SUSPENDED",
+        "TERMINATED",
+        "RETIRED",
+        "PROSPECT",
+        "LOYAL",
+        "NEW"
+      ],
+      "backout": "^[A-Z]{3,10}$",
+      "positiveContentExamples": [
+        "ACTIVE",
+        "INACTIVE",
+        "CHURNED",
+        "PENDING",
+        "SUSPENDED",
+        "TERMINATED",
+        "RETIRED",
+        "PROSPECT"
+      ],
+      "negativeContentExamples": [
+        "PAID",
+        "OVERDUE",
+        "COMPLETED",
+        "FAILED",
+        "PROCESSING",
+        "REFUNDED",
+        "APPROVED",
+        "DECLINED"
+      ],
+      "positiveHeaderExamples": [
+        "Customer Status",
+        "Active/Churn Status"
+      ],
+      "negativeHeaderExamples": [
+        "Invoice Status",
+        "Payment Status",
+        "Order Status",
+        "Shipping Status"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*customer.*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Customer Status"
+          ],
+          "negativeExamples": [
+            "Invoice Status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*active.*churn.*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Active/Churn Status"
+          ],
+          "negativeExamples": [
+            "Payment Status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Status"
+          ],
+          "negativeExamples": [
+            "Invoice"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21140,
+      "explanation": "This semantic type is used to classify the current status of a customer in relation to a telecommunications service provider. It helps in identifying whether a customer is active, inactive, churned, or in any other state that reflects their engagement with the service provider. This classification is crucial for customer relationship management and targeted marketing strategies.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "db437e36-0883-4091-8f51-508eff15846a"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Avg Monthly GB Download",
+      "description": "A data usage metric representing the average amount of data downloaded by a customer per month, measured in gigabytes.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)\\b\\d+(\\.\\d+)?\\s*GB\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "15.5 GB",
+        "20 GB",
+        "7.25 GB",
+        "100 GB",
+        "0.5 GB",
+        "50.75 GB"
+      ],
+      "negativeContentExamples": [
+        "15.5 MB",
+        "20 TB",
+        "7.25 KB",
+        "100 MB",
+        "0.5 TB",
+        "50.75 MB"
+      ],
+      "positiveHeaderExamples": [
+        "Average Monthly Download",
+        "Monthly Data Usage",
+        "Avg Monthly GB Download",
+        "Monthly GB Download",
+        "Average Data Download",
+        "Monthly Download in GB"
+      ],
+      "negativeHeaderExamples": [
+        "Total GB Downloaded",
+        "Annual Download Volume",
+        "Monthly Upload",
+        "Data Plan",
+        "Yearly Data Usage",
+        "Download Speed"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*average.*monthly.*download.*gb.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Average Monthly Download (GB)"
+          ],
+          "negativeExamples": [
+            "Total GB Downloaded"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*monthly.*data.*usage.*gb.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Monthly Data Usage (GB)"
+          ],
+          "negativeExamples": [
+            "Annual Download Volume (GB)"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*monthly.*download.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Monthly Download"
+          ],
+          "negativeExamples": [
+            "Total Download"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*data.*usage.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Data Usage"
+          ],
+          "negativeExamples": [
+            "Data Plan"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*download.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Download"
+          ],
+          "negativeExamples": [
+            "Upload"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21150,
+      "explanation": "This semantic type is used to identify columns and data values that represent the average amount of data downloaded by a customer per month, measured in gigabytes. It is useful for analyzing customer data usage patterns and managing data plans.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "bd163768-9729-4874-9038-3a96aa218b1b"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Churn Category",
+      "description": "A classification label indicating the primary reason category for customer service discontinuation.",
+      "baseType": "STRING",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "PRICE",
+        "COMPETITION",
+        "PRODUCT_ISSUE",
+        "CUSTOMER_SERVICE",
+        "CONTRACT",
+        "RELOCATION",
+        "USAGE",
+        "OTHER",
+        "NO_REASON",
+        "TECHNICAL_ISSUE"
+      ],
+      "backout": "^[A-Z_]{2,20}$",
+      "positiveContentExamples": [
+        "PRICE",
+        "COMPETITION",
+        "PRODUCT_ISSUE",
+        "CUSTOMER_SERVICE",
+        "CONTRACT",
+        "RELOCATION",
+        "USAGE",
+        "OTHER"
+      ],
+      "negativeContentExamples": [
+        "DISCOUNT",
+        "NEW_PRODUCT",
+        "LOYALTY_PROGRAM",
+        "MARKETING",
+        "SALES",
+        "SUPPORT",
+        "FEEDBACK",
+        "INQUIRY"
+      ],
+      "positiveHeaderExamples": [
+        "Churn Category",
+        "Churn Type",
+        "Customer Churn Category",
+        "Service Churn Type",
+        "Churn Reason",
+        "Churn Classification"
+      ],
+      "negativeHeaderExamples": [
+        "Customer Segment",
+        "Service Category",
+        "Product Type",
+        "Market Segment",
+        "Sales Category",
+        "Support Type"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*churn.*category.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Churn Category"
+          ],
+          "negativeExamples": [
+            "Customer Segment"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*churn.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Churn Type"
+          ],
+          "negativeExamples": [
+            "Service Category"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*churn.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Churn"
+          ],
+          "negativeExamples": [
+            "Category"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*category.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Category"
+          ],
+          "negativeExamples": [
+            "Type"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21160,
+      "explanation": "This semantic type is used to categorize the primary reason for customer churn, which is the discontinuation of a service by a customer. It helps in analyzing and understanding the factors leading to customer attrition, allowing businesses to address these issues and improve customer retention strategies.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "d458e2fd-b71d-4cd3-9d62-2232d13244b1"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Payment Method",
+      "description": "The billing and payment processing method selected by a customer for their account charges.",
+      "baseType": "STRING",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "CREDIT CARD",
+        "DEBIT CARD",
+        "PAYPAL",
+        "BANK TRANSFER",
+        "CASH",
+        "CHECK",
+        "APPLE PAY",
+        "GOOGLE PAY",
+        "BITCOIN",
+        "VENMO"
+      ],
+      "backout": "^[A-Z ]{4,15}$",
+      "positiveContentExamples": [
+        "CREDIT CARD",
+        "DEBIT CARD",
+        "PAYPAL",
+        "BANK TRANSFER",
+        "CASH",
+        "CHECK",
+        "APPLE PAY",
+        "GOOGLE PAY"
+      ],
+      "negativeContentExamples": [
+        "2023-10-01",
+        "100.00",
+        "John Doe",
+        "123456789",
+        "Invoice #1234",
+        "New York"
+      ],
+      "positiveHeaderExamples": [
+        "Payment Method",
+        "Billing Method",
+        "Payment Type",
+        "Billing Type"
+      ],
+      "negativeHeaderExamples": [
+        "Payment Date",
+        "Payment Amount",
+        "Billing Date",
+        "Billing Amount"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*payment.*method.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Payment Method"
+          ],
+          "negativeExamples": [
+            "Payment Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*billing.*method.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Billing Method"
+          ],
+          "negativeExamples": [
+            "Billing Amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*payment.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Payment Type"
+          ],
+          "negativeExamples": [
+            "Payment Amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*billing.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Billing Type"
+          ],
+          "negativeExamples": [
+            "Billing Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*method.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Method"
+          ],
+          "negativeExamples": [
+            "Date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21170,
+      "explanation": "This semantic type identifies the method of payment or billing selected by a customer, such as credit card, debit card, or digital payment platforms. It is used to categorize and process payment-related data in financial and transactional datasets.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "23571fee-28a3-4818-b3e9-6b2f39a6a9a0"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Offer",
+      "description": "A promotional plan or special deal identifier provided to customers for service discounts or benefits.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i).*(offer|promotion|plan|deal|discount).*name.*",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "New Year Deal Name",
+        "Black Friday Discount Name"
+      ],
+      "negativeContentExamples": [
+        "Offer Code 1234",
+        "Discount Tier 1",
+        "Code: PROMO2023",
+        "Tier 2 Discount",
+        "1234 Offer Code",
+        "Discount Level 3"
+      ],
+      "positiveHeaderExamples": [
+        "Offer Name",
+        "Promotion Plan",
+        "Deal Name",
+        "Discount Name",
+        "Special Offer Name",
+        "Plan Name"
+      ],
+      "negativeHeaderExamples": [
+        "Offer Code",
+        "Discount Tier",
+        "Code Name",
+        "Tier Level",
+        "Discount Code",
+        "Level Name"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*offer.*name.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Offer Name"
+          ],
+          "negativeExamples": [
+            "Offer Code"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*promotion.*plan.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Promotion Plan"
+          ],
+          "negativeExamples": [
+            "Discount Tier"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*promotion.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Promotion Plan"
+          ],
+          "negativeExamples": [
+            "Offer Code"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*offer.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Offer Name"
+          ],
+          "negativeExamples": [
+            "Discount Tier"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*name.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Offer Name"
+          ],
+          "negativeExamples": [
+            "Offer Code"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21180,
+      "explanation": "This semantic type is used to identify promotional plans or special deal identifiers that provide customers with service discounts or benefits. It is characterized by terms like \"offer,\" \"promotion,\" \"plan,\" \"deal,\" and \"discount\" combined with \"name.\"",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "7223dabf-0fda-4e85-9a98-5fdc6bfcd58c"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "Total Charges",
+      "description": "The cumulative billing amount charged to a customer across all telecommunications services and time periods.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^\\d+(\\.\\d{1,2})?$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "123.45",
+        "6789.00",
+        "100",
+        "2500.5",
+        "0.99",
+        "999999.99"
+      ],
+      "negativeContentExamples": [
+        "123,45",
+        "12.345",
+        "abc",
+        "12.3.4",
+        "12-34",
+        "12 34"
+      ],
+      "positiveHeaderExamples": [
+        "Total_Charges",
+        "Charges_Total",
+        "Total_Amount",
+        "Billing_Total",
+        "Service_Charges",
+        "Overall_Charges"
+      ],
+      "negativeHeaderExamples": [
+        "Payment_Method",
+        "Billing_Cycle",
+        "Customer_ID",
+        "Service_Type",
+        "Account_Number",
+        "Transaction_Date"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*total.*charges.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Total_Charges"
+          ],
+          "negativeExamples": [
+            "Payment_Method"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*charges.*total.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Charges_Total"
+          ],
+          "negativeExamples": [
+            "Billing_Cycle"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*charges.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Charges"
+          ],
+          "negativeExamples": [
+            "Method"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*total.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Total"
+          ],
+          "negativeExamples": [
+            "Cycle"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Amount"
+          ],
+          "negativeExamples": [
+            "Method"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Number"
+          ],
+          "negativeExamples": [
+            "Cycle"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21190,
+      "explanation": "This semantic type represents the total charges billed to a customer for telecommunications services. It is identified by numeric values that may include decimals, and column headers that reference total or cumulative charges.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "ae6795cc-3466-4767-bc80-2bdacfa0e026"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "CLTV",
+      "description": "The projected total revenue value that a customer will generate over their entire relationship lifecycle.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i).*customer.*lifetime.*value.*|.*cltv.*",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [],
+      "negativeContentExamples": [
+        "Revenue",
+        "Account Balance",
+        "1000",
+        "Customer ID",
+        "Order Number",
+        "Product Price"
+      ],
+      "positiveHeaderExamples": [
+        "Customer Lifetime Value",
+        "Predicted CLTV",
+        "CLTV Estimate",
+        "Lifetime Value",
+        "Projected CLTV",
+        "Customer Value Prediction"
+      ],
+      "negativeHeaderExamples": [
+        "Total Revenue",
+        "Account Value",
+        "Revenue Forecast",
+        "Customer ID",
+        "Order Total",
+        "Product Cost"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*customer.*lifetime.*value.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Customer Lifetime Value ($)"
+          ],
+          "negativeExamples": [
+            "Total Revenue"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*predicted.*cltv.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Predicted CLTV"
+          ],
+          "negativeExamples": [
+            "Account Value"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*lifetime.*value.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Customer Lifetime Value ($)"
+          ],
+          "negativeExamples": [
+            "Total Revenue"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*cltv.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Predicted CLTV"
+          ],
+          "negativeExamples": [
+            "Account Value"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*value.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Customer Lifetime Value ($)"
+          ],
+          "negativeExamples": [
+            "Total Revenue"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 21200,
+      "explanation": "The semantic type CUSTOMER.CLTV is used to identify data related to the projected total revenue value that a customer will generate over their entire relationship lifecycle. This type is crucial for businesses to estimate the long-term value of their customers and make informed decisions regarding customer retention and marketing strategies.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "8a26c4b0-f3bc-4cff-bc53-20110b904e73"
+    },
+    {
+      "resultType": "error",
+      "semanticType": "Churn Reason",
+      "description": null,
+      "baseType": "STRING",
+      "pluginType": null,
+      "regexPattern": null,
+      "listValues": null,
+      "backout": null,
+      "positiveContentExamples": null,
+      "negativeContentExamples": null,
+      "positiveHeaderExamples": null,
+      "negativeHeaderExamples": null,
+      "confidenceThreshold": 0.0,
+      "headerPatterns": null,
+      "priority": 21220,
+      "explanation": "Failed to parse Claude response - no valid JSON or XML found",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "5782e9cb-4431-4417-9f8b-c1536a15a2e2"
+    }
+  ]
+}

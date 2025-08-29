@@ -49,12 +49,159 @@ public class SemanticTypePromptService {
     // Lightweight RAG: retrieve top-k banking snippets for augmentation when description hints banking
     String desc = request.getDescription() == null ? "" : request.getDescription().toLowerCase();
     String header = request.getColumnHeader() == null ? "" : request.getColumnHeader().toLowerCase();
-    boolean looksBanking = desc.contains("bank") || header.contains("account") || header.contains("txn") || header.contains("transaction");
+    boolean looksBanking = desc.contains("bank");
+    boolean looksTransactions =
+        !looksBanking
+            && (header.contains("transaction")
+                || header.contains("txn")
+                || header.contains("merchant")
+                || header.contains("device")
+                || header.contains("ip address")
+                || header.contains("channel"));
+    boolean looksExtension =
+        !looksBanking
+            && !looksTransactions
+            && (
+                header.contains("iban")
+                    || header.contains("duns")
+                    || header.contains("bsn")
+                    || header.contains("sin")
+                    || header.contains("ein")
+                    || header.contains("npi")
+                    || header.contains("cusip")
+                    || header.contains("isin")
+                    || header.contains("ean")
+                    || header.contains("isbn")
+                    || header.contains("upc")
+                    || header.contains("imei")
+                    || header.contains("guid")
+                    || header.contains("uuid")
+                    || header.contains("vin")
+                    || header.contains("mac")
+                    || header.contains("airport")
+                    || header.contains("iata")
+                    || header.contains("currency")
+                    || header.contains("language")
+                    || header.contains("continent")
+                    || header.contains("nationality")
+                    || header.contains("timezone")
+                    || header.contains("postal")
+                    || header.contains("zip")
+                    || header.contains("color")
+                    || header.contains("hex")
+                    || header.contains("naics")
+                    || header.contains("industry")
+                    || header.contains("marital")
+                    || header.contains("race")
+                    || header.contains("age range")
+                    || header.contains("age_group")
+                    || header.contains("longitude")
+                    || header.contains("latitude")
+                    || header.contains("easting")
+                    || header.contains("northing")
+                    || header.contains("street")
+                    || header.contains("address")
+                    || header.contains("geojson")
+                    || header.contains("wkt")
+                    || header.contains("uri")
+                    || header.contains("url")
+                    || header.contains("email")
+                    || header.contains("telephone")
+                    || header.contains("phone")
+                    || header.contains("book_number")
+                    || header.contains("publishing_number")
+                    || header.contains("european_article_num")
+                    || header.contains("universal_product_numbers")
+              );
+
+    boolean looksInsurance =
+        !looksBanking
+            && !looksTransactions
+            && (header.contains("policy")
+                || header.contains("premium")
+                || header.contains("claims")
+                || header.contains("lapse")
+                || header.contains("renewal")
+                || header.contains("distribution_channel")
+                || header.contains("seniority")
+                || header.contains("date_birth")
+                || header.contains("driving_licence")
+                || header.contains("type_risk")
+                || header.contains("year_matriculation")
+                || header.contains("cylinder_capacity")
+                || header.contains("value_vehicle")
+                || header.contains("type_fuel")
+                || header.contains("n_doors")
+                || header.contains("length")
+                || header.contains("weight"));
+
+    boolean looksTelco =
+        !looksBanking
+            && !looksTransactions
+            && !looksExtension
+            && !looksInsurance
+            && (header.contains("rsrp")
+                || header.contains("rsrq")
+                || header.contains("sinr")
+                || header.contains("cqi")
+                || header.contains("throughput")
+                || header.contains("uplink")
+                || header.contains("downlink")
+                || header.contains("latency")
+                || header.contains("jitter")
+                || header.contains("packet_loss")
+                || header.contains("prb")
+                || header.contains("handover")
+                || header.contains("rrc")
+                || header.contains("cell_id")
+                || header.contains("pci")
+                || header.contains("tac")
+                || header.contains("lac")
+                || header.contains("mcc")
+                || header.contains("mnc")
+                || header.contains("nrarfcn")
+                || header.contains("earfcn")
+                || header.contains("band")
+                || header.contains("timestamp")
+                || header.contains("datetime"));
+
+    boolean looksTelcoChurn =
+        !looksBanking
+            && !looksTransactions
+            && !looksExtension
+            && !looksInsurance
+            && !looksTelco
+            && (header.contains("customerid")
+                || header.contains("customer_id")
+                || header.contains("churn")
+                || header.contains("tenure")
+                || header.contains("monthlycharges")
+                || header.contains("totalcharges")
+                || header.contains("contract")
+                || header.contains("paymentmethod")
+                || header.contains("paperlessbilling")
+                || header.contains("internetservice")
+                || header.contains("phoneservice")
+                || header.contains("streaming")
+                || header.contains("onlinesecurity")
+                || header.contains("onlinebackup")
+                || header.contains("deviceprotection")
+                || header.contains("techsupport")
+                || header.contains("multiplelines")
+                || header.contains("partner")
+                || header.contains("dependents")
+                || header.contains("seniorcitizen")
+                || header.contains("gender"));
+
+    // Build a richer query using both description and header for better retrieval
+    String retrievalQuery = (request.getDescription() == null ? "" : request.getDescription())
+        + "\nHEADER:" + (request.getColumnHeader() == null ? "" : request.getColumnHeader());
+
     if (looksBanking) {
       try {
         // Initialize once (idempotent) and retrieve
         knowledgeService.initializeBankingKnowledge();
-        var results = knowledgeService.retrieveBanking(request.getDescription(), 256);
+        var results = knowledgeService.retrieveBanking(retrievalQuery, 256);
         if (!results.isEmpty()) {
           List<String> aug = results.stream().map(r -> r.text).collect(Collectors.toList());
           // Prepend augmentation into description to bias the LLM
@@ -74,6 +221,139 @@ public class SemanticTypePromptService {
               .detectedBaseType(request.getDetectedBaseType())
               .detectedPattern(request.getDetectedPattern())
               .build();
+        }
+      } catch (Exception ignored) {}
+    } else if (looksTransactions) {
+      try {
+        knowledgeService.initializeTransactionsKnowledge();
+        var results = knowledgeService.retrieveTransactions(retrievalQuery, 256);
+        if (!results.isEmpty()) {
+          List<String> aug = results.stream().map(r -> r.text).collect(Collectors.toList());
+          String augmented =
+              "[TRANSACTIONS_KNOWLEDGE]\n- "
+                  + String.join("\n- ", aug)
+                  + "\n[/TRANSACTIONS_KNOWLEDGE]\n"
+                  + request.getDescription();
+          request =
+              com.nl2fta.classifier.dto.semantic_type.SemanticTypeGenerationRequest.builder()
+                  .typeName(request.getTypeName())
+                  .description(augmented)
+                  .positiveContentExamples(request.getPositiveContentExamples())
+                  .negativeContentExamples(request.getNegativeContentExamples())
+                  .positiveHeaderExamples(request.getPositiveHeaderExamples())
+                  .negativeHeaderExamples(request.getNegativeHeaderExamples())
+                  .checkExistingTypes(request.isCheckExistingTypes())
+                  .proceedDespiteSimilarity(request.isProceedDespiteSimilarity())
+                  .generateExamplesForExistingType(
+                      request.getGenerateExamplesForExistingType())
+                  .columnHeader(request.getColumnHeader())
+                  .detectedBaseType(request.getDetectedBaseType())
+                  .detectedPattern(request.getDetectedPattern())
+                  .build();
+        }
+      } catch (Exception ignored) {}
+    } else if (looksExtension) {
+      try {
+        knowledgeService.initializeExtensionKnowledge();
+        var results = knowledgeService.retrieveExtension(retrievalQuery, 256);
+        if (!results.isEmpty()) {
+          List<String> aug = results.stream().map(r -> r.text).collect(Collectors.toList());
+          String augmented =
+              "[EXTENSION_KNOWLEDGE]\n- " + String.join("\n- ", aug) + "\n[/EXTENSION_KNOWLEDGE]\n" + request.getDescription();
+          request =
+              com.nl2fta.classifier.dto.semantic_type.SemanticTypeGenerationRequest.builder()
+                  .typeName(request.getTypeName())
+                  .description(augmented)
+                  .positiveContentExamples(request.getPositiveContentExamples())
+                  .negativeContentExamples(request.getNegativeContentExamples())
+                  .positiveHeaderExamples(request.getPositiveHeaderExamples())
+                  .negativeHeaderExamples(request.getNegativeHeaderExamples())
+                  .checkExistingTypes(request.isCheckExistingTypes())
+                  .proceedDespiteSimilarity(request.isProceedDespiteSimilarity())
+                  .generateExamplesForExistingType(
+                      request.getGenerateExamplesForExistingType())
+                  .columnHeader(request.getColumnHeader())
+                  .detectedBaseType(request.getDetectedBaseType())
+                  .detectedPattern(request.getDetectedPattern())
+                  .build();
+        }
+      } catch (Exception ignored) {}
+    } else if (looksInsurance) {
+      try {
+        knowledgeService.initializeInsuranceKnowledge();
+        var results = knowledgeService.retrieveInsurance(retrievalQuery, 256);
+        if (!results.isEmpty()) {
+          List<String> aug = results.stream().map(r -> r.text).collect(Collectors.toList());
+          String augmented =
+              "[INSURANCE_KNOWLEDGE]\n- " + String.join("\n- ", aug) + "\n[/INSURANCE_KNOWLEDGE]\n" + request.getDescription();
+          request =
+              com.nl2fta.classifier.dto.semantic_type.SemanticTypeGenerationRequest.builder()
+                  .typeName(request.getTypeName())
+                  .description(augmented)
+                  .positiveContentExamples(request.getPositiveContentExamples())
+                  .negativeContentExamples(request.getNegativeContentExamples())
+                  .positiveHeaderExamples(request.getPositiveHeaderExamples())
+                  .negativeHeaderExamples(request.getNegativeHeaderExamples())
+                  .checkExistingTypes(request.isCheckExistingTypes())
+                  .proceedDespiteSimilarity(request.isProceedDespiteSimilarity())
+                  .generateExamplesForExistingType(
+                      request.getGenerateExamplesForExistingType())
+                  .columnHeader(request.getColumnHeader())
+                  .detectedBaseType(request.getDetectedBaseType())
+                  .detectedPattern(request.getDetectedPattern())
+                  .build();
+        }
+      } catch (Exception ignored) {}
+    } else if (looksTelco) {
+      try {
+        knowledgeService.initializeTelcoKnowledge();
+        var results = knowledgeService.retrieveTelco(retrievalQuery, 256);
+        if (!results.isEmpty()) {
+          List<String> aug = results.stream().map(r -> r.text).collect(Collectors.toList());
+          String augmented =
+              "[TELCO_KNOWLEDGE]\n- " + String.join("\n- ", aug) + "\n[/TELCO_KNOWLEDGE]\n" + request.getDescription();
+          request =
+              com.nl2fta.classifier.dto.semantic_type.SemanticTypeGenerationRequest.builder()
+                  .typeName(request.getTypeName())
+                  .description(augmented)
+                  .positiveContentExamples(request.getPositiveContentExamples())
+                  .negativeContentExamples(request.getNegativeContentExamples())
+                  .positiveHeaderExamples(request.getPositiveHeaderExamples())
+                  .negativeHeaderExamples(request.getNegativeHeaderExamples())
+                  .checkExistingTypes(request.isCheckExistingTypes())
+                  .proceedDespiteSimilarity(request.isProceedDespiteSimilarity())
+                  .generateExamplesForExistingType(
+                      request.getGenerateExamplesForExistingType())
+                  .columnHeader(request.getColumnHeader())
+                  .detectedBaseType(request.getDetectedBaseType())
+                  .detectedPattern(request.getDetectedPattern())
+                  .build();
+        }
+      } catch (Exception ignored) {}
+    } else if (looksTelcoChurn) {
+      try {
+        knowledgeService.initializeTelcoChurnKnowledge();
+        var results = knowledgeService.retrieveTelcoChurn(retrievalQuery, 256);
+        if (!results.isEmpty()) {
+          List<String> aug = results.stream().map(r -> r.text).collect(Collectors.toList());
+          String augmented =
+              "[TELCO_CHURN_KNOWLEDGE]\n- " + String.join("\n- ", aug) + "\n[/TELCO_CHURN_KNOWLEDGE]\n" + request.getDescription();
+          request =
+              com.nl2fta.classifier.dto.semantic_type.SemanticTypeGenerationRequest.builder()
+                  .typeName(request.getTypeName())
+                  .description(augmented)
+                  .positiveContentExamples(request.getPositiveContentExamples())
+                  .negativeContentExamples(request.getNegativeContentExamples())
+                  .positiveHeaderExamples(request.getPositiveHeaderExamples())
+                  .negativeHeaderExamples(request.getNegativeHeaderExamples())
+                  .checkExistingTypes(request.isCheckExistingTypes())
+                  .proceedDespiteSimilarity(request.isProceedDespiteSimilarity())
+                  .generateExamplesForExistingType(
+                      request.getGenerateExamplesForExistingType())
+                  .columnHeader(request.getColumnHeader())
+                  .detectedBaseType(request.getDetectedBaseType())
+                  .detectedPattern(request.getDetectedPattern())
+                  .build();
         }
       } catch (Exception ignored) {}
     }

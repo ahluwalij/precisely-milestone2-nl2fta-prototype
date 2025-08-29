@@ -688,6 +688,93 @@ public class TableClassificationService {
     if (headerTokens.contains("loan") && containsToken(typeTokens, "card")) score -= 1.5;
     if (headerTokens.contains("account") && containsToken(typeTokens, "loan") && !containsToken(typeTokens, "account")) score -= 1.0;
 
+    // Insurance-specific disambiguation penalties
+    // Payment vs Claims
+    if (headerTokens.contains("payment") && (containsToken(typeTokens, "claim") || containsToken(typeTokens, "claims"))) score -= 1.2;
+    if ((headerTokens.contains("n") && headerTokens.contains("claims") && headerTokens.contains("year")) && containsToken(typeTokens, "payment")) score -= 1.2;
+
+    // Lapse date vs birth date confusion
+    if (headerTokens.contains("lapse") && containsToken(typeTokens, "birth")) score -= 1.3;
+    if (headerTokens.contains("birth") && containsToken(typeTokens, "lapse")) score -= 1.3;
+
+    // History vs year matriculation confusion
+    if ((headerTokens.contains("year") && headerTokens.contains("matriculation")) && containsToken(typeTokens, "history")) score -= 1.0;
+    if ((headerTokens.contains("n") && headerTokens.contains("claims") && headerTokens.contains("history")) && containsToken(typeTokens, "year")) score -= 1.0;
+
+    // Area should not map to claims metrics
+    if (headerTokens.contains("area") && (containsToken(typeTokens, "claim") || containsToken(typeTokens, "claims") || containsToken(typeTokens, "history"))) score -= 1.0;
+
+
+    // Generic cross-domain confusion handling via domain inference
+    java.util.Set<String> insuranceCues = new java.util.HashSet<>(java.util.Arrays.asList(
+        "policy", "premium", "renewal", "lapse", "claim", "claims", "driver", "licence",
+        "fuel", "vehicle", "matriculation", "doors", "seniority", "distribution", "channel",
+        "power", "cylinder", "area", "weight", "length"));
+    java.util.Set<String> bankingCues = new java.util.HashSet<>(java.util.Arrays.asList(
+        "account", "loan", "card", "balance", "interest", "branch", "transaction", "amount",
+        "opening", "limit", "status", "branchid"));
+    java.util.Set<String> extensionCues = new java.util.HashSet<>(java.util.Arrays.asList(
+        "iban", "duns", "bsn", "sin", "ein", "npi", "cusip", "isin", "ean", "isbn",
+        "upc", "imei", "guid", "uuid", "ipaddress", "macaddress", "postal", "zip",
+        "timezone", "continent", "currency", "language", "color", "naics", "industry",
+        "vin", "geojson", "wkt", "airport", "iata", "email", "uri", "url"));
+
+    int insuranceHeaderHits = 0, bankingHeaderHits = 0, extensionHeaderHits = 0;
+    for (String t : headerTokens) {
+      if (insuranceCues.contains(t)) insuranceHeaderHits++;
+      if (bankingCues.contains(t)) bankingHeaderHits++;
+      if (extensionCues.contains(t)) extensionHeaderHits++;
+    }
+    int insuranceTypeHits = 0, bankingTypeHits = 0, extensionTypeHits = 0;
+    for (String t : typeTokens) {
+      if (insuranceCues.contains(t)) insuranceTypeHits++;
+      if (bankingCues.contains(t)) bankingTypeHits++;
+      if (extensionCues.contains(t)) extensionTypeHits++;
+    }
+
+    // Determine dominant domains
+    String headerDomain = null;
+    int headerMax = Math.max(insuranceHeaderHits, Math.max(bankingHeaderHits, extensionHeaderHits));
+    if (headerMax > 0) {
+      if (headerMax == insuranceHeaderHits) headerDomain = "insurance";
+      else if (headerMax == bankingHeaderHits) headerDomain = "banking";
+      else headerDomain = "extension";
+    }
+    String typeDomain = null;
+    int typeMax = Math.max(insuranceTypeHits, Math.max(bankingTypeHits, extensionTypeHits));
+    if (typeMax > 0) {
+      if (typeMax == insuranceTypeHits) typeDomain = "insurance";
+      else if (typeMax == bankingTypeHits) typeDomain = "banking";
+      else typeDomain = "extension";
+    }
+
+    if (headerDomain != null && typeDomain != null) {
+      if (!headerDomain.equals(typeDomain)) {
+        // Strong penalty for domain mismatch
+        score -= 2.0;
+      } else {
+        // Small boost for domain alignment
+        score += 0.5;
+      }
+    }
+
+    // Additional specific confusion guards
+    // GUID/UUID should not be generic IDENTIFIER if header explicitly mentions guid/uuid
+    if ((headerTokens.contains("guid") || headerTokens.contains("uuid"))
+        && containsToken(typeTokens, "identifier")
+        && !containsToken(typeTokens, "guid") && !containsToken(typeTokens, "uuid")) {
+      score -= 1.2;
+    }
+    // EMAIL vs URL
+    if (headerTokens.contains("email") && (containsToken(typeTokens, "uri") || containsToken(typeTokens, "url"))) {
+      score -= 1.0;
+    }
+    // UPC/EAN/ISBN vs TELEPHONE
+    boolean productCodeHeader = headerTokens.contains("upc") || headerTokens.contains("ean") || headerTokens.contains("isbn");
+    if (productCodeHeader && containsToken(typeTokens, "telephone")) {
+      score -= 1.3;
+    }
+
     return score;
   }
 
