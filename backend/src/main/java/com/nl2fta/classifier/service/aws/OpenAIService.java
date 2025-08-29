@@ -55,7 +55,8 @@ public class OpenAIService implements LLMService {
       throw new IllegalStateException("OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.");
     }
 
-    log.debug("Sending prompt to OpenAI model {}:\n{}", model, prompt);
+    log.info("OpenAI request model={}, maxTokens={}, temperature={}", model, maxTokens, temperature);
+    log.debug("OpenAI prompt (first 500 chars): {}", prompt != null && prompt.length() > 500 ? prompt.substring(0, 500) + "…" : prompt);
 
     // Create OpenAI API request
     var requestBody = objectMapper.createObjectNode();
@@ -87,6 +88,8 @@ public class OpenAIService implements LLMService {
 
         if (response.getBody() != null) {
           JsonNode responseJson = objectMapper.readTree(response.getBody());
+          log.debug("OpenAI raw response (first 800 chars): {}",
+              response.getBody().length() > 800 ? response.getBody().substring(0, 800) + "…" : response.getBody());
           JsonNode choices = responseJson.get("choices");
 
           if (choices != null && choices.isArray() && choices.size() > 0) {
@@ -95,17 +98,19 @@ public class OpenAIService implements LLMService {
 
             if (messageNode != null && messageNode.has("content")) {
               String content = messageNode.get("content").asText();
-              log.debug("Received response from OpenAI: {} characters", content.length());
+              log.info("OpenAI response content length={} chars", content.length());
               return content;
             }
           }
         }
 
+        log.error("Invalid response format from OpenAI API: status={}, bodyPresent={}",
+            response.getStatusCode(), response.getBody() != null);
         throw new RuntimeException("Invalid response format from OpenAI API");
 
       } catch (Exception e) {
         attempt++;
-        log.warn("OpenAI API call attempt {} failed: {}", attempt, e.getMessage());
+        log.warn("OpenAI API call attempt {} failed: {}", attempt, e.getMessage(), e);
 
         if (attempt >= maxRetryAttempts) {
           throw new RuntimeException("OpenAI API call failed after " + maxRetryAttempts + " attempts", e);
