@@ -150,14 +150,22 @@ def _build_generation_request(description_text: str, column_header: str, values:
 
 
 def _ensure_aws_configured(api_base: str, region: str) -> None:
-    """Configure AWS creds in backend using the semantic-types generation controller.
+    """Configure LLM provider.
 
-    Idempotent: safe to call multiple times.
+    Prefer OpenAI when OPENAI_API_KEY is present; otherwise, configure AWS Bedrock.
     """
+    openai_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    provider = os.environ.get("LLM_PROVIDER", "").strip().lower()
+    if openai_key or provider == "openai":
+        # OpenAI path requires no backend auth call; controller will select provider
+        return
+    # Bedrock fallback: require AWS creds
     ak = os.environ.get("AWS_ACCESS_KEY_ID", "").strip()
     sk = os.environ.get("AWS_SECRET_ACCESS_KEY", "").strip()
     if not ak or not sk:
-        raise RuntimeError("AWS credentials are required in environment")
+        # Do not abort; allow backend to respond with proper error while we log
+        print("[warn] No OPENAI_API_KEY and no AWS credentials; LLM calls will fail.")
+        return
     url = f"{api_base}/semantic-types/aws/configure"
     body = {"accessKeyId": ak, "secretAccessKey": sk, "region": region}
     r = requests.post(url, json=body, timeout=60)
@@ -167,7 +175,7 @@ def _ensure_aws_configured(api_base: str, region: str) -> None:
 
 def _generate_type(api_base: str, payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     url = f"{api_base}/semantic-types/generate"
-    r = requests.post(url, json=payload, timeout=120)
+    r = requests.post(url, json=payload, timeout=180)
     if r.status_code != 200:
         return {"resultType": "error", "explanation": f"HTTP {r.status_code}", "raw": r.text}
     try:
@@ -241,7 +249,8 @@ def _process_row_parallel(api_base: str, row: Dict[str, str], desc_idx: int, bas
                 print(f"[{rtype}] Generated type {safe_name} for {basename} (desc {desc_idx})")
             else:
                 # For errors or other statuses, show the original format
-                print(f"[{rtype}] Generated type {name} for {basename} (desc {desc_idx})")
+                expl = result.get("explanation") or result.get("error") or ""
+                print(f"[{rtype}] Generated type {name} for {basename} (desc {desc_idx}) - {expl}")
         except Exception as e:
             print(f"Failed to process generated result: {e}")
 

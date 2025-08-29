@@ -5,19 +5,19 @@
     <!-- Console appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg [user=%X{username} cid=%X{correlationId}]%n</pattern>
         </encoder>
     </appender>
     
     <!-- Root logger -->
-    <root level="${ROOT_LOG_LEVEL:INFO}">
+    <root level="${ROOT_LOG_LEVEL:-INFO}">
         <appender-ref ref="CONSOLE"/>
     </root>
     
     <!-- Application loggers -->
-    <logger name="com.nl2fta.classifier" level="${APP_LOG_LEVEL:INFO}"/>
-    <logger name="com.nl2fta.classifier.service.semantic_type.generation" level="${GEN_LOG_LEVEL:DEBUG}"/>
-    <logger name="com.nl2fta.classifier.service.aws.OpenAIService" level="${OPENAI_LOG_LEVEL:DEBUG}"/>
+    <logger name="com.nl2fta.classifier" level="${APP_LOG_LEVEL:-INFO}"/>
+    <logger name="com.nl2fta.classifier.service.semantic_type.generation" level="${GEN_LOG_LEVEL:-DEBUG}"/>
+    <logger name="com.nl2fta.classifier.service.aws.OpenAIService" level="${OPENAI_LOG_LEVEL:-DEBUG}"/>
     <logger name="com.nl2fta.classifier.service.TableClassificationService" level="INFO"/>
     
     <!-- Reduce startup noise -->

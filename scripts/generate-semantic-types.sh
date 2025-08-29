@@ -507,6 +507,18 @@ start_backend() {
   LOGGING_LEVEL_COM_NL2FTA=DEBUG \
   LOGGING_LEVEL_COM_NL2FTA_CLASSIFIER=DEBUG \
   LOGGING_LEVEL_ROOT=INFO \
+  # Logback overrides for deep debug
+  ROOT_LOG_LEVEL=${ROOT_LOG_LEVEL:-INFO} \
+  APP_LOG_LEVEL=${APP_LOG_LEVEL:-DEBUG} \
+  GEN_LOG_LEVEL=${GEN_LOG_LEVEL:-DEBUG} \
+  OPENAI_LOG_LEVEL=${OPENAI_LOG_LEVEL:-DEBUG} \
+  # LLM provider selection; prefer OpenAI if key present
+  LLM_PROVIDER=${LLM_PROVIDER:-openai} \
+  OPENAI_API_KEY=${OPENAI_API_KEY:-} \
+  OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o} \
+  OPENAI_MAX_TOKENS=${OPENAI_MAX_TOKENS:-4096} \
+  OPENAI_TEMPERATURE=${OPENAI_TEMPERATURE:-0.7} \
+  OPENAI_RETRY_MAX_ATTEMPTS=${OPENAI_RETRY_MAX_ATTEMPTS:-3} \
   AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
   AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
   AWS_DEFAULT_REGION=${AWS_REGION} \
@@ -517,9 +529,28 @@ start_backend() {
 
   echo -e "Using JVM options: ${YELLOW}$GEN_JAVA_OPTS${NC}"
 
+  # Diagnose port mapping and determine effective host port
+  echo -e "${BLUE}Checking port mappings for backend...${NC}"
+  MAP1=$($COMPOSE -f docker-compose.dev.yml port backend $GEN_BACKEND_PORT 2>/dev/null || true)
+  MAP2=$($COMPOSE -f docker-compose.dev.yml port backend 8081 2>/dev/null || true)
+  echo "compose port (container $GEN_BACKEND_PORT): ${MAP1:-<none>}"
+  echo "compose port (container 8081): ${MAP2:-<none>}"
+  EFFECTIVE_HOST_PORT=""
+  if [ -n "$MAP1" ]; then
+    EFFECTIVE_HOST_PORT=$(echo "$MAP1" | awk -F: '{print $2}')
+  elif [ -n "$MAP2" ]; then
+    EFFECTIVE_HOST_PORT=$(echo "$MAP2" | awk -F: '{print $2}')
+  fi
+  if [ -z "$EFFECTIVE_HOST_PORT" ]; then
+    EFFECTIVE_HOST_PORT="$GEN_BACKEND_PORT"
+  fi
+  # Expose for downstream run_generation
+  export GEN_EFFECTIVE_HOST_PORT="$EFFECTIVE_HOST_PORT"
+  echo "Using health check port: $EFFECTIVE_HOST_PORT"
+
   echo -n "Waiting for backend to start"
   for i in {1..160}; do
-    if curl -s "http://localhost:$GEN_BACKEND_PORT/api/health" >/dev/null 2>&1; then
+    if curl -sf "http://localhost:$EFFECTIVE_HOST_PORT/api/health" >/dev/null 2>&1; then
       echo ""; echo -e "${GREEN}✔${NC} Backend is ready"
       return 0
     fi
@@ -544,7 +575,8 @@ run_generation() {
   echo -e "${BLUE}Running generator...${NC}"
 
   PY="${EVALUATOR_DIR}/src/generate_semantic_types.py"
-  API_BASE="http://localhost:$GEN_BACKEND_PORT/api"
+  API_PORT="${GEN_EFFECTIVE_HOST_PORT:-$GEN_BACKEND_PORT}"
+  API_BASE="http://localhost:$API_PORT/api"
 
   # Inputs are authoritative in evaluator/datasets/generation-inputs. No copying from data/.
   GEN_INPUTS_DIR="$EVALUATOR_DIR/datasets/generation-inputs"
@@ -558,6 +590,17 @@ run_generation() {
   # No short names: generation uses data file names for output naming
   [ -n "$DESCRIPTIONS" ] && echo "Descriptions: $DESCRIPTIONS"
 
+  # Ensure logs are verbose inside backend
+  ROOT_LOG_LEVEL=${ROOT_LOG_LEVEL:-INFO} \
+  APP_LOG_LEVEL=${APP_LOG_LEVEL:-DEBUG} \
+  GEN_LOG_LEVEL=${GEN_LOG_LEVEL:-DEBUG} \
+  OPENAI_LOG_LEVEL=${OPENAI_LOG_LEVEL:-DEBUG} \
+  LLM_PROVIDER=${LLM_PROVIDER:-openai} \
+  OPENAI_API_KEY=${OPENAI_API_KEY:-} \
+  OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o} \
+  OPENAI_MAX_TOKENS=${OPENAI_MAX_TOKENS:-4096} \
+  OPENAI_TEMPERATURE=${OPENAI_TEMPERATURE:-0.7} \
+  OPENAI_RETRY_MAX_ATTEMPTS=${OPENAI_RETRY_MAX_ATTEMPTS:-3} \
   EVALUATOR_API_BASE_URL="$API_BASE" \
   EVALUATOR_RUN_DIR="$RUN_DIR" \
   EVAL_RUN_TIMESTAMP="$RUN_TS" \
@@ -569,13 +612,18 @@ run_generation() {
       $FILES_ARG \
       --region \"$AWS_REGION\" \
       --run-timestamp \"$RUN_TS\""
+
+  # Always show backend logs to surface generation/parsing issues
+  print_backend_logs
 }
 
 print_backend_logs() {
   echo -e "${BLUE}Backend logs (tail)${NC}"
   # Attempt to show recent backend logs to surface generation/parsing issues
   COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT \
-    $COMPOSE -f "$PROJECT_ROOT/docker-compose.dev.yml" logs --no-color --tail=400 backend || true
+    $COMPOSE -f "$PROJECT_ROOT/docker-compose.dev.yml" logs --no-color --tail=500 backend || true
+  echo -e "${BLUE}Streaming live backend logs for 20s...${NC}"
+  timeout 20 sh -c "COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT $COMPOSE -f '$PROJECT_ROOT/docker-compose.dev.yml' logs -f --no-color backend" || true
 }
 
 trap 'stop_backend' EXIT
@@ -598,9 +646,7 @@ echo ""
 echo -e "${GREEN}Generation complete. Outputs in ${GEN_DIR}${NC}"
 
 # Always print backend logs in CI to expose generation/parsing problems
-if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
-  print_backend_logs
-fi
+# Already printed backend logs above
 
 # Print an eval-style summary table (with deltas vs baseline) and append to GitHub Step Summary if present
 echo ""

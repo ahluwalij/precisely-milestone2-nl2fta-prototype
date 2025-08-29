@@ -24,7 +24,7 @@ x-config:
 x-backend-env: &backend-env # Server configuration
   SPRING_PROFILES_ACTIVE: dev
   APP_ENVIRONMENT: development
-  BACKEND_PORT: *backend-port
+  BACKEND_PORT: ${BACKEND_PORT:-8081}
   SERVER_PORT: ${BACKEND_PORT:-8081}
   SERVER_SERVLET_CONTEXT_PATH: /
   CONTEXT_PATH: /
@@ -50,6 +50,11 @@ x-backend-env: &backend-env # Server configuration
   # Logging (development levels)
   LOGGING_LEVEL_ROOT: INFO
   LOGGING_LEVEL_COM_NL2FTA: DEBUG
+  # Logback environment overrides (consumed by logback-spring.xml)
+  ROOT_LOG_LEVEL: ${ROOT_LOG_LEVEL:-INFO}
+  APP_LOG_LEVEL: ${APP_LOG_LEVEL:-DEBUG}
+  GEN_LOG_LEVEL: ${GEN_LOG_LEVEL:-DEBUG}
+  OPENAI_LOG_LEVEL: ${OPENAI_LOG_LEVEL:-DEBUG}
 
   # CORS (only origins are configurable; methods/headers/credentials are fixed in code)
   CORS_ALLOWED_ORIGINS: http://localhost:4200
@@ -69,6 +74,14 @@ x-backend-env: &backend-env # Server configuration
   AWS_BEDROCK_TEMPERATURE: 0
   # Prefill key used by frontend config endpoint
   AWS_BEDROCK_MODEL_ID: ${AWS_BEDROCK_MODEL_ID:-us.anthropic.claude-sonnet-4-20250514-v1:0}
+
+  # LLM provider selection and OpenAI configuration
+  LLM_PROVIDER: ${LLM_PROVIDER:-openai}
+  OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+  OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o}
+  OPENAI_MAX_TOKENS: ${OPENAI_MAX_TOKENS:-4096}
+  OPENAI_TEMPERATURE: ${OPENAI_TEMPERATURE:-0.7}
+  OPENAI_RETRY_MAX_ATTEMPTS: ${OPENAI_RETRY_MAX_ATTEMPTS:-3}
 
   # User AWS Credentials for prefilling UI
   AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}

@@ -1,0 +1,1890 @@
+{
+  "dataset": "banking",
+  "description_number": 4,
+  "timestamp": "20250828_190835",
+  "generated_types": [
+    {
+      "resultType": "generated",
+      "semanticType": "TransactionID",
+      "description": "A string that strictly matches the pattern TX\\d{6}, where 'TX' is a constant prefix followed by exactly six digits (0–9), with no spaces or symbols.",
+      "baseType": "String",
+      "pluginType": "regex",
+      "regexPattern": "TX\\d{6}",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "TX000001",
+        "TX000201",
+        "TX055501",
+        "TX123456",
+        "TX654321",
+        "TX111111"
+      ],
+      "negativeContentExamples": [
+        "TX00000",
+        "UX000001",
+        "T124",
+        "TX12345A",
+        "TX 123456",
+        "123456"
+      ],
+      "positiveHeaderExamples": [
+        "Transaction ID",
+        "TX Reference",
+        "Transaction Identifier",
+        "TX ID",
+        "TransactionCode",
+        "TX Number"
+      ],
+      "negativeHeaderExamples": [
+        "User ID",
+        "Transaction Date",
+        "Order ID",
+        "Customer Number",
+        "Product Code",
+        "Reference ID"
+      ],
+      "confidenceThreshold": 98.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*transaction.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Transaction ID"
+          ],
+          "negativeExamples": [
+            "User ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*tx.*reference.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "TX Reference"
+          ],
+          "negativeExamples": [
+            "Transaction Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*transaction.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Transaction"
+          ],
+          "negativeExamples": [
+            "Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*tx.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "TX"
+          ],
+          "negativeExamples": [
+            "UX"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "ID"
+          ],
+          "negativeExamples": [
+            "Date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2500,
+      "explanation": "This semantic type represents a specific format of transaction identifiers used in datasets where the transaction ID begins with 'TX' followed by six digits. It is useful for uniquely identifying transactions within a dataset.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "33f4c4c4-3791-4fd0-8b55-46232d1a13a4"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "TransactionAmount",
+      "description": "The amount follows the pattern \\d+(\\.\\d{1,2})? representing positive numbers with optional decimal places up to two digits for currency precision.",
+      "baseType": "Double",
+      "pluginType": "regex",
+      "regexPattern": "\\d+(\\.\\d{1,2})?",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "376.24",
+        "1.2",
+        "521353.2",
+        "45.00",
+        "1000",
+        "0.99"
+      ],
+      "negativeContentExamples": [
+        "XC00128",
+        "14D",
+        "YY",
+        "abc",
+        "1234.567",
+        "12.3.4"
+      ],
+      "positiveHeaderExamples": [
+        "Transaction Amount",
+        "Amount",
+        "Amt",
+        "Amount"
+      ],
+      "negativeHeaderExamples": [
+        "Transaction Date",
+        "Balance",
+        "Date",
+        "Name"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*transaction.*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Transaction Amount"
+          ],
+          "negativeExamples": [
+            "Transaction Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*usd.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Amount (USD)"
+          ],
+          "negativeExamples": [
+            "Balance"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amt.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Amt"
+          ],
+          "negativeExamples": [
+            "Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Amount"
+          ],
+          "negativeExamples": [
+            "Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Number"
+          ],
+          "negativeExamples": [
+            "Name"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2610,
+      "explanation": "This semantic type is used for identifying and validating data that represents transaction amounts. The pattern ensures the values are positive numbers with up to two decimal places, suitable for currency precision. It is useful in financial datasets where transaction values need to be identified and processed.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "5706c0e7-4706-483f-8a6c-1985a562bbd4"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "TransactionDate",
+      "description": "The timestamp follows patterns like \\d{1,2}/\\d{1,2}/\\d{4} \\d{1,2}:\\d{2}:\\d{2} or \\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2} for complete date-time representation.",
+      "baseType": "LocalDateTime",
+      "pluginType": "regex",
+      "regexPattern": "(\\d{1,2}/\\d{1,2}/\\d{4} \\d{1,2}:\\d{2}:\\d{2})|(\\d{4}-\\d{2}-\\d{2} \\d{1,2}:\\d{2}:\\d{2})",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "4/11/2023 16:29:14",
+        "2023-05-11 11:29:14",
+        "2000-05-01 11:29:14",
+        "12/31/1999 23:59:59",
+        "1/1/2020 00:00:00",
+        "2022-12-25 08:45:30"
+      ],
+      "negativeContentExamples": [
+        "Wednesday",
+        "January",
+        "1",
+        "2023-05-11",
+        "16:29:14",
+        "11/2023 16:29",
+        "2023/05/11 11:29:14"
+      ],
+      "positiveHeaderExamples": [
+        "Transaction Date",
+        "Txn Timestamp",
+        "Transaction DateTime",
+        "Txn Date"
+      ],
+      "negativeHeaderExamples": [
+        "Transaction ID",
+        "Date Created",
+        "Timestamp",
+        "Creation Date"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*transaction.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Transaction Date"
+          ],
+          "negativeExamples": [
+            "Transaction ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*txn.*timestamp.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Txn Timestamp"
+          ],
+          "negativeExamples": [
+            "Date Created"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*txn.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Txn Date"
+          ],
+          "negativeExamples": [
+            "Created Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Date"
+          ],
+          "negativeExamples": [
+            "ID"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2720,
+      "explanation": "This semantic type identifies columns representing transaction dates, specifically in formats like MM/DD/YYYY HH:MM:SS or YYYY-MM-DD HH:MM:SS. It is useful in financial datasets where transaction timing is crucial for analysis and reporting.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "ab499cf6-8c26-403e-bdf9-60f3b6a0a24e"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "FeedbackType",
+      "description": "The feedback category follows a pattern like (Suggestion|Complaint|Praise|Inquiry|Issue) representing standard customer service classifications.",
+      "baseType": "String",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "SUGGESTION",
+        "COMPLAINT",
+        "PRAISE",
+        "INQUIRY",
+        "ISSUE"
+      ],
+      "backout": "^[A-Z]+$",
+      "positiveContentExamples": [
+        "Suggestion",
+        "Complaint",
+        "Praise",
+        "Inquiry",
+        "Issue"
+      ],
+      "negativeContentExamples": [
+        "-1",
+        "0.5",
+        "Never",
+        "Feedback",
+        "Type1"
+      ],
+      "positiveHeaderExamples": [
+        "Feedback Type",
+        "Type of Feedback",
+        "Customer Feedback Type",
+        "Feedback Category Type",
+        "Client Feedback Type"
+      ],
+      "negativeHeaderExamples": [
+        "Feedback Score",
+        "Feedback Date",
+        "Customer Rating",
+        "Feedback Count",
+        "Score Type"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*feedback.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Feedback Type"
+          ],
+          "negativeExamples": [
+            "Feedback Score"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*type.*feedback.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Type of Feedback"
+          ],
+          "negativeExamples": [
+            "Feedback Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Type"
+          ],
+          "negativeExamples": [
+            "Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*feedback.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Feedback"
+          ],
+          "negativeExamples": [
+            "Date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2750,
+      "explanation": "This semantic type is used to categorize customer feedback into predefined categories such as Suggestion, Complaint, Praise, Inquiry, and Issue. It helps in organizing customer feedback for better analysis and response strategies.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "d39bb369-d732-4fc5-b107-96502de23896"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "AccountOpeningDate",
+      "description": "The date when an account was opened, accepting various date-time formats.",
+      "baseType": "LocalDateTime",
+      "pluginType": "regex",
+      "regexPattern": "(\\d{1,2}/\\d{1,2}/\\d{4}( \\d{1,2}:\\d{2}:\\d{2})?)|(\\d{4}-\\d{2}-\\d{2}( \\d{1,2}:\\d{2}:\\d{2})?)",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "4/11/2023 16:29:14",
+        "2023-05-11",
+        "4/11/2023"
+      ],
+      "negativeContentExamples": [
+        "Wednesday",
+        "January",
+        "1",
+        "Account"
+      ],
+      "positiveHeaderExamples": [
+        "Account Opening Date",
+        "Account Start Date"
+      ],
+      "negativeHeaderExamples": [
+        "Opening Balance Date",
+        "Account Closing Date"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*account.*opening.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Account Opening Date"
+          ],
+          "negativeExamples": [
+            "Account Closing Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*account.*start.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Account Start Date"
+          ],
+          "negativeExamples": [
+            "Opening Balance Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*account.*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Account Date"
+          ],
+          "negativeExamples": [
+            "Balance Date"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*date.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Date"
+          ],
+          "negativeExamples": [
+            "Time"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2820,
+      "explanation": "This semantic type identifies dates when accounts are opened, supporting both date and date-time formats commonly used in records. It's useful for financial datasets and customer onboarding processes.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "543b388b-daf2-4585-867d-32fa70d99f1c"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "LoanStatus",
+      "description": "The loan status follows a pattern like (Approved|Pending|Rejected|Closed|Active) representing standard loan lifecycle states. Examples: Approved, Closed.",
+      "baseType": "String",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "APPROVED",
+        "PENDING",
+        "REJECTED",
+        "CLOSED",
+        "ACTIVE"
+      ],
+      "backout": "^[A-Z]+$",
+      "positiveContentExamples": [
+        "Approved",
+        "Pending",
+        "Rejected",
+        "Closed",
+        "Active"
+      ],
+      "negativeContentExamples": [
+        "-1",
+        "Yes",
+        "No",
+        "123",
+        "Completed"
+      ],
+      "positiveHeaderExamples": [
+        "Loan Status",
+        "Status"
+      ],
+      "negativeHeaderExamples": [
+        "Loan Amount",
+        "Account Status"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*loan.*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan Status"
+          ],
+          "negativeExamples": [
+            "Loan Amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Status"
+          ],
+          "negativeExamples": [
+            "Account Status"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2830,
+      "explanation": "This semantic type is used to classify loan lifecycle states, such as Approved, Pending, Rejected, Closed, and Active. It is important for categorizing and managing loan records in financial datasets.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "c83430c9-6795-403d-b073-fbcf38c4b233"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "AccountType",
+      "description": "The account type follows a pattern like (Savings|Checkings|Current|Investment|Business) representing standard banking product categories.",
+      "baseType": "String",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "SAVINGS",
+        "CHECKINGS",
+        "CURRENT",
+        "INVESTMENT",
+        "BUSINESS"
+      ],
+      "backout": "^(?:SAVINGS|CHECKINGS|CURRENT|INVESTMENT|BUSINESS)$",
+      "positiveContentExamples": [
+        "Savings",
+        "Checkings",
+        "Current",
+        "Investment",
+        "Business",
+        "SAVINGS",
+        "CHECKINGS",
+        "CURRENT"
+      ],
+      "negativeContentExamples": [
+        "Monday",
+        "Apple",
+        "Transaction",
+        "Bank",
+        "Deposit",
+        "Withdrawal",
+        "Loan",
+        "Credit"
+      ],
+      "positiveHeaderExamples": [
+        "Account Type",
+        "Account Category",
+        "Account",
+        "TYPE"
+      ],
+      "negativeHeaderExamples": [
+        "Transaction Type",
+        "Portfolio Type",
+        "Bank Type",
+        "Account Name",
+        "Account Number",
+        "Financial Category",
+        "Bank Account",
+        "Credit Type"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*account.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Account Type"
+          ],
+          "negativeExamples": [
+            "Transaction Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*account.*category.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Account Category"
+          ],
+          "negativeExamples": [
+            "Portfolio Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*account.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Account"
+          ],
+          "negativeExamples": [
+            "Transaction"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Type"
+          ],
+          "negativeExamples": [
+            "Category"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2840,
+      "explanation": "This semantic type represents standard banking product categories such as Savings, Checkings, Current, Investment, and Business accounts. It helps classify and identify account types within datasets related to banking and financial services.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "c6988317-eac6-4d72-8dc3-4fa4af2f5f0b"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "InterestRate",
+      "description": "The interest rate follows patterns like \\d+(\\.\\d+)?%? accepting decimal numbers with optional percentage symbols for rate representation. Examples: 2.65, 3%.",
+      "baseType": "String",
+      "pluginType": "regex",
+      "regexPattern": "\\b\\d+(\\.\\d+)?%?\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "2.65",
+        "4.5"
+      ],
+      "negativeContentExamples": [
+        "-1.0",
+        "-2",
+        "abc",
+        "100%",
+        "1.1.1"
+      ],
+      "positiveHeaderExamples": [
+        "Interest Rate",
+        "Rate",
+        "APR Rate",
+        "Rate of Interest"
+      ],
+      "negativeHeaderExamples": [
+        "Fee Rate",
+        "Discount Rate",
+        "Tax Rate",
+        "Exchange Rate"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*interest.*rate.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Interest Rate"
+          ],
+          "negativeExamples": [
+            "Fee Rate"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*rate.*\\(.*%\\).*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Rate (%)"
+          ],
+          "negativeExamples": [
+            "Discount Rate"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*interest.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Interest Rate"
+          ],
+          "negativeExamples": [
+            "Fee Rate"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*rate.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Rate (%)"
+          ],
+          "negativeExamples": [
+            "Discount Rate"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2860,
+      "explanation": "This semantic type is used to identify interest rates expressed as decimal numbers with optional percentage symbols. It is useful in contexts where financial data is being processed, allowing for the extraction and handling of interest rate values from datasets.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "e4219bff-1ee4-4e6c-8ead-0748fd60dcd7"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "AccountBalance",
+      "description": "Represents positive monetary amounts with optional decimal precision up to two places.",
+      "baseType": "Double",
+      "pluginType": "regex",
+      "regexPattern": "\\d+(\\.\\d{1,2})?",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "124.2",
+        "345235.6",
+        "3533.3",
+        "100",
+        "99999.99",
+        "0.01"
+      ],
+      "negativeContentExamples": [
+        "Tom",
+        "Negative",
+        "Monday",
+        "-100",
+        "12.345",
+        "abc"
+      ],
+      "positiveHeaderExamples": [
+        "Account Balance",
+        "Current Balance",
+        "Balance",
+        "Total Amount",
+        "Balance Amount",
+        "Account Value"
+      ],
+      "negativeHeaderExamples": [
+        "Balance Change",
+        "Credit Limit",
+        "Limit",
+        "Reference",
+        "Transaction ID",
+        "Account Number"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*account\\s+balance.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Account Balance"
+          ],
+          "negativeExamples": [
+            "Balance Change"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*current\\s+balance.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Current Balance"
+          ],
+          "negativeExamples": [
+            "Credit Limit"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*balance.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Balance"
+          ],
+          "negativeExamples": [
+            "Limit"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Total Amount"
+          ],
+          "negativeExamples": [
+            "Quantity"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Account Number"
+          ],
+          "negativeExamples": [
+            "Reference"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2900,
+      "explanation": "This semantic type is used to identify positive monetary balances in financial data, such as account balances, total amounts, or any monetary value with up to two decimal places.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "3c143fa9-4cb9-4ddc-bd59-95a6a4c9d21c"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "ResolutionStatus",
+      "description": "The resolution status represents service workflow states with values like Resolved, Pending, In Progress, Escalated, and Closed.",
+      "baseType": "String",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "RESOLVED",
+        "PENDING",
+        "IN PROGRESS",
+        "ESCALATED",
+        "CLOSED"
+      ],
+      "backout": "^[A-Z]{2,15}$",
+      "positiveContentExamples": [
+        "Resolved",
+        "Pending",
+        "In Progress",
+        "Escalated",
+        "Closed",
+        "RESOLVED",
+        "PENDING"
+      ],
+      "negativeContentExamples": [
+        "No",
+        "-1",
+        "134.2",
+        "Open",
+        "Complete",
+        "12345",
+        "Active"
+      ],
+      "positiveHeaderExamples": [
+        "Resolution Status",
+        "Status of Resolution",
+        "Current Resolution Status",
+        "Final Resolution Status",
+        "Service Resolution Status",
+        "Resolution Status Code"
+      ],
+      "negativeHeaderExamples": [
+        "Resolution Time",
+        "Case Status",
+        "Service Time",
+        "Time to Resolution",
+        "Case ID",
+        "Resolution Date"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*resolution\\s*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Resolution Status"
+          ],
+          "negativeExamples": [
+            "Resolution Time"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*status\\s*of\\s*resolution.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Status of Resolution"
+          ],
+          "negativeExamples": [
+            "Case Status"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*status.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Status"
+          ],
+          "negativeExamples": [
+            "Resolution Time"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2910,
+      "explanation": "The STATUS.RESOLUTION semantic type is used to identify and classify resolution status values within datasets representing service workflows. It helps in categorizing and filtering records based on their state in the resolution process, such as whether a case is pending, resolved, or escalated.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "7c437593-344a-4ab3-bfa9-43bd4a7d7e57"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "CardType",
+      "description": "The card network follows a pattern like (Visa|MasterCard|Amex|Discover|UnionPay) representing major payment card brands.",
+      "baseType": "String",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "VISA",
+        "MASTERCARD",
+        "AMEX",
+        "DISCOVER",
+        "UNIONPAY",
+        "JCB",
+        "DANKORT",
+        "DINERSCLUB",
+        "MAESTRO",
+        "CUP"
+      ],
+      "backout": "^(?:[A-Z][a-z]+|[A-Z]+)$",
+      "positiveContentExamples": [
+        "Amex",
+        "Visa",
+        "MasterCard",
+        "Discover",
+        "UnionPay",
+        "JCB",
+        "Dankort",
+        "DinersClub"
+      ],
+      "negativeContentExamples": [
+        "1",
+        "-1",
+        "Saturday",
+        "1234",
+        "Credit",
+        "Limit",
+        "Transaction",
+        "Account"
+      ],
+      "positiveHeaderExamples": [
+        "Card Type",
+        "Payment Card",
+        "Card Brand",
+        "Credit Card Type",
+        "Bank Card Type",
+        "Card Network"
+      ],
+      "negativeHeaderExamples": [
+        "Card Number",
+        "Credit Limit",
+        "Account Number",
+        "Expiration Date",
+        "Security Code",
+        "Holder Name"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*card.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Card Type"
+          ],
+          "negativeExamples": [
+            "Card Number"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*payment.*card.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Payment Card"
+          ],
+          "negativeExamples": [
+            "Credit Limit"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Type"
+          ],
+          "negativeExamples": [
+            "Number"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2950,
+      "explanation": "This semantic type identifies major payment card brands used in transactions, such as Visa, MasterCard, and Amex. It is useful for categorizing and processing financial data related to credit or debit card transactions.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "1111ec01-4c8f-4883-b79a-a1fc3e8de699"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "LoanType",
+      "description": "The loan category follows a pattern like (Mortgage|Auto|Personal|Business|Student) representing standard lending product types.",
+      "baseType": "String",
+      "pluginType": "list",
+      "regexPattern": null,
+      "listValues": [
+        "MORTGAGE",
+        "AUTO",
+        "PERSONAL",
+        "BUSINESS",
+        "STUDENT"
+      ],
+      "backout": "^[A-Z][a-z]+$",
+      "positiveContentExamples": [
+        "Mortgage",
+        "Auto",
+        "Personal",
+        "Business",
+        "Student"
+      ],
+      "negativeContentExamples": [
+        "-15.0",
+        "Negative",
+        "Monday",
+        "12345",
+        "Insurance"
+      ],
+      "positiveHeaderExamples": [
+        "Loan Type",
+        "Loan Category",
+        "Loan Classification"
+      ],
+      "negativeHeaderExamples": [
+        "Account Type",
+        "Property Type",
+        "Income Source"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*loan.*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan Type"
+          ],
+          "negativeExamples": [
+            "Account Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*loan.*category.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan Category"
+          ],
+          "negativeExamples": [
+            "Property Type"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*loan.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan"
+          ],
+          "negativeExamples": [
+            "Account"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*type.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Type"
+          ],
+          "negativeExamples": [
+            "Category"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2970,
+      "explanation": "The LOAN.TYPE semantic type is used to classify and identify standard categories of loans such as Mortgage, Auto, Personal, Business, and Student. This type assists in organizing and analyzing financial data related to lending products.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "0b1c48e1-c555-4f2c-bcae-45f26f524f02"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "LoanID",
+      "description": "The loan identifier is a positive integer used for tracking loan accounts, following the pattern \\d+. Examples include: 2, 56, 124.",
+      "baseType": "Long",
+      "pluginType": "regex",
+      "regexPattern": "\\b[1-9]\\d*\\b",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "2",
+        "56",
+        "124",
+        "789",
+        "1010",
+        "9999"
+      ],
+      "negativeContentExamples": [
+        "0",
+        "-1",
+        "ACD",
+        "001",
+        "12.5",
+        "Loan123"
+      ],
+      "positiveHeaderExamples": [
+        "Loan ID",
+        "Loan Reference",
+        "Loan Number"
+      ],
+      "negativeHeaderExamples": [
+        "Loan Amount",
+        "Customer ID",
+        "Interest Rate"
+      ],
+      "confidenceThreshold": 90.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*loan.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan ID"
+          ],
+          "negativeExamples": [
+            "Loan Amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*loan.*reference.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan Reference"
+          ],
+          "negativeExamples": [
+            "Customer ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*loan.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan ID"
+          ],
+          "negativeExamples": [
+            "Customer ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan ID"
+          ],
+          "negativeExamples": [
+            "Loan Amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan Number"
+          ],
+          "negativeExamples": [
+            "Loan Amount"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 2990,
+      "explanation": "The LoanID semantic type identifies positive integer values used as loan identifiers, essential for tracking and managing loan accounts. The pattern ensures that only valid positive numbers are recognized, avoiding confusion with other identifiers or numerical values.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "9d99240b-6535-443d-9eb2-b0da0f51fca5"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "FeedbackID",
+      "description": "The FeedbackID is a positive integer used for tracking customer service feedback. It should match a sequence of digits representing a positive integer.",
+      "baseType": "Long",
+      "pluginType": "regex",
+      "regexPattern": "\\d+",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "1",
+        "35",
+        "124",
+        "567",
+        "9999",
+        "23456"
+      ],
+      "negativeContentExamples": [
+        "-1",
+        "0.5",
+        "Monday",
+        "abc",
+        "12.34",
+        "-124"
+      ],
+      "positiveHeaderExamples": [
+        "Feedback ID",
+        "Ticket ID",
+        "Customer Feedback ID"
+      ],
+      "negativeHeaderExamples": [
+        "Response ID",
+        "Comment ID",
+        "Feedback Date"
+      ],
+      "confidenceThreshold": 98.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*feedback.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Feedback ID"
+          ],
+          "negativeExamples": [
+            "Response ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*ticket.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Ticket ID"
+          ],
+          "negativeExamples": [
+            "Comment ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "ID"
+          ],
+          "negativeExamples": [
+            "Note ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*number.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Number"
+          ],
+          "negativeExamples": [
+            "Reference"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 3000,
+      "explanation": "The FeedbackID is used within customer service applications to uniquely identify feedback entries. It is a positive integer, ensuring that each feedback can be tracked correctly without confusion with negative numbers or non-integer values.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "9be98664-98c7-457c-9686-dca86b9b2199"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "LoanAmount",
+      "description": "The loan principal representing positive monetary amounts with optional decimal precision for currency values.",
+      "baseType": "Double",
+      "pluginType": "regex",
+      "regexPattern": "\\d+(\\.\\d{1,2})?",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "124.2",
+        "345235.6",
+        "3533.3",
+        "1000.00",
+        "789",
+        "50000.5"
+      ],
+      "negativeContentExamples": [
+        "-15.0",
+        "Negative",
+        "Monday",
+        "1,000.00",
+        "12.345",
+        "ABC"
+      ],
+      "positiveHeaderExamples": [
+        "Loan Amount",
+        "Principal Amount",
+        "Total Loan",
+        "Loan Principal",
+        "Loan Sum"
+      ],
+      "negativeHeaderExamples": [
+        "Interest Rate",
+        "Balance",
+        "Loan Date",
+        "Monthly Payment",
+        "Interest Payment"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*loan.*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan Amount"
+          ],
+          "negativeExamples": [
+            "Interest Rate"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*principal.*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Principal Amount"
+          ],
+          "negativeExamples": [
+            "Balance"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Amount"
+          ],
+          "negativeExamples": [
+            "Rate"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*loan.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Loan"
+          ],
+          "negativeExamples": [
+            "Interest"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*principal.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Principal"
+          ],
+          "negativeExamples": [
+            "Balance"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Amount"
+          ],
+          "negativeExamples": [
+            "Rate"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 3010,
+      "explanation": "The CURRENCY.LOAN_AMOUNT semantic type is used to identify and classify columns and data values representing loan principal amounts. These values are positive monetary amounts with optional decimal precision, typical for currency-related datasets. This type helps in distinguishing loan-related numeric data from other financial metrics.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "7d57de52-3c15-431f-8549-c7310d20f52d"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "BranchID",
+      "description": "The branch identifier is a positive integer used for internal branch tracking systems.",
+      "baseType": "Long",
+      "pluginType": "regex",
+      "regexPattern": "\\d+",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "2",
+        "56",
+        "124",
+        "789",
+        "3456",
+        "98765"
+      ],
+      "negativeContentExamples": [
+        "-1",
+        "ACD",
+        "123a",
+        "-56",
+        "12.34"
+      ],
+      "positiveHeaderExamples": [
+        "Branch ID",
+        "Branch Code",
+        "Branch Number",
+        "Branch Identifier",
+        "Branch No",
+        "Branch Identification"
+      ],
+      "negativeHeaderExamples": [
+        "Office ID",
+        "Location ID",
+        "Department Code",
+        "Region Number",
+        "Area ID",
+        "Division Code"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*branch.*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Branch ID"
+          ],
+          "negativeExamples": [
+            "Office ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*branch.*code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Branch Code"
+          ],
+          "negativeExamples": [
+            "Location ID"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*branch.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Branch"
+          ],
+          "negativeExamples": [
+            "Location"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*code.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Code"
+          ],
+          "negativeExamples": [
+            "Name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*id.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "ID"
+          ],
+          "negativeExamples": [
+            "Number"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 3020,
+      "explanation": "This semantic type is used to identify branch identifiers which are positive integers used in internal branch tracking systems. Typically, these are numeric codes that help in uniquely identifying branches within an organization.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "09010403-9a6e-44b7-9779-dcb327f9563b"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "CreditLimit",
+      "description": "The credit limit follows the pattern \\d+(\\.\\d{1,2})? representing positive monetary amounts with optional decimal precision for credit boundaries. Examples: 450.5, 1000.",
+      "baseType": "Double",
+      "pluginType": "regex",
+      "regexPattern": "\\d+(\\.\\d{1,2})?",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "450.5",
+        "1000",
+        "562.3",
+        "250.75",
+        "99999",
+        "123456.78"
+      ],
+      "negativeContentExamples": [
+        "-1",
+        "Monday",
+        "-1234.5",
+        "1000A",
+        "Credit",
+        "1234,56"
+      ],
+      "positiveHeaderExamples": [
+        "Credit Limit",
+        "Max Credit"
+      ],
+      "negativeHeaderExamples": [
+        "Balance Limit",
+        "Loan Limit",
+        "Available Credit",
+        "Interest Rate",
+        "Monthly Payment",
+        "Credit Score"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*credit.*limit.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Credit Limit"
+          ],
+          "negativeExamples": [
+            "Balance Limit"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*max.*credit.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Max Credit"
+          ],
+          "negativeExamples": [
+            "Loan Limit"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*credit.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Credit Limit"
+          ],
+          "negativeExamples": [
+            "Balance Limit"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*limit.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Credit Limit"
+          ],
+          "negativeExamples": [
+            "Loan Limit"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*num.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Credit Limit Number"
+          ],
+          "negativeExamples": [
+            "Loan Number"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 3090,
+      "explanation": "This semantic type represents credit limits, defined as positive monetary amounts with optional decimal precision for financial boundaries. It is useful for identifying columns or data entries that specify credit limits in financial datasets.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "53b3296e-1827-4ebf-8417-4ffbc9612898"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "AccountBalanceAfterTransaction",
+      "description": "The post-transaction balance representing the updated monetary amount with up to two decimal precision.",
+      "baseType": "Double",
+      "pluginType": "regex",
+      "regexPattern": "\\d+(\\.\\d{1,2})?",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "124.2",
+        "345235.6",
+        "3533.3",
+        "123456789.99",
+        "0.01",
+        "1000.00"
+      ],
+      "negativeContentExamples": [
+        "Tom",
+        "Negative",
+        "Monday",
+        "124.234",
+        "-124.2",
+        "12.345"
+      ],
+      "positiveHeaderExamples": [
+        "Balance After Transaction",
+        "Post-Txn Balance",
+        "Updated Balance",
+        "Account Balance After Transaction",
+        "Balance Post Transaction",
+        "Transaction Result Balance"
+      ],
+      "negativeHeaderExamples": [
+        "Pre-Txn Balance",
+        "Transaction Balance",
+        "Initial Balance",
+        "Current Balance",
+        "Balance Before Transaction",
+        "Transaction Amount"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*balance.*after.*transaction.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Balance After Transaction"
+          ],
+          "negativeExamples": [
+            "Pre-Txn Balance"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*post.*txn.*balance.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Post-Txn Balance"
+          ],
+          "negativeExamples": [
+            "Transaction Balance"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*balance.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Account Balance"
+          ],
+          "negativeExamples": [
+            "Transaction Amount"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*amount.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "Monetary Amount"
+          ],
+          "negativeExamples": [
+            "Transaction Date"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 3160,
+      "explanation": "This semantic type identifies the balance amount in an account following a transaction, allowing for decimal precision up to two places. It helps in financial datasets to categorize and validate post-transaction balances accurately.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "02abc884-7d62-44c7-8081-cce188564775"
+    }
+  ]
+}
