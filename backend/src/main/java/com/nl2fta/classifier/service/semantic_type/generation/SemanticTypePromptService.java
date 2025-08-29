@@ -26,6 +26,7 @@ public class SemanticTypePromptService {
 
   private final CustomSemanticTypeService customSemanticTypeService;
   private final PromptService promptService;
+  private final com.nl2fta.classifier.service.generation.GenerationKnowledgeService knowledgeService;
 
   /**
    * Builds the main prompt for semantic type generation.
@@ -44,6 +45,38 @@ public class SemanticTypePromptService {
     log.info(
         "STEP 2 - NEW TYPE GENERATION: Found {} total types (built-in + custom) for context",
         allTypes.size());
+
+    // Lightweight RAG: retrieve top-k banking snippets for augmentation when description hints banking
+    String desc = request.getDescription() == null ? "" : request.getDescription().toLowerCase();
+    String header = request.getColumnHeader() == null ? "" : request.getColumnHeader().toLowerCase();
+    boolean looksBanking = desc.contains("bank") || header.contains("account") || header.contains("txn") || header.contains("transaction");
+    if (looksBanking) {
+      try {
+        // Initialize once (idempotent) and retrieve
+        knowledgeService.initializeBankingKnowledge();
+        var results = knowledgeService.retrieveBanking(request.getDescription(), 256);
+        if (!results.isEmpty()) {
+          List<String> aug = results.stream().map(r -> r.text).collect(Collectors.toList());
+          // Prepend augmentation into description to bias the LLM
+          String augmented = "[BANKING_KNOWLEDGE]\n- " + String.join("\n- ", aug) + "\n[/BANKING_KNOWLEDGE]\n" + request.getDescription();
+          // Rebuild a new request with augmented description (no toBuilder on this DTO)
+          request = com.nl2fta.classifier.dto.semantic_type.SemanticTypeGenerationRequest.builder()
+              .typeName(request.getTypeName())
+              .description(augmented)
+              .positiveContentExamples(request.getPositiveContentExamples())
+              .negativeContentExamples(request.getNegativeContentExamples())
+              .positiveHeaderExamples(request.getPositiveHeaderExamples())
+              .negativeHeaderExamples(request.getNegativeHeaderExamples())
+              .checkExistingTypes(request.isCheckExistingTypes())
+              .proceedDespiteSimilarity(request.isProceedDespiteSimilarity())
+              .generateExamplesForExistingType(request.getGenerateExamplesForExistingType())
+              .columnHeader(request.getColumnHeader())
+              .detectedBaseType(request.getDetectedBaseType())
+              .detectedPattern(request.getDetectedPattern())
+              .build();
+        }
+      } catch (Exception ignored) {}
+    }
 
     PromptService.SemanticTypeGenerationParams params =
         PromptService.SemanticTypeGenerationParams.builder()

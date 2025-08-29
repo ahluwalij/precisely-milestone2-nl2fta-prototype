@@ -1,0 +1,321 @@
+{
+  "dataset": "example",
+  "description_number": 1,
+  "timestamp": "20250828_212212",
+  "generated_types": [
+    {
+      "resultType": "generated",
+      "semanticType": "NAME.LAST",
+      "description": "Last name",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^[A-Z][a-z]+(?:[-'][A-Z][a-z]+)*$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "Smith",
+        "Johnson",
+        "McDonald",
+        "Lee",
+        "Garcia",
+        "Nguyen",
+        "Martinez"
+      ],
+      "negativeContentExamples": [
+        "12345",
+        "Smith123",
+        "O'Connor!",
+        "Lee@",
+        "Garcia_",
+        "Nguyen#",
+        "Martinez$"
+      ],
+      "positiveHeaderExamples": [
+        "last_name",
+        "surname",
+        "family_name",
+        "lname"
+      ],
+      "negativeHeaderExamples": [
+        "first_name",
+        "given_name",
+        "middle_name",
+        "fname"
+      ],
+      "confidenceThreshold": 97.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*last.*name.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "last_name"
+          ],
+          "negativeExamples": [
+            "first_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*surname.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "surname"
+          ],
+          "negativeExamples": [
+            "given_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*family.*name.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "family_name"
+          ],
+          "negativeExamples": [
+            "middle_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*lname.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "lname"
+          ],
+          "negativeExamples": [
+            "fname"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*name.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "name"
+          ],
+          "negativeExamples": [
+            "address"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 6220,
+      "explanation": "This semantic type represents last names, which are typically used to identify individuals within a family or lineage. The regex pattern accounts for common last name structures, including hyphenated and apostrophized names. This type is useful in datasets where distinguishing between first and last names is necessary, such as in contact lists, customer databases, and identity verification systems.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "d9f81b7a-d0fc-4547-bafc-9839d45b80af"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "NAME.FIRST",
+      "description": "First name",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?i)^[A-Z][a-z]+(?:[-' ][A-Z][a-z]+)*$",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "John",
+        "Mary",
+        "Anne-Marie",
+        "Jean-Luc",
+        "Anna"
+      ],
+      "negativeContentExamples": [
+        "john123",
+        "mary!",
+        "Anne_Marie",
+        "12345",
+        "O'Connor1",
+        "Jean-Luc-"
+      ],
+      "positiveHeaderExamples": [
+        "first_name",
+        "fname",
+        "given_name",
+        "name"
+      ],
+      "negativeHeaderExamples": [
+        "last_name",
+        "surname",
+        "address",
+        "email"
+      ],
+      "confidenceThreshold": 97.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*first.*name.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "first_name"
+          ],
+          "negativeExamples": [
+            "last_name"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*fname.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "fname"
+          ],
+          "negativeExamples": [
+            "lname"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*given.*name.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "given_name"
+          ],
+          "negativeExamples": [
+            "surname"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*name.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "name"
+          ],
+          "negativeExamples": [
+            "address"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 6230,
+      "explanation": "This semantic type represents first names, typically used in personal identification. It is designed to match common first name patterns, including those with hyphens or apostrophes, while excluding numeric or special character entries.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "1f901edd-f3e1-4845-ae2f-0469c099eeee"
+    },
+    {
+      "resultType": "generated",
+      "semanticType": "IDENTITY.EMPLOYEE_ID",
+      "description": "An IP address identifying the source location or device originating network traffic or data transmission.",
+      "baseType": "STRING",
+      "pluginType": "regex",
+      "regexPattern": "(?:(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])",
+      "listValues": [],
+      "backout": null,
+      "positiveContentExamples": [
+        "192.168.1.1",
+        "10.0.0.1",
+        "172.16.254.1",
+        "8.8.8.8",
+        "255.255.255.255",
+        "127.0.0.1"
+      ],
+      "negativeContentExamples": [
+        "256.256.256.256",
+        "192.168.1.256",
+        "192.168.1",
+        "192.168.1.1.1",
+        "192.168.1.a",
+        "192.168.1.-1"
+      ],
+      "positiveHeaderExamples": [
+        "source_ip_address",
+        "client_ip",
+        "ip_address",
+        "ip",
+        "network_ip",
+        "device_ip"
+      ],
+      "negativeHeaderExamples": [
+        "mac_address",
+        "user_id",
+        "email_address",
+        "location",
+        "hostname",
+        "device_id"
+      ],
+      "confidenceThreshold": 95.0,
+      "headerPatterns": [
+        {
+          "regExp": "(?i).*source.*ip.*address.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "source_ip_address"
+          ],
+          "negativeExamples": [
+            "destination_ip_address"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*ip.*address.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "ip_address"
+          ],
+          "negativeExamples": [
+            "mac_address"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*ip.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "ip"
+          ],
+          "negativeExamples": [
+            "id"
+          ],
+          "rationale": null
+        },
+        {
+          "regExp": "(?i).*address.*",
+          "confidence": 99,
+          "mandatory": false,
+          "positiveExamples": [
+            "address"
+          ],
+          "negativeExamples": [
+            "location"
+          ],
+          "rationale": null
+        }
+      ],
+      "priority": 6260,
+      "explanation": "This semantic type is used to identify IPv4 addresses, which are numerical labels assigned to devices connected to a computer network that uses the Internet Protocol for communication. These addresses are crucial for identifying the source of network traffic and ensuring proper routing of data.",
+      "existingTypeMatch": null,
+      "existingTypeDescription": null,
+      "existingTypePattern": null,
+      "existingTypeHeaderPatterns": null,
+      "existingTypeIsBuiltIn": false,
+      "suggestedAction": null,
+      "comparison": null,
+      "correlationId": "e10f20bb-81ea-4f78-93c0-aa5ceb7ae605"
+    }
+  ]
+}

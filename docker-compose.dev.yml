@@ -161,6 +161,7 @@ services:
       <<: *backend-env
     volumes:
       - ./backend/src:/app/src
+      - ./evaluator:/app/evaluator
     healthcheck:
       test:
         [

@@ -40,9 +40,15 @@ public class SemanticTypeConversionService {
     customType.setSemanticType(generated.getSemanticType());
     customType.setDescription(generated.getDescription());
     customType.setPluginType(generated.getPluginType());
-    customType.setThreshold((int) Math.round(generated.getConfidenceThreshold() * 100));
-    // Use the priority from the generated type (which is automatically assigned to avoid conflicts)
-    customType.setPriority(generated.getPriority());
+    // generated.getConfidenceThreshold() is already 0-100 in our parser; lower floor to 30 to boost recall
+    int threshold = (int) Math.round(generated.getConfidenceThreshold());
+    if (threshold < 30) threshold = 30;
+    if (threshold > 100) threshold = 100;
+    customType.setThreshold(threshold);
+    // Ensure generated types outrank built-ins by raising priority if needed (>= 2000)
+    Integer genPriority = generated.getPriority() == null ? 2000 : generated.getPriority();
+    if (genPriority < 2000) genPriority = 2000;
+    customType.setPriority(genPriority);
 
     // Handle content based on plugin type - CustomSemanticType uses ContentConfig not Content
     if ("regex".equals(generated.getPluginType())) {

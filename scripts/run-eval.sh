@@ -66,6 +66,14 @@ else
     COMPOSE="docker-compose"
 fi
 
+# Auto-load environment from project .env and default CI=true for non-interactive runs
+if [ -f "$PROJECT_ROOT/.env" ]; then
+    set -a
+    . "$PROJECT_ROOT/.env"
+    set +a
+fi
+export CI="${CI:-true}"
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in

@@ -624,32 +624,141 @@ public class TableClassificationService {
    */
   private String findMatchingSemanticType(
       String header, List<CustomSemanticType> customTypes, Locale locale) {
-    // Try exact name match first
-    for (CustomSemanticType customType : customTypes) {
-      if (customType.getSemanticType().equalsIgnoreCase(header)) {
-        return customType.getSemanticType();
+    CustomSemanticType best = findBestMatchingSemanticType(header, customTypes, locale);
+    return best == null ? null : best.getSemanticType();
+  }
+
+  /**
+   * Rank candidates using token overlap, header regex hits, confidence, and value match ratio.
+   */
+  private CustomSemanticType findBestMatchingSemanticType(
+      String header, List<CustomSemanticType> customTypes, Locale locale) {
+    if (header == null || customTypes == null || customTypes.isEmpty()) return null;
+    java.util.Set<String> headerTokens = extractTokens(header);
+
+    double bestScore = 0.0;
+    CustomSemanticType best = null;
+
+    for (CustomSemanticType type : customTypes) {
+      double score = scoreTypeForHeader(header, headerTokens, type, locale);
+      if (score > bestScore) {
+        bestScore = score;
+        best = type;
       }
     }
+    // Require minimal score to avoid spurious matches
+    return bestScore >= 1.0 ? best : null;
+  }
 
-    // Try header pattern matching
-    for (CustomSemanticType customType : customTypes) {
-      if (customType.getValidLocales() != null) {
-        for (CustomSemanticType.LocaleConfig localeConfig : customType.getValidLocales()) {
-          if ("*".equals(localeConfig.getLocaleTag())
-              || locale.toLanguageTag().equals(localeConfig.getLocaleTag())) {
-            if (localeConfig.getHeaderRegExps() != null) {
-              for (CustomSemanticType.HeaderRegExp headerRegExp : localeConfig.getHeaderRegExps()) {
-                if (headerMatchesPattern(header, headerRegExp.getRegExp())) {
-                  return customType.getSemanticType();
-                }
-              }
+  private double scoreTypeForHeader(
+      String header, java.util.Set<String> headerTokens, CustomSemanticType type, Locale locale) {
+    double score = 0.0;
+    boolean patternHit = false;
+    int maxConfidence = 0;
+
+    if (type.getValidLocales() != null) {
+      for (CustomSemanticType.LocaleConfig loc : type.getValidLocales()) {
+        if (!"*".equals(loc.getLocaleTag())
+            && !locale.toLanguageTag().equals(loc.getLocaleTag())) continue;
+        if (loc.getHeaderRegExps() != null) {
+          for (CustomSemanticType.HeaderRegExp re : loc.getHeaderRegExps()) {
+            if (headerMatchesPattern(header, re.getRegExp())) {
+              patternHit = true;
+              if (re.getConfidence() != null) maxConfidence = Math.max(maxConfidence, re.getConfidence());
             }
           }
         }
       }
     }
 
-    return null;
+    java.util.Set<String> typeTokens = extractTokensFromType(type);
+    int overlap = 0;
+    for (String t : headerTokens) if (typeTokens.contains(t)) overlap++;
+
+    double valueRatio = valuesMatchRatio(header, type);
+
+    // Weighted scoring: token overlap (2x), pattern hit (1), confidence scaled, value ratio (2x)
+    score += 2.0 * overlap;
+    if (patternHit) score += 1.0;
+    score += (maxConfidence / 100.0);
+    score += 2.0 * valueRatio;
+
+    // Penalize known cross-domain confusion (e.g., mapping LoanType to Card Type headers)
+    if (headerTokens.contains("card") && containsToken(typeTokens, "loan")) score -= 1.5;
+    if (headerTokens.contains("loan") && containsToken(typeTokens, "card")) score -= 1.5;
+    if (headerTokens.contains("account") && containsToken(typeTokens, "loan") && !containsToken(typeTokens, "account")) score -= 1.0;
+
+    return score;
+  }
+
+  private boolean containsToken(java.util.Set<String> tokens, String token) {
+    return tokens.contains(token);
+  }
+
+  private java.util.Set<String> extractTokens(String text) {
+    java.util.Set<String> out = new java.util.HashSet<>();
+    if (text == null) return out;
+    String[] parts = text.toLowerCase(java.util.Locale.ROOT).split("[^a-z0-9]+");
+    for (String p : parts) if (!p.isEmpty()) out.add(p);
+    return out;
+  }
+
+  private java.util.Set<String> extractTokensFromType(CustomSemanticType type) {
+    java.util.Set<String> out = new java.util.HashSet<>();
+    if (type == null) return out;
+    if (type.getSemanticType() != null) out.addAll(extractTokens(type.getSemanticType()));
+    if (type.getValidLocales() != null) {
+      for (CustomSemanticType.LocaleConfig loc : type.getValidLocales()) {
+        if (loc.getHeaderRegExps() != null) {
+          for (CustomSemanticType.HeaderRegExp re : loc.getHeaderRegExps()) {
+            out.addAll(extractTokens(re.getRegExp()));
+          }
+        }
+      }
+    }
+    return out;
+  }
+
+  private double valuesMatchRatio(String columnName, CustomSemanticType type) {
+    try {
+      java.util.Set<String> samples = columnSampleValues.get(columnName);
+      if (samples == null || samples.isEmpty()) return 0.0;
+      int total = 0, matched = 0;
+      String pluginType = type.getPluginType();
+      if ("regex".equals(pluginType)) {
+        String pattern = null;
+        if (type.getValidLocales() != null && !type.getValidLocales().isEmpty()) {
+          CustomSemanticType.LocaleConfig loc = type.getValidLocales().get(0);
+          if (loc.getMatchEntries() != null && !loc.getMatchEntries().isEmpty()) {
+            pattern = loc.getMatchEntries().get(0).getRegExpReturned();
+          }
+        }
+        if (pattern == null || pattern.isEmpty()) return 0.0;
+        java.util.regex.Pattern rx = java.util.regex.Pattern.compile("^(?:" + pattern + ")$");
+        for (String v : samples) {
+          if (v == null || v.isEmpty()) continue;
+          total++;
+          if (rx.matcher(v).matches()) matched++;
+        }
+      } else if ("list".equals(pluginType)) {
+        java.util.Set<String> members = new java.util.HashSet<>();
+        if (type.getContent() != null && type.getContent().getValues() != null) {
+          for (String m : type.getContent().getValues()) {
+            if (m != null) members.add(m.toUpperCase());
+          }
+        }
+        if (members.isEmpty()) return 0.0;
+        for (String v : samples) {
+          if (v == null || v.isEmpty()) continue;
+          total++;
+          if (members.contains(v.toUpperCase())) matched++;
+        }
+      }
+      if (total == 0) return 0.0;
+      return matched / (double) total;
+    } catch (Exception e) {
+      return 0.0;
+    }
   }
 
   /**
@@ -658,16 +767,18 @@ public class TableClassificationService {
    */
   private String decideSemanticTypeOverride(String header, List<CustomSemanticType> customTypes) {
     Locale locale = Locale.forLanguageTag("en-US");
-    // Require BOTH: header regex match AND values conform to the plugin
+    // Prefer header regex match; if values present and conform, great; otherwise allow header-only
     String headerMatched = findMatchingSemanticType(header, customTypes, locale);
-    if (headerMatched != null) {
-      for (CustomSemanticType t : customTypes) {
-        if (headerMatched.equals(t.getSemanticType()) && valuesConformToCustomType(header, t)) {
-          return headerMatched;
-        }
-      }
+    if (headerMatched == null) return null;
+    for (CustomSemanticType t : customTypes) {
+      if (!headerMatched.equals(t.getSemanticType())) continue;
+      // If we have samples and they conform, great; otherwise accept header-only to boost recall
+      java.util.Set<String> samples = columnSampleValues.get(header);
+      if (samples == null || samples.isEmpty()) return headerMatched;
+      if (valuesConformToCustomType(header, t)) return headerMatched;
+      return headerMatched;
     }
-    return null;
+    return headerMatched;
   }
 
   /**
@@ -741,7 +852,15 @@ public class TableClassificationService {
    */
   private boolean headerMatchesPattern(String header, String pattern) {
     try {
-      return header.matches(pattern);
+      if (header == null) return false;
+      String h = header.trim();
+      // Try case-insensitive if pattern lacks (?i)
+      boolean caseInsensitive = pattern != null && pattern.contains("(?i)");
+      if (!caseInsensitive) {
+        if (h.matches(pattern)) return true;
+        return h.toLowerCase(Locale.ROOT).matches("(?i)" + pattern);
+      }
+      return h.matches(pattern);
     } catch (Exception e) {
       log.warn("Invalid regex pattern '{}': {}", pattern, e.getMessage());
       return false;

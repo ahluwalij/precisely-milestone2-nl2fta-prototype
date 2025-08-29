@@ -99,8 +99,10 @@ public class SemanticTypeResponseParserService {
         backout = generateFallbackBackoutPattern(listValues);
         log.info("Generated fallback backout pattern for list type: '{}'", backout);
       }
-      int confidenceThreshold = parseIntValue(getElementText(basicInfo, "confidenceThreshold"), 95);
-      int priority = 2000; // Always use 2000 as required by FTA
+      int confidenceThreshold = parseIntValue(getElementText(basicInfo, "confidenceThreshold"), 96);
+      if (confidenceThreshold < 50) confidenceThreshold = 50;
+      if (confidenceThreshold > 100) confidenceThreshold = 100;
+      int priority = 2200; // Ensure higher than built-ins by default
 
       // Parse header patterns
       List<HeaderPattern> headerPatterns = parseXmlHeaderPatterns(root);
@@ -179,7 +181,7 @@ public class SemanticTypeResponseParserService {
           .backout(backout)
           .headerPatterns(parseHeaderPatterns(castToMapList(parsed.get("headerPatterns"))))
           .confidenceThreshold(parseConfidenceThreshold(parsed.get("confidenceThreshold")))
-          .priority(2000) // Always use 2000 as required by FTA
+          .priority(2200) // Ensure higher than built-ins by default
           .positiveContentExamples(
               cleanExamplesList(castToStringList(parsed.get("positiveContentExamples"))))
           .negativeContentExamples(
@@ -262,7 +264,9 @@ public class SemanticTypeResponseParserService {
 
       try {
         String regExp = getElementText(patternElement, "regExp");
-        int confidence = parseIntValue(getElementText(patternElement, "confidence"), 95);
+        int confidence = parseIntValue(getElementText(patternElement, "confidence"), 98);
+        if (confidence < 70) confidence = 70;
+        if (confidence > 100) confidence = 100;
         boolean mandatory = parseBooleanValue(getElementText(patternElement, "mandatory"), true);
         String rationale = getElementText(patternElement, "rationale");
 

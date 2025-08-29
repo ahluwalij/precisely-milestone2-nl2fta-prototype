@@ -36,7 +36,8 @@ NC='\033[0m'
 
 # Defaults
 DATASET="all"
-DESCRIPTIONS=""  # if empty, Python will auto-detect from inputs header
+# Default to only description 1 unless explicitly provided
+DESCRIPTIONS=""  # will default to "1" below if not set
 DATA_DIR_OVERRIDE=""
 FILES_CSV=""
 AWS_REGION="${AWS_REGION:-us-east-1}"
@@ -210,6 +211,15 @@ CLEANUP=true
 USE_SAVED_CREDENTIALS=false
 DEFAULT_MODE=false
 
+# Auto-load environment from project .env (OpenAI keys, etc.) and default CI to true
+# This avoids needing to export these repeatedly when running locally.
+if [ -f "$PROJECT_ROOT/.env" ]; then
+  set -a
+  . "$PROJECT_ROOT/.env"
+  set +a
+fi
+export CI="${CI:-true}"
+
 while [[ $# -gt 0 ]]; do
   case $1 in
     --dataset) DATASET="$2"; shift 2;;
@@ -237,6 +247,11 @@ while [[ $# -gt 0 ]]; do
     *) echo "Unknown option: $1"; usage; exit 1;;
   esac
 done
+
+# If descriptions were not provided via CLI, default to only description 1 for generation.
+if [ -z "$DESCRIPTIONS" ]; then
+  DESCRIPTIONS="1"
+fi
 
 check_prereqs() {
   echo -e "${BLUE}Checking prerequisites...${NC}"
