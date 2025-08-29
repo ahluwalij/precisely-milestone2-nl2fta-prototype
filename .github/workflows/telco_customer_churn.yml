@@ -2,6 +2,12 @@ name: Telco Customer Churn Dataset - Generate & Evaluate
 
 on:
   workflow_dispatch:
+    inputs:
+      descriptions:
+        description: 'Space-separated description numbers to generate (e.g., "1" or "1 2" or "1 2 3 4 5 6")'
+        required: false
+        default: '1'
+        type: string
 
 jobs:
   build-package:
@@ -107,7 +113,7 @@ jobs:
             echo "❌ Missing evaluator/datasets/generation-inputs/telco_customer_churn_inputs.csv" >&2
             exit 1
           fi
-          DESCRIPTIONS="1"
+          DESCRIPTIONS="${{ github.event.inputs.descriptions || '1' }}"
           ./scripts/generate-semantic-types.sh --dataset telco_customer_churn --descriptions "$DESCRIPTIONS" --default
 
       - name: Run evaluator on generated types (telco_customer_churn)
@@ -128,7 +134,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
         run: |
           chmod +x scripts/run-eval.sh
-          DESCRIPTIONS="1"
+          DESCRIPTIONS="${{ github.event.inputs.descriptions || '1' }}"
           ./scripts/run-eval.sh --dataset telco_customer_churn --descriptions "$DESCRIPTIONS" --no-cleanup --default || true
           echo "Listing evaluator logs (if any):"
           ls -la evaluator/logs || true
