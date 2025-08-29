@@ -504,6 +504,9 @@ start_backend() {
   BACKEND_PORT=$GEN_BACKEND_PORT \
   AUTH_PASSWORD=gen-password-2024 \
   JWT_SECRET=gen-secret-minimum-32-characters-long-2024 \
+  LOGGING_LEVEL_COM_NL2FTA=DEBUG \
+  LOGGING_LEVEL_COM_NL2FTA_CLASSIFIER=DEBUG \
+  LOGGING_LEVEL_ROOT=INFO \
   AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
   AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
   AWS_DEFAULT_REGION=${AWS_REGION} \
@@ -568,6 +571,13 @@ run_generation() {
       --run-timestamp \"$RUN_TS\""
 }
 
+print_backend_logs() {
+  echo -e "${BLUE}Backend logs (tail)${NC}"
+  # Attempt to show recent backend logs to surface generation/parsing issues
+  COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT \
+    $COMPOSE -f "$PROJECT_ROOT/docker-compose.dev.yml" logs --no-color --tail=400 backend || true
+}
+
 trap 'stop_backend' EXIT
 
 echo -e "${BLUE}╔══════════════════════════════════════════════════════════════════╗${NC}"
@@ -586,6 +596,11 @@ run_generation
 
 echo ""
 echo -e "${GREEN}Generation complete. Outputs in ${GEN_DIR}${NC}"
+
+# Always print backend logs in CI to expose generation/parsing problems
+if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+  print_backend_logs
+fi
 
 # Print an eval-style summary table (with deltas vs baseline) and append to GitHub Step Summary if present
 echo ""
